@@ -8,23 +8,19 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
+    {% include "header.html" %}
+  
     <h1>ダッシュボード</h1>
     <p>ログイン成功！</p>
     <p>メールアドレス: {{ email }}</p>
 
-    <form action="{{ url_for('logout') }}" method="post">
-        <button type="submit">ログアウト</button>
-    </form>
+    <p>プロフィール作成がまだの方は、下記から作成してください。</p>
+    <div style="text-align: right; margin-top: 1rem;">
+        <a href="{{ url_for('profile_input') }}"><button>プロフィール作成</button></a>
+    </div>
+    <h3>プロフィール一覧</h3>
 
-     <h3>プロフィール一覧</h3>
-    <ul>
-        {% for profile in profiles %}
-            <li>
-                <strong>名前:</strong> {{ profile.name }}<br>
-                <strong>メール:</strong> {{ profile.email }}<br>
-                <strong>自己紹介:</strong> {{ profile.bio }}
-            </li>
-       
-    </ul>
+    
+
 </body>
 </html>

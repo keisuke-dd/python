@@ -80,6 +80,11 @@ def dashboard():
 def skillsheet_input():
     return render_template("skillsheet_input.html")
 
+# 🔹 プロフィール入力ページ表示
+@app.route("/profile_input")
+def profile_input():
+    return render_template("profile_input.html")
+
 
 # 🔹 ログアウト処理
 @app.route("/logout")
