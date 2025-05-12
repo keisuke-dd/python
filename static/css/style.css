@@ -1,0 +1,8 @@
+
+/*ヘッダー画像*/
+img {
+  width: 180px;
+  height: auto;
+  max-width: 800px;
+  border-bottom: 4px solid #4299e1;
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロフィール作成</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <h1>ダッシュボード</h1>
+    <p>ログイン成功！</p>
+    <p>メールアドレス: {{ email }}</p>
+
+    <form action="{{ url_for('logout') }}" method="post">
+        <button type="submit">ログアウト</button>
+    </form>
+
+     <h3>プロフィール一覧</h3>
+    <ul>
+        {% for profile in profiles %}
+            <li>
+                <strong>名前:</strong> {{ profile.name }}<br>
+                <strong>メール:</strong> {{ profile.email }}<br>
+                <strong>自己紹介:</strong> {{ profile.bio }}
+            </li>
+       
+    </ul>
+</body>
+</html>
