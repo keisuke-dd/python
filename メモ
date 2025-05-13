@@ -1,0 +1,58 @@
+#  プロフィール入力処理
+@app.route("/profile_input", methods=["GET", "POST"])
+def profile_input():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        name = request.form.get("name")
+        age = request.form.get("age")
+        location = request.form.get("location")
+        occupation = request.form.get("occupation")
+        education = request.form.get("education")
+        certifications = request.form.get("certifications")
+        bio = request.form.get("bio")
+
+#supabaseのtableにデータを追加
+        try:
+            result = supabase.table("profile").upsert({
+                "user_id": session['user_id'],  # ユーザーIDを指定
+                "name": name,
+                "age": age,
+                "location": location,
+                "occupation": occupation,
+                "education": education,
+                "certifications": certifications,
+                "bio": bio,
+            }, on_conflict=["user_id"]).execute()
+
+            if result.error:
+                print("保存エラー:", result.error)
+                return render_template("profile_input.html", error="保存に失敗しました。")
+
+            return redirect(url_for("profile_output"))
+        
+        except Exception as e:
+            print(f"Supabase保存中にエラー: {e}")
+            return render_template("profile_input.html", error="予期せぬエラーが発生しました。")
+
+    # GET時は入力フォーム表示
+    return render_template("profile_input.html")
+
+# プロフィールアウトプット表示
+@app.route("/profile_output", methods=["GET"])
+def profile_output():
+    if 'user_id' in session:
+        user_id = session['user_id']
+        # Supabaseからプロフィール情報を取得
+        try:
+            profile = supabase.table("profile").select("*").eq("user_id", user_id).execute()
+            if profile.data:
+                return render_template("profile_output.html", profile=profile.data[0])
+            else:
+                return render_template("profile_output.html", error="プロフィールが見つかりません。")
+        except Exception as e:
+            print(f"プロフィール取得に失敗しました。エラー内容: {e}")
+            return render_template("profile_output.html", error="プロフィールの取得に失敗しました。")
+    else:
+        return redirect(url_for('login'))

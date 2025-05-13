@@ -77,6 +77,78 @@ def login():
     return render_template("login.html")
 
 
+
+
+#  プロフィール入力処理
+@app.route("/profile_input", methods=["GET", "POST"])
+def profile_input():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        name = request.form.get("name")
+        age = request.form.get("age")
+        location = request.form.get("location")
+        occupation = request.form.get("occupation")
+        education = request.form.get("education")
+        certifications = request.form.get("certifications")
+        bio = request.form.get("bio")
+
+        # supabaseのtableにデータを追加
+        try:
+            result = supabase.table("profile").upsert({
+                "user_id": session['user_id'],  # ユーザーID
+                "name": name,
+                "age": age,
+                "location": location,
+                "occupation": occupation,
+                "education": education,
+                "certifications": certifications,
+                "bio": bio,
+            }, on_conflict=["user_id"]).execute()
+
+            # レスポンスのステータスコードを確認
+            if result.model_dump().get("error"):
+                print("保存エラー:", result.error)
+                return render_template("profile_input.html", error="保存に失敗しました。")
+
+            # 成功の場合
+            return redirect(url_for("profile_output"))
+
+        except Exception as e:
+            # 例外処理
+            print(f"エラー: {e}")
+            return render_template("profile_input.html", error="予期せぬエラーが発生しました。")
+
+    return render_template("profile_input.html")
+            
+
+
+# プロフィールアウトプット表示
+@app.route("/profile_output", methods=["GET"])
+def profile_output():
+    if 'user_id' in session:
+        user_id = session['user_id']
+
+        try:
+            response = supabase.table("profile").select("*").eq("user_id", user_id).execute()
+
+            # デバッグ出力
+            print("取得結果:", response.data)
+
+            if response.data and len(response.data) > 0:
+                # 最初のデータを渡す
+                return render_template("profile_output.html", profile=response.data[0])
+            else:
+                return render_template("profile_output.html", error="プロフィールが見つかりません。")
+
+        except Exception as e:
+            print(f"プロフィール取得に失敗しました。エラー内容: {e}")
+            return render_template("profile_output.html", error="プロフィールの取得に失敗しました。")
+    else:
+        return redirect(url_for('login'))
+    
+
 #  ダッシュボード（ログイン後のページ）
 @app.route("/dashboard")
 def dashboard():
@@ -90,14 +162,6 @@ def dashboard():
 @app.route("/skillsheet_input")
 def skillsheet_input():
     return render_template("skillsheet_input.html")
-
-
-#  プロフィール入力ページ表示
-@app.route("/profile_input")
-def profile_input():
-    return render_template("profile_input.html")
-
-#  プロフィール入力処理
 
 
 # 🔹 プロジェクト入力ページ表示
