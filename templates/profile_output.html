@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロフィール作成</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "header.html" %}
+
+    <div class="container">
+        <h1>プロフィール情報</h1>
+        <p>名前: {{ profile_name }}</p>
+        <p>年齢: {{ profile_age }}歳</p>
+        <p>最寄り駅: {{ profile_location }}</p>
+        <p>職種: {{ profile_occupation }}</p>
+        <p>学歴: {{ profile_education }}</p>
+        <p>資格: {{ profile_certifications }}</p>
+        <p>自己紹介: {{ profile_bio }}</p>
+
+        <div style="text-align: right; margin-top: 1rem;">
+            <a href="{{ url_for('profile_input') }}"><button>プロフィールを編集</button></a>
+            <a href="{{ url_for('dashboard') }}"><button>ダッシュボードに戻る</button></a>
+        </div>
+    </div>
+</body>
+</html>

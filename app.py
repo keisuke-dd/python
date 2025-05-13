@@ -97,6 +97,35 @@ def skillsheet_input():
 def profile_input():
     return render_template("profile_input.html")
 
+#  プロフィール入力処理
+@app.route("/profile_output", methods=["POST"])
+def save_profile():
+    # セッションからログイン中のユーザーIDを取得
+    user_id = session.get("user_id")
+    if not user_id:
+        return redirect(url_for("login"))
+
+    # フォームからのデータを取得
+    name = request.form.get("name")
+    email = request.form.get("email")
+    bio = request.form.get("bio")
+
+    # Supabaseのprofilesテーブルに保存
+    try:
+        result = supabase.table("profiles").insert({
+            "user_id": user_id,
+            "name": name,
+            "email": email,
+            "bio": bio
+        }).execute()
+
+        print("保存成功:", result)
+        return redirect(url_for("dashboard"))  # 保存後にダッシュボードへ
+    except Exception as e:
+        print("保存エラー:", e)
+        return "プロフィールの保存に失敗しました"
+
+
 
 # 🔹 プロジェクト入力ページ表示
 @app.route("/project_input")

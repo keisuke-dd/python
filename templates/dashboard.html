@@ -28,6 +28,27 @@
         {% else %}
             <li>年齢: 未設定</li>
         {% endif %}
+        {% if profile_location %}
+            <li>最寄り駅: {{ profile_location }}</li>
+        {% else %}
+            <li>最寄り駅: 未設定</li>
+        {% endif %}
+        {% if profile_occupation %}
+            <li>職種: {{ profile_occupation }}</li>
+        {% else %}
+            <li>職種: 未設定</li>
+        {% endif %}
+        {% if profile_education %}
+            <li>学歴: {{ profile_education }}</li>
+        {% else %}
+            <li>学歴: 未設定</li>
+        {% endif %}
+        {% if profile_certifications %}
+            <li>資格: {{ profile_certifications }}</li>
+        {% else %}
+            <li>資格: 未設定</li>
+        {% endif %}
+
         {% if profile_bio %}
             <li>自己紹介: {{ profile_bio }}</li>
         {% else %}
@@ -49,6 +70,7 @@
     {% else %}
         <p>入力されたスキルはありません。</p>
     {% endif %}
+    
     <h2>スキルレベル</h2>
     <ul>
 
