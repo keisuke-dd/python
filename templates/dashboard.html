@@ -14,13 +14,89 @@
     <p>ログイン成功！</p>
     <p>メールアドレス: {{ user_email }}</p>
 
-    <p>プロフィール作成がまだの方は、下記から作成してください。</p>
-    <div style="text-align: right; margin-top: 1rem;">
-        <a href="{{ url_for('profile_input') }}"><button>プロフィール作成</button></a>
-    </div>
     <h3>プロフィール一覧</h3>
 
-    
+    <p>プロフィール情報:</p>
+    <ul>
+        {% if profile_name %}
+            <li>名前: {{ profile_name }}</li>
+        {% else %}
+            <li>名前: 未設定</li>
+        {% endif %}
+        {% if profile_age %}
+            <li>年齢: {{ profile_age }}歳</li>
+        {% else %}
+            <li>年齢: 未設定</li>
+        {% endif %}
+        {% if profile_bio %}
+            <li>自己紹介: {{ profile_bio }}</li>
+        {% else %}
+            <li>自己紹介: 未設定</li>
+        {% endif %}
+    </ul>
+
+    <h3>スキルシート一覧</h3>
+    <p>スキルシート情報:</p>
+
+     <h2>入力されたスキルレベル</h2>
+
+      {% if skills %}
+        <ul>
+            {% for lang, level in skills.items() %}
+                <li>{{ lang }}: {{ level }}</li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p>入力されたスキルはありません。</p>
+    {% endif %}
+    <h2>スキルレベル</h2>
+    <ul>
+
+        {% if skill_name %}
+            <li>スキル名: {{ skill_name }}</li>
+        {% else %}
+            <li>スキル名: 未設定</li>
+        {% endif %}
+        {% if skill_level %}
+            <li>スキルレベル: {{ skill_level }}</li>
+        {% else %}
+            <li>スキルレベル: 未設定</li>
+        {% endif %}
+        {% if skill_description %}
+            <li>スキル説明: {{ skill_description }}</li>
+        {% else %}
+            <li>スキル説明: 未設定</li>
+        {% endif %}
+    </ul>
+
+    <h3>プロジェクト一覧</h3>
+    <p>プロジェクト情報:</p>
+    <ul>
+        {% if project_name %}
+            <li>プロジェクト名: {{ project_name }}</li>
+        {% else %}
+            <li>プロジェクト名: 未設定</li>
+        {% endif %}
+        {% if project_description %}
+            <li>プロジェクト説明: {{ project_description }}</li>
+        {% else %}
+            <li>プロジェクト説明: 未設定</li>
+        {% endif %}
+        {% if project_duration %}
+            <li>プロジェクト期間: {{ project_duration }}</li>
+        {% else %}
+            <li>プロジェクト期間: 未設定</li>
+        {% endif %}
+        {% if project_role %}
+            <li>プロジェクト役割: {{ project_role }}</li>
+        {% else %}
+            <li>プロジェクト役割: 未設定</li>
+        {% endif %}
+        {% if project_technologies %}
+            <li>使用技術: {{ project_technologies }}</li>
+        {% else %}
+            <li>使用技術: 未設定</li>
+        {% endif %}
 
 </body>
 </html>

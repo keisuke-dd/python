@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロジェクト作成</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "header.html" %}
+
+    <h1>プロジェクト入力</h1>
+    <form method="POST" action="/save_project">
+        <label for="project_name">プロジェクト名</label>
+        <input type="text" id="project_name" name="project_name" required>
+
+        <label for="project_description">プロジェクト説明</label>
+        <textarea id="project_description" name="project_description" rows="5"></textarea>
+
+        <label for="project_duration">プロジェクト期間</label>
+        <input type="text" id="project_duration" name="project_duration" required>
+
+        <label for="project_role">役割</label>
+        <input type="text" id="project_role" name="project_role" required>
+        
+        <label for="project_technologies">使用技術</label>
+        <input type="text" id="project_technologies" name="project_technologies" required>
+
+        <button type="submit">保存する</button> 
+
+</body>
+</html>

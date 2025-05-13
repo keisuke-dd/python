@@ -1,4 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
+from flask_session import Session
+from datetime import timedelta
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -16,14 +18,23 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # セッション用のシークレットキー
 
+#  セッションの設定
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # 30分で自動ログアウト
+Session(app)
 
-# 🔹 ホームページ (ログインかサインアップを選ぶ画面)
+#  セキュリティの強化設定
+app.config['SESSION_COOKIE_SECURE'] = False     # HTTPSのみでクッキー送信 localhost環境のため一時出来にflase
+app.config['SESSION_COOKIE_HTTPONLY'] = True   # JavaScriptからのアクセスを防止
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # クロスサイトのCSRF防止
+
+#  ホームページ (ログインかサインアップを選ぶ画面)
 @app.route("/", methods=["GET"])
 def home():
     return render_template("home.html")
 
 
-# 🔹 サインアップページ & 処理
+#  サインアップページ & 処理
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
@@ -41,7 +52,7 @@ def signup():
     return render_template("signup.html")
 
 
-# 🔹 ログインページ & ログイン処理
+#  ログインページ & ログイン処理
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
@@ -66,7 +77,7 @@ def login():
     return render_template("login.html")
 
 
-# 🔹 ダッシュボード（ログイン後のページ）
+#  ダッシュボード（ログイン後のページ）
 @app.route("/dashboard")
 def dashboard():
     if 'user_id' in session:
@@ -75,18 +86,25 @@ def dashboard():
         return redirect(url_for('login'))
 
 
-# 🔹 スキルシート作成ページ
+#  スキルシート作成ページ
 @app.route("/skillsheet_input")
 def skillsheet_input():
     return render_template("skillsheet_input.html")
 
-# 🔹 プロフィール入力ページ表示
+
+#  プロフィール入力ページ表示
 @app.route("/profile_input")
 def profile_input():
     return render_template("profile_input.html")
 
 
-# 🔹 ログアウト処理
+# 🔹 プロジェクト入力ページ表示
+@app.route("/project_input")
+def project_input():
+    return render_template("project_input.html")
+    
+    
+#  ログアウト処理
 @app.route("/logout")
 def logout():
     session.clear()
