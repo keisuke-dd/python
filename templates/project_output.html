@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロジェクト作成</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    {% include "header.html" %}
+    <div class="container">
+        <h1>プロジェクト情報</h1>
+        <p>プロジェクト情報を以下に表示します。</p>
+        <p>プロジェクト名: {{ project.project_name }}</p>
+        <p>プロジェクト概要: {{ project.project_overview }}</p>
+        <p>使用技術: {{ project.technologies }}</p>
+        <p>役割: {{ project.role }}</p>
+        <p>期間: {{ project.period }}</p>
+
+        <div style="text-align: right; margin-top: 1rem;">
+            <a href="{{ url_for('project_input') }}"><button>プロジェクトを編集</button></a>
+            <a href="{{ url_for('dashboard') }}"><button>ダッシュボードに戻る</button></a>
+        </div>
+
+    </div>
+</body>
+</html>

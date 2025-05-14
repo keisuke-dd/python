@@ -16,9 +16,11 @@
         <a href="{{ url_for('logout') }}">
                 <button class="logout">ログアウト</button></a>
             <a href="{{ url_for('dashboard') }}">
-                <button class="dashboard">dashboard</button></a>
+                <button class="dashboard">ダッシュボード</button></a>
+
+        <button id="scrollBottomBtn" onclick="window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' })">⬇ 一番下へ</button>
                 
-        <form method="post" action="/create-skillsheet">
+        <form method="post" action="/skillsheet_input">
 
 
             <section class="section">
@@ -48,8 +50,8 @@
                 <h2 class="section-title">01.プログラミング言語</h2>
                 <div class="language-select-group">
                     <div class="form-group">
-                        <label for="language_python">Python:</label>
-                        <select id="language_python" name="language_python">
+                        <label for="python">Python:</label>
+                        <select id="python" name="python">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -59,8 +61,8 @@
                         </select>
                      </div>
                     <div  class="form-group">
-                        <label for="language_ruby">Ruby:</label>
-                        <select id="language_ruby" name="language_ruby">
+                    <label for="ruby">Ruby:</label>
+                        <select id="ruby" name="ruby">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -70,8 +72,19 @@
                         </select>
                     </div>
                     <div  class="form-group">
-                        <label for="language_js">JavaScript:</label>
-                        <select id="language_js" name="language_js">
+                        <label for="javascript">JavaScript:</label>
+                        <select id="javascript" name="javascript">
+                            </select>option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="shell">Shell:</label>
+                        <select id="shell" name="shell">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -81,8 +94,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_shell">Shell:</label>
-                        <select id="language_shell" name="language_shell">
+                        <label for="c">C:</label>
+                        <select id="c" name="c">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -92,8 +105,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_c">C:</label>
-                        <select id="language_c" name="language_c">
+                        <label for="c++">C++:</label>
+                        <select id="c++" name="c++">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -103,8 +116,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_cpp">C++:</label>
-                        <select id="language_cpp" name="language_cpp">
+                        <label for="c#">C#:</label>
+                        <select id="c#" name="c#">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -114,8 +127,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_csharp">C#:</label>
-                        <select id="language_csharp" name="language_csharp">
+                        <label for="java">Java:</label>
+                        <select id="java" name="java">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -125,8 +138,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_java">Java:</label>
-                        <select id="language_java" name="language_java">
+                        <label for="php">PHP:</label>
+                        <select id="php" name="php">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -136,8 +149,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_php">PHP:</label>
-                        <select id="language_php" name="language_php">
+                        <label for="go">Go:</label>
+                        <select id="go" name="go">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -147,8 +160,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_go">Go:</label>
-                        <select id="language_go" name="language_go">
+                        <label for="html">HTML:</label>
+                        <select id="html" name="html">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -158,8 +171,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_html">HTML:</label>
-                        <select id="language_html" name="language_html">
+                        <label for="css">CSS:</label>
+                        <select id="css" name="css">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -169,8 +182,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_css">CSS:</label>
-                        <select id="language_css" name="language_css">
+                        <label for="swift">Swift:</label>
+                        <select id="swift" name="swift">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -180,8 +193,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_swift">Swift:</label>
-                        <select id="language_swift" name="language_swift">
+                        <label for="kotlin">Kotlin:</label>
+                        <select id="kotlin" name="kotlin">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -191,19 +204,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="language_kotlin">Kotlin:</label>
-                        <select id="language_kotlin" name="language_kotlin">
-                            <option value="">-</option>
-                            <option value="S">S (上級、教育可能)</option>
-                            <option value="A">A (中級、1人称対応可能)</option>
-                            <option value="B">B (業務経験あり)</option>
-                            <option value="C">C (知識のみ、研修レベル)</option>
-                            <option value="D">D (経験なし)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="language_vba">VBA:</label>
-                        <select id="language_vba" name="language_vba">
+                        <label for="vba">VBA:</label>
+                        <select id="vba" name="vba">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -219,8 +221,8 @@
                 <h2 class="section-title">02.フレームワーク</h2>
                 <div class="language-select-group">
                     <div class="form-group">
-                        <label for="framework_ruby_on_rails">Ruby on Rails:</label>
-                        <select id="framework_ruby_on_rails" name="framework_ruby_on_rails">
+                        <label for="ruby_on_rails">Ruby on Rails:</label>
+                        <select id="ruby_on_rails" name="ruby_on_rails">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -230,8 +232,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_django">Django:</label>
-                        <select id="framework_django" name="framework_django">
+                        <label for="django">Django:</label>
+                        <select id="django" name="django">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -241,8 +243,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_flask">Flask:</label>
-                        <select id="framework_flask" name="framework_flask">
+                        <label for="flask">Flask:</label>
+                        <select id="flask" name="flask">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -252,8 +254,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_laravel">Laravel:</label>
-                        <select id="framework_laravel" name="framework_laravel">
+                        <label for="laravel">Laravel:</label>
+                        <select id="laravel" name="laravel">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -263,8 +265,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_symfony">Symfony:</label>
-                        <select id="framework_symfony" name="framework_symfony">
+                        <label for="symfony">Symfony:</label>
+                        <select id="symfony" name="symfony">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -274,8 +276,8 @@
                         </select>
                     </div>
                      <div class="form-group">
-                        <label for="framework_cakephp">CakePHP:</label>
-                        <select id="framework_cakephp" name="framework_cakephp">
+                        <label for="cakephp">CakePHP:</label>
+                        <select id="cakephp" name="cakephp">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -285,8 +287,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_php">PHP:</label>
-                        <select id="framework_php" name="framework_php">
+                        <label for="php">PHP:</label>
+                        <select id="php" name="php">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -296,8 +298,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_nextjs">Next.js:</label>
-                        <select id="framework_nextjs" name="framework_nextjs">
+                        <label for="next_js">Next.js:</label>
+                        <select id="next_js" name="next_js">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -307,8 +309,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_nuxtjs">Nuxt.js:</label>
-                        <select id="framework_nuxtjs" name="framework_nuxtjs">
+                        <label for="nuxt_js">Nuxt.js:</label>
+                        <select id="nuxt_js" name="nuxt_js">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -318,8 +320,8 @@
                         </select>
                     </div>
                      <div class="form-group">
-                        <label for="framework_vuejs">Vue.js:</label>
-                        <select id="framework_vuejs" name="framework_vuejs">
+                        <label for="vue_js">Vue.js:</label>
+                        <select id="vue_js" name="vue_js">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -329,8 +331,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_springboot">Spring Boot:</label>
-                        <select id="framework_springboot" name="framework_springboot">
+                        <label for="spring_boot">Spring Boot:</label>
+                        <select id="spring_boot" name="spring_boot">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -340,8 +342,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_bottle">Bottle:</label>
-                        <select id="framework_bottle" name="framework_bottle">
+                        <label for="bottle">Bottle:</label>
+                        <select id="bottle" name="bottle">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -351,8 +353,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="framework_react">React:</label>
-                        <select id="framework_react" name="framework_react">
+                        <label for="react">React:</label>
+                        <select id="react" name="react">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -368,8 +370,8 @@
                 <h2 class="section-title">03.開発環境</h2>
                 <div class="language-select-group">
                     <div class="form-group">
-                        <label for="env_vscode">VSCode:</label>
-                        <select id="env_vscode" name="env_vscode">
+                        <label for="vscode">VSCode:</label>
+                        <select id="vscode" name="vscode">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -379,8 +381,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_eclipse">Eclipse:</label>
-                        <select id="env_eclipse" name="env_eclipse">
+                        <label for="eclipse">Eclipse:</label>
+                        <select id="eclipse" name="eclipse">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -390,8 +392,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_pycharm">PyCharm:</label>
-                        <select id="env_pycharm" name="env_pycharm">
+                        <label for="pycharm">PyCharm:</label>
+                        <select id="pycharm" name="pycharm">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -401,8 +403,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_jupyter_notebook">Jupyter Notebook:</label>
-                        <select id="env_jupyter_notebook" name="env_jupyter_notebook">
+                        <label for="jupyter_notebook">Jupyter Notebook:</label>
+                        <select id="jupyter_notebook" name="jupyter_notebook">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -412,8 +414,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_android_studio">Android Studio:</label>
-                        <select id="env_android_studio" name="env_android_studio">
+                        <label for="android_studio">Android Studio:</label>
+                        <select id="android_studio" name="android_studio">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -423,8 +425,8 @@
                         </select>
                     </div>
                      <div class="form-group">
-                        <label for="env_atom">Atom:</label>
-                        <select id="env_atom" name="env_atom">
+                        <label for="atom">Atom:</label>
+                        <select id="atom" name="atom">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -434,8 +436,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_xcode">Xcode:</label>
-                        <select id="env_xcode" name="env_xcode">
+                        <label for="xcode">Xcode:</label>
+                        <select id="xcode" name="xcode">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -445,8 +447,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_webstorm">WebStorm:</label>
-                        <select id="env_webstorm" name="env_webstorm">
+                        <label for="webstorm">WebStorm:</label>
+                        <select id="webstorm" name="webstorm">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -456,8 +458,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_netbeans">NetBeans:</label>
-                        <select id="env_netbeans" name="env_netbeans">
+                        <label for="netbeans">NetBeans:</label>
+                        <select id="netbeans" name="netbeans">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -467,8 +469,8 @@
                         </select>
                     </div>
                      <div class="form-group">
-                        <label for="env_visual_studio">Visual Studio:</label>
-                        <select id="env_visual_studio" name="env_visual_studio">
+                        <label for="visual_studio">Visual Studio:</label>
+                        <select id="visual_studio" name="visual_studio">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -484,8 +486,8 @@
                 <h2 class="section-title">04.OS</h2>
                 <div class="flamework">
                     <div class="form-group">
-                        <label for="env_eindows">Windows:</label>
-                        <select id="env_windows" name="e0nv_windows">
+                        <label for="windows">Windows:</label>
+                        <select id="windows" name="windows">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -495,8 +497,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_windowsserver">Windows Server:</label>
-                        <select id="env_windowsserver" name="env_windowsserver">
+                        <label for="windows_server">Windows Server:</label>
+                        <select id="windows_server" name="windows_server">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -506,8 +508,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_macos">macOS:</label>
-                        <select id="env_macos" name="env_macos">
+                        <label for="macos">macOS:</label>
+                        <select id="macos" name="macos">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -517,8 +519,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_linux">Linux:</label>
-                        <select id="env_linux" name="env_linux">
+                        <label for="linux">Linux:</label>
+                        <select id="linux" name="linux">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -528,8 +530,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_unix">Unix:</label>
-                        <select id="env_unix" name="env_unix">
+                        <label for="unix">Unix:</label>
+                        <select id="unix" name="unix">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -539,8 +541,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="env_solaris">Solaris:</label>
-                        <select id="env_solaris" name="solaris">
+                        <label for="solaris">Solaris:</label>
+                        <select id="solaris" name="solaris">
                             <option value="">-</option>
                             <option value="S">S (上級、教育可能)</option>
                             <option value="A">A (中級、1人称対応可能)</option>
@@ -551,172 +553,148 @@
                     </div>
 
                     <div class="form-group">
-            <label for="android">Android:</label>
-            <select id="android" name="android">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                        <label for="android">Android:</label>
+                        <select id="android" name="android">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-            </select>
-        </div>
+                    <div class="form-group">
+                        <label for="ios">iOS:</label>
+                        <select id="ios" name="ios">  
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-        <div class="form-group">
-            <label for="ios">iOS:</label>
-            <select id="ios" name="ios">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                    <div class="form-group">
+                        <label for="chromeos">ChromeOS:</label>
+                        <select id="chromeos" name="chromeos">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-            </select>
-        </div>
+                    <div class="form-group">
+                        <label for="centos">CentOS:</label>
+                        <select id="centos" name="centos">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-        <div class="form-group">
-            <label for="chromeos">ChromeOS:</label>
-            <select id="chromeos" name="chromeos">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                    <div class="form-group">
+                        <label for="ubuntu">Ubuntu:</label>
+                        <select id="ubuntu" name="ubuntu">                            
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-            </select>
-        </div>
+                    <div class="form-group">
+                        <label for="ms_dos">MS-DOS:</label>
+                        <select id="ms_dos" name="ms_dos">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-        <div class="form-group">
-            <label for="centos">CentOS:</label>
-            <select id="centos" name="centos">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                    <div class="form-group">
+                        <label for="watchos">watchOS:</label>
+                        <select id="watchos" name="watchos">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-            </select>
-        </div>
+                    <div class="form-group">
+                        <label for="wear_os">Wear OS:</label>
+                        <select id="wear_os" name="wear_os">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-        <div class="form-group">
-            <label for="ubuntu">Ubuntu:</label>
-            <select id="ubuntu" name="ubuntu">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                    <div class="form-group">
+                        <label for="rasberrypi_os">RasberryPi OS:</label>
+                        <select id="rasberrypi_os" name="rasberrypi_os">                            
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-            </select>
-        </div>
+                    <div class="form-group">
+                        <label for="oracle_solaris">Oracle Solaris:</label>
+                        <select id="oracle_solaris" name="oracle_solaris">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-        <div class="form-group">
-            <label for="ms_dos">MS-DOS:</label>
-            <select id="ms_dos" name="ms_dos">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                    <div class="form-group">
+                        <label for="z_os">z/OS:</label>
+                        <select id="z_os" name="z_os">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="watchos">watchOS:</label>
-            <select id="watchos" name="watchos">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
-
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="wear_os">Wear OS:</label>
-            <select id="wear_os" name="wear_os">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
-
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="rasberrypi_os">RasberryPi OS:</label>
-            <select id="rasberrypi_os" name="rasberrypi_os">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
-
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="oracle_solaris">Oracle Solaris:</label>
-            <select id="oracle_solaris" name="oracle_solaris">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
-
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="z_os">z/OS:</label>
-            <select id="z_os" name="z_os">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
-
-            </select>
-        </div>
-
-        <div class="form-group">
-            <label for="firefox_os">FireFox OS:</label>
-            <select id="firefox_os" name="firefox_os">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
-
-            </select>
-        </div>
+                    <div class="form-group">
+                        <label for="firefox_os">FireFox OS:</label>
+                        <select id="firefox_os" name="firefox_os">
+                            <option value="">-</option>
+                            <option value="S">S (上級、教育可能)</option>
+                            <option value="A">A (中級、1人称対応可能)</option>
+                            <option value="B">B (業務経験あり)</option>
+                            <option value="C">C (知識のみ、研修レベル)</option>
+                            <option value="D">D (経験なし)</option>
+                        </select>
+                    </div>
 
         <div class="form-group">
             <label for="blackberryos">BlackBerryOS:</label>
@@ -1355,19 +1333,19 @@
 </section>
 
 <section class="section">
-<h2 class="section-title">09. 仮想化基盤</h2>
-<div class="language-select-group">
+    <h2 class="section-title">09. 仮想化基盤</h2>
+    <div class="language-select-group">
 
         <div class="form-group">
             <label for="vmware_vsphereesxi">VMware vSphere(ESXi):</label>
             <select id="vmware_vsphereesxi" name="vmware_vsphereesxi">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1376,12 +1354,12 @@
             <label for="vmware_workstation">VMware Workstation:</label>
             <select id="vmware_workstation" name="vmware_workstation">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1390,12 +1368,12 @@
             <label for="oracle_virtualbox">Oracle VirtualBox:</label>
             <select id="oracle_virtualbox" name="oracle_virtualbox">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1404,12 +1382,12 @@
             <label for="vmware_fusion">VMware Fusion:</label>
             <select id="vmware_fusion" name="vmware_fusion">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1418,12 +1396,12 @@
             <label for="microsoft_hyper_v">Microsoft Hyper-V:</label>
             <select id="microsoft_hyper_v" name="microsoft_hyper_v">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1432,12 +1410,12 @@
             <label for="kvmkernel_based_virtual_machine">KVM(Kernel-based Virtual Machine):</label>
             <select id="kvmkernel_based_virtual_machine" name="kvmkernel_based_virtual_machine">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1446,12 +1424,12 @@
             <label for="docker">Docker:</label>
             <select id="docker" name="docker">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1765,19 +1743,19 @@
 </section>
 
 <section class="section">
-<h2 class="section-title">12. データベース</h2>
+    <h2 class="section-title">12. データベース</h2>
 <div class="language-select-group">
 
         <div class="form-group">
             <label for="mysql">MySQL:</label>
             <select id="mysql" name="mysql">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1786,12 +1764,12 @@
             <label for="oracle">Oracle:</label>
             <select id="oracle" name="oracle">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1800,12 +1778,12 @@
             <label for="postgresql">PostgreSQL:</label>
             <select id="postgresql" name="postgresql">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1814,12 +1792,12 @@
             <label for="sqlite">SQLite:</label>
             <select id="sqlite" name="sqlite">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1828,12 +1806,12 @@
             <label for="mongodb">mongoDB:</label>
             <select id="mongodb" name="mongodb">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1842,12 +1820,12 @@
             <label for="cassandra">Cassandra:</label>
             <select id="cassandra" name="cassandra">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1856,12 +1834,12 @@
             <label for="microsoft_sql_server">Microsoft SQL Server:</label>
             <select id="microsoft_sql_server" name="microsoft_sql_server">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1870,12 +1848,12 @@
             <label for="amazon_aurora">Amazon Aurora:</label>
             <select id="amazon_aurora" name="amazon_aurora">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1884,12 +1862,12 @@
             <label for="mariadb">MariaDB:</label>
             <select id="mariadb" name="mariadb">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1898,12 +1876,12 @@
             <label for="redis">Redis:</label>
             <select id="redis" name="redis">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1912,12 +1890,12 @@
             <label for="dynamodb">DynamoDB:</label>
             <select id="dynamodb" name="dynamodb">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1925,13 +1903,13 @@
         <div class="form-group">
             <label for="elasticsearch">ElasticSearch:</label>
             <select id="elasticsearch" name="elasticsearch">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                            
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1940,16 +1918,16 @@
             <label for="amazon_rds">Amazon RDS:</label>
             <select id="amazon_rds" name="amazon_rds">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
-</div>
+    </div>
 </section>
 
 <section class="section">
@@ -1960,12 +1938,12 @@
             <label for="wireshark">Wireshark:</label>
             <select id="wireshark" name="wireshark">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1974,12 +1952,12 @@
             <label for="owasp_zap">OWASP ZAP:</label>
             <select id="owasp_zap" name="owasp_zap">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -1988,12 +1966,12 @@
             <label for="burp_suite">Burp Suite:</label>
             <select id="burp_suite" name="burp_suite">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2002,12 +1980,12 @@
             <label for="nessus">Nessus:</label>
             <select id="nessus" name="nessus">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2016,12 +1994,12 @@
             <label for="openvas">OpenVAS:</label>
             <select id="openvas" name="openvas">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2030,12 +2008,12 @@
             <label for="tera_term">Tera Term:</label>
             <select id="tera_term" name="tera_term">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2044,12 +2022,12 @@
             <label for="powershell">PowerShell:</label>
             <select id="powershell" name="powershell">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2058,12 +2036,12 @@
             <label for="コマンドプロンプト">コマンドプロンプト:</label>
             <select id="コマンドプロンプト" name="コマンドプロンプト">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2072,12 +2050,12 @@
             <label for="winscp">WinSCP:</label>
             <select id="winscp" name="winscp">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2086,12 +2064,12 @@
             <label for="tor">Tor:</label>
             <select id="tor" name="tor">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2100,12 +2078,12 @@
             <label for="kintone">Kintone:</label>
             <select id="kintone" name="kintone">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2114,12 +2092,12 @@
             <label for="jira">Jira:</label>
             <select id="jira" name="jira">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2128,12 +2106,12 @@
             <label for="confluence">Confluence:</label>
             <select id="confluence" name="confluence">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2142,12 +2120,12 @@
             <label for="servivenow">ServiveNow:</label>
             <select id="servivenow" name="servivenow">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2156,12 +2134,12 @@
             <label for="サクラエディタ">サクラエディタ:</label>
             <select id="サクラエディタ" name="サクラエディタ">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2170,12 +2148,12 @@
             <label for="power_automate">Power Automate:</label>
             <select id="power_automate" name="power_automate">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2183,13 +2161,13 @@
         <div class="form-group">
             <label for="automation_anywhere">Automation Anywhere:</label>
             <select id="automation_anywhere" name="automation_anywhere">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+                        
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2198,12 +2176,12 @@
             <label for="active_directory">Active Directory:</label>
             <select id="active_directory" name="active_directory">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2212,12 +2190,12 @@
             <label for="sap_erp">SAP ERP:</label>
             <select id="sap_erp" name="sap_erp">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2226,12 +2204,12 @@
             <label for="salesforce">Salesforce:</label>
             <select id="salesforce" name="salesforce">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2243,8 +2221,8 @@
 <div class="language-select-group">
 
         <div class="form-group">
-            <label for="英語">英語:</label>
-            <select id="英語" name="英語">
+            <label for="english">英語:</label>
+            <select id="english" name="english">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2257,8 +2235,8 @@
         </div>
 
         <div class="form-group">
-            <label for="中国語">中国語:</label>
-            <select id="中国語" name="中国語">
+            <label for="chinese">中国語:</label>
+            <select id="chinese" name="chinese">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2271,8 +2249,8 @@
         </div>
 
         <div class="form-group">
-            <label for="韓国語">韓国語:</label>
-            <select id="韓国語" name="韓国語">
+            <label for="korean">韓国語:</label>
+            <select id="korean" name="korean">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2285,8 +2263,8 @@
         </div>
 
         <div class="form-group">
-            <label for="タガログ語">タガログ語:</label>
-            <select id="タガログ語" name="タガログ語">
+            <label for="tagalog">タガログ語:</label>
+            <select id="tagalog" name="tagalog">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2299,8 +2277,8 @@
         </div>
 
         <div class="form-group">
-            <label for="ドイツ語">ドイツ語:</label>
-            <select id="ドイツ語" name="ドイツ語">
+            <label for="german">ドイツ語:</label>
+            <select id="german" name="german">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2313,8 +2291,8 @@
         </div>
 
         <div class="form-group">
-            <label for="スペイン語">スペイン語:</label>
-            <select id="スペイン語" name="スペイン語">
+            <label for="spanish">スペイン語:</label>
+            <select id="spanish" name="spanish">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2327,8 +2305,8 @@
         </div>
 
         <div class="form-group">
-            <label for="イタリア語">イタリア語:</label>
-            <select id="イタリア語" name="イタリア語">
+            <label for="italian">イタリア語:</label>
+            <select id="italian" name="italian">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2341,8 +2319,8 @@
         </div>
 
         <div class="form-group">
-            <label for="ロシア語">ロシア語:</label>
-            <select id="ロシア語" name="ロシア語">
+            <label for="russian">ロシア語:</label>
+            <select id="russian" name="russian">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2355,8 +2333,8 @@
         </div>
 
         <div class="form-group">
-            <label for="ポルトガル語">ポルトガル語:</label>
-            <select id="ポルトガル語" name="ポルトガル語">
+            <label for="portuguese">ポルトガル語:</label>
+            <select id="portuguese" name="portuguese">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2369,8 +2347,8 @@
         </div>
 
         <div class="form-group">
-            <label for="フランス語">フランス語:</label>
-            <select id="フランス語" name="フランス語">
+            <label for="french">フランス語:</label>
+            <select id="french" name="french">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2383,8 +2361,8 @@
         </div>
 
         <div class="form-group">
-            <label for="リトアニア語">リトアニア語:</label>
-            <select id="リトアニア語" name="リトアニア語">
+            <label for="lithuanian">リトアニア語:</label>
+            <select id="lithuanian" name="lithuanian">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2397,8 +2375,8 @@
         </div>
 
         <div class="form-group">
-            <label for="マレー語">マレー語:</label>
-            <select id="マレー語" name="マレー語">
+            <label for="malay">マレー語:</label>
+            <select id="malay" name="malay">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2411,8 +2389,8 @@
         </div>
 
         <div class="form-group">
-            <label for="ルーマニア語">ルーマニア語:</label>
-            <select id="ルーマニア語" name="ルーマニア語">
+            <label for="romanian">ルーマニア語:</label>
+            <select id="romanian" name="romanian">
                 
     <option value="">-</option>
     <option value="S">S (上級、教育可能)</option>
@@ -2434,12 +2412,12 @@
             <label for="shodan">Shodan:</label>
             <select id="shodan" name="shodan">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2448,12 +2426,12 @@
             <label for="censys">Censys:</label>
             <select id="censys" name="censys">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2462,12 +2440,12 @@
             <label for="greynoise">Greynoise:</label>
             <select id="greynoise" name="greynoise">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2476,12 +2454,12 @@
             <label for="ibm_x_force">IBM X-Force:</label>
             <select id="ibm_x_force" name="ibm_x_force">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2490,12 +2468,12 @@
             <label for="urlsanio">urlsan.io:</label>
             <select id="urlsanio" name="urlsanio">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2504,12 +2482,12 @@
             <label for="abuseipdb">AbuseIPDB:</label>
             <select id="abuseipdb" name="abuseipdb">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2518,26 +2496,26 @@
             <label for="virustotal">VirusTotal:</label>
             <select id="virustotal" name="virustotal">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
 
         <div class="form-group">
             <label for="cyberchef">CyberChef:</label>
-            <select id="cyberchef" name="cyberchef">
+            <select id="cyberchef" name="cyberchef">    
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2546,12 +2524,12 @@
             <label for="anyrun">ANY.RUN:</label>
             <select id="anyrun" name="anyrun">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2560,12 +2538,12 @@
             <label for="hybrid_analysis">Hybrid Analysis:</label>
             <select id="hybrid_analysis" name="hybrid_analysis">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2574,12 +2552,12 @@
             <label for="wappalyzer">Wappalyzer:</label>
             <select id="wappalyzer" name="wappalyzer">
                 
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
 
             </select>
         </div>
@@ -2587,37 +2565,24 @@
         <div class="form-group">
             <label for="wireshark">Wireshark:</label>
             <select id="wireshark" name="wireshark">
-                
-    <option value="">-</option>
-    <option value="S">S (上級、教育可能)</option>
-    <option value="A">A (中級、1人称対応可能)</option>
-    <option value="B">B (業務経験あり)</option>
-    <option value="C">C (知識のみ、研修レベル)</option>
-    <option value="D">D (経験なし)</option>
-
+                    
+                <option value="">-</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
             </select>
         </div>
-                </div>
-            </section>
+    </div>
+    </section>
 
-             <section class="section">
-                <h2 class="section-title">スキル2</h2>
-                <div class="form-group">
-                    <label for="skills2">スキル:</label>
-                    <textarea id="skills2" name="skills2" placeholder="得意なスキルを記述してください (例: JavaScript, Python, AWS)" required></textarea>
-                </div>
-            </section>
-
-            <section class="section">
-                <h2 class="section-title">職務経歴</h2>
-                <div class="form-group">
-                    <label for="experience">職務経歴:</label>
-                    <textarea id="experience" name="experience" placeholder="職務経歴を記述してください" required></textarea>
-                </div>
-            </section>
+             
 
             <button type="submit">スキルシートを作成</button>
         </form>
     </div>
+
+    <button id="scrollTopBtn" onclick="window.scrollTo({ top: 0, behavior: 'smooth' })">⬆ 上に戻る</button>
 </body>
 </html>

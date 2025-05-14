@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_session import Session
-from datetime import timedelta
+from datetime import datetime, timedelta
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -77,6 +77,33 @@ def login():
     return render_template("login.html")
 
 
+#  ダッシュボード（ログイン後のページ）
+@app.route("/dashboard")
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    user_email = session.get('user_email')
+
+    try:
+        # Supabaseからプロフィール取得
+        response = supabase.table("profile").select("*").eq("user_id", user_id).execute()
+
+        # デバッグ出力
+        print("プロフィール取得結果:", response.data)
+
+        if response.data and len(response.data) > 0:
+            profile = response.data[0]
+        else:
+            profile = None
+
+    except Exception as e:
+        print("プロフィール取得エラー:", e)
+        profile = None
+
+    return render_template("dashboard.html", user_id=user_id, user_email=user_email, profile=profile)
+
 
 
 #  プロフィール入力処理
@@ -149,27 +176,137 @@ def profile_output():
         return redirect(url_for('login'))
     
 
-#  ダッシュボード（ログイン後のページ）
-@app.route("/dashboard")
-def dashboard():
-    if 'user_id' in session:
-        return render_template("dashboard.html", user_id=session['user_id'], user_email=session['user_email'])
-    else:
+
+#  スキルシート作成ページ & 処理
+@app.route("/skillsheet_input", methods=["GET", "POST"])
+def skillsheet_input():
+    if 'user_id' not in session:
         return redirect(url_for('login'))
 
+    if request.method == "POST":
+        # フォームの項目名リストを作成
+        fields = [
+            # 言語
+            "python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "php", "go", "html", "css", "swift", "kotlin", "vba",
+            # フレームワーク
+            "ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react",
+            # 開発環境
+            "vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio",
+            # OS
+            "windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "ubuntu", "centos", "ms_dos", "raspberrypi_os",
+            # クラウド
+            "aws", "azure", "gcp", "oci",
+            # 仮想化・コンテナ
+            "vmware_vsphere", "oracle_virtualbox", "docker", "kubernetes", "microsoft_hyper_v",
+            # AI・生成AI
+            "chatgpt", "copilot", "gemini", "grok", "perplexity",
+            # ツール類
+            "wireshark", "burp_suite", "owasp_zap", "powershell", "cmd", "tera_term",
+            # セキュリティ製品
+            "microsoft_defender_for_endpoint", "crowdstrike_falcon", "splunk",
+            # 言語（自然言語）
+            "english", "chinese", "korean", "spanish", "portugese"
+            
+        ]
+        
+        # フォームからデータを取得し、辞書に格納
+        data = {field: request.form.get(field) for field in fields}
+        data["user_id"] = session['user_id']
+        data["updated_at"] = datetime.utcnow().isoformat()
 
-#  スキルシート作成ページ
-@app.route("/skillsheet_input")
-def skillsheet_input():
-    return render_template("skillsheet_input.html")
+        try:
+            # Supabaseにデータを保存（upsert：既存データの更新または新規挿入）
+            result = supabase.table("skillsheet").upsert(data, on_conflict=["user_id"]).execute()
+
+            if result.model_dump().get("error"):
+                return render_template("skillsheet_input.html", error="スキルシートの保存に失敗しました。")
+            
+            return redirect(url_for("skillsheet_output"))
+
+        except Exception as e:
+            print(f"エラー: {e}")
+            return render_template("skillsheet_input.html", error="予期せぬエラーが発生しました。")
+
+  
 
 
-# 🔹 プロジェクト入力ページ表示
-@app.route("/project_input")
+
+#  スキルシート表示ページ
+@app.route("/skillsheet_output", methods=["GET"])
+def skillsheet_output():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        response = supabase.table("skillsheet").select("*").eq("user_id", session['user_id']).execute()
+        
+        if response.data and len(response.data) > 0:
+            return render_template("skillsheet_output.html", skillsheet=response.data[0])
+        else:
+            return render_template("skillsheet_output.html", error="スキルシートが見つかりません。")
+
+    except Exception as e:
+        print(f"スキルシート取得エラー: {e}")
+        return render_template("skillsheet_output.html", error="スキルシートの取得に失敗しました。")
+
+
+
+
+# プロジェクト入力ページ & 処理
+@app.route("/project_input", methods=["GET", "POST"])
 def project_input():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        project_name = request.form.get("project_name")
+        description = request.form.get("description")
+        start_date = request.form.get("start_date")
+        end_date = request.form.get("end_date")
+
+        try:
+            # Supabaseのテーブルにプロジェクトデータを保存
+            result = supabase.table("projects").upsert({
+                "user_id": session['user_id'],
+                "project_name": project_name,
+                "description": description,
+                "start_date": start_date,
+                "end_date": end_date,
+            }, on_conflict=["user_id", "project_name"]).execute()
+
+            if result.model_dump().get("error"):
+                print("保存エラー:", result.error)
+                return render_template("project_input.html", error="プロジェクトの保存に失敗しました。")
+
+            return redirect(url_for("project_output"))
+
+        except Exception as e:
+            print(f"エラー: {e}")
+            return render_template("project_input.html", error="予期せぬエラーが発生しました。")
+
     return render_template("project_input.html")
+
+
+# プロジェクト表示ページ
+@app.route("/project_output", methods=["GET"])
+def project_output():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        response = supabase.table("projects").select("*").eq("user_id", session['user_id']).execute()
+
+        if response.data and len(response.data) > 0:
+            return render_template("project_output.html", projects=response.data)
+        else:
+            return render_template("project_output.html", error="プロジェクトが見つかりません。")
+
+    except Exception as e:
+        print(f"プロジェクト取得エラー: {e}")
+        return render_template("project_output.html", error="プロジェクトの取得に失敗しました。")
     
-    
+
+
 #  ログアウト処理
 @app.route("/logout")
 def logout():

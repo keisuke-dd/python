@@ -1,8 +1,16 @@
-
-/*ヘッダー画像*/
-img {
-  width: 180px;
-  height: auto;
-  max-width: 800px;
+.header {
+  background-color: #fff;
   border-bottom: 4px solid #4299e1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 0.5rem 0;
+  height: auto; 
+}
+
+
+.header img {
+  height: 80px; 
+  object-fit: contain;
+  display: block;
 }

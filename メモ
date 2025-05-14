@@ -56,3 +56,168 @@ def profile_output():
             return render_template("profile_output.html", error="プロフィールの取得に失敗しました。")
     else:
         return redirect(url_for('login'))
+
+
+
+@app.route("/dashboard")
+def dashboard():
+    if 'user_id' in session:
+        return render_template("dashboard.html", user_id=session['user_id'], user_email=session['user_email'])
+    else:
+        return redirect(url_for('login'))
+
+
+
+HTML
+<form method="post" action="/create-skillsheet">
+    <div class="form-group">
+        <label for="python">Python:</label>
+        <select id="python" name="python">
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="javascript">JavaScript:</label>
+        <select id="javascript" name="javascript">
+            <option value="">-</option>
+            <option value="S">S (上級、教育可能)</option>
+            <option value="A">A (中級、1人称対応可能)</option>
+            <option value="B">B (業務経験あり)</option>
+            <option value="C">C (知識のみ、研修レベル)</option>
+            <option value="D">D (経験なし)</option>
+        </select>
+    </div>
+
+    <button type="submit">送信</button>
+</form>
+
+
+
+app.py
+from flask import Flask, request, redirect, url_for
+import supabase
+import os
+
+app = Flask(__name__)
+
+# Supabaseの初期化
+url = os.getenv("SUPABASE_URL")
+key = os.getenv("SUPABASE_KEY")
+supabase_client = supabase.create_client(url, key)
+
+@app.route('/create-skillsheet', methods=['POST'])
+def create_skillsheet():
+    # フォームからデータを受け取る
+    python_level = request.form.get('python')
+    javascript_level = request.form.get('javascript')
+
+    # Supabaseにデータを保存
+    data = {
+        "python": python_level,
+        "javascript": javascript_level,
+        "user_id": "ユーザーのID"  # ここは実際のユーザーIDに置き換えてください
+    }
+
+    response = supabase_client.table('skillsheet').insert(data).execute()
+    
+    if response.status_code == 201:
+        print("データの保存に成功しました")
+        return redirect(url_for('dashboard'))
+    else:
+        print("データの保存に失敗しました", response.error_message)
+        return "保存エラー", 500
+
+
+DB構成
+| カラム名        | タイプ                          |
+| ----------- | ---------------------------- |
+| id          | SERIAL                       |
+| user\_id    | TEXT                         |
+| python      | TEXT                         |
+| javascript  | TEXT                         |
+| created\_at | TIMESTAMPTZ (default: now()) |
+
+
+
+
+
+
+@app.route("/skillsheet_input", methods=["GET", "POST"])
+def skillsheet_input():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        # フォームの項目名リストを作成
+        fields = [
+            "language_python", "language_ruby", "language_js", "language_shell",
+            "language_c", "language_cpp", "language_csharp", "language_java",
+            "language_php", "language_go", "language_html", "language_css",
+            "language_swift", "language_kotlin", "language_vba"
+        ]
+        
+        # 入力されたデータを辞書に格納
+        data = {field: request.form.get(field) for field in fields}
+        data["user_id"] = session['user_id']
+        data["updated_at"] = datetime.utcnow().isoformat()
+
+        try:
+            # Supabaseにデータを保存
+            result = supabase.table("skillsheet").upsert(data, on_conflict=["user_id"]).execute()
+
+            # エラーハンドリング
+            if result.status_code != 200:
+                return render_template("skillsheet_input.html", error="スキルシートの保存に失敗しました。")
+
+            return redirect(url_for("skillsheet_output"))  # 成功時に遷移
+
+        except Exception as e:
+            print(f"エラー: {e}")
+            return render_template("skillsheet_input.html", error="予期せぬエラーが発生しました。")
+
+    return render_template("skillsheet_input.html")
+
+
+
+
+
+#  スキルシート作成ページ & 処理
+@app.route("/skillsheet_input", methods=["GET", "POST"])
+def skillsheet_input():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        # フォームからデータ取得
+        
+        python = request.form.get("language_python")
+        
+        
+        # 他の言語も必要に応じて追加
+
+        try:
+            # Supabaseのテーブルにスキルシートデータを保存
+            result = supabase.table("skillsheet").upsert({
+                "user_id": session['user_id'],
+                "python": python,
+                
+                # 他のスキルも追加
+            }, on_conflict=["user_id"]).execute()
+
+            if result.model_dump().get("error"):
+                print("保存エラー:", result.error)
+                return render_template("skillsheet_input.html", error="スキルシートの保存に失敗しました。")
+
+            return redirect(url_for("skillsheet_output"))
+
+        except Exception as e:
+            print(f"エラー: {e}")
+            return render_template("skillsheet_input.html", error="予期せぬエラーが発生しました。")
+
+    return render_template("skillsheet_input.html")

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スキルシート作成</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/skillsheet_input.css') }}">
+</head>
+
+<body>
+    <div class="container">
+        {% include "header.html" %}
+
+        <h1>スキルシート情報</h1>
+        <p>スキルシート情報を以下に表示します。</p> 
+        <p>スキルシート情報:</p>
+        <ul>
+            {% if skillsheet.skill_name %}
+                <li>スキル: {{ skillsheet.skill_name }}</li>
+            {% else %}
+                <li>スキル: 未設定</li>
+            {% endif %}
+        </ul>
+        <ul>
+            {% if skillsheet.skill_level %}
+                <li>スキルレベル: {{ skillsheet.skill_level }}</li>
+            {% else %}
+                <li>スキルレベル: 未設定</li>
+            {% endif %}
+        </ul>
+        
+
+        <div style="text-align: right; margin-top: 1rem;">
+            <a href="{{ url_for('skillsheet_input') }}"><button>スキルシートを編集</button></a>
+            <a href="{{ url_for('dashboard') }}"><button>ダッシュボードに戻る</button></a>
+        </div>
+    </div>
+</body>
+</html>
