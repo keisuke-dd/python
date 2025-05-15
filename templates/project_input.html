@@ -1,33 +1,50 @@
 <!DOCTYPE html>
 <html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>プロジェクト作成</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    {% include "header.html" %}
-
-    <h1>プロジェクト入力</h1>
-    <form method="POST" action="/project_input">
-        <label for="project_name">プロジェクト名</label>
-        <input type="text" id="project_name" name="project_name" required>
-
-        <label for="project_description">プロジェクト説明</label>
-        <textarea id="project_description" name="project_description" rows="5"></textarea>
-
-        <label for="project_duration">プロジェクト期間</label>
-        <input type="text" id="project_duration" name="project_duration" required>
-
-        <label for="project_role">役割</label>
-        <input type="text" id="project_role" name="project_role" required>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>プロジェクト作成</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    </head>
+    <body>
         
-        <label for="project_technologies">使用技術</label>
-        <input type="text" id="project_technologies" name="project_technologies" required>
+        {% include "header.html" %}
+        
 
-        <button type="submit">保存する</button> 
+        <h1>プロジェクト入力</h1>
+        <p>プロジェクト情報を入力してください。</p>
 
-</body>
+
+
+            <!-- エラー表示をここに追加 -->
+            {% if error %}
+            <div style="color: red; font-weight: bold; margin-bottom: 1em;">
+                エラー: {{ error }}
+            </div>
+            {% endif %}
+
+            <form method="POST" action="/project_input">
+                <label for="name">プロジェクト名</label>
+                <input type="text" id="name" name="name" required>
+
+                <label for="description">プロジェクト説明</label>
+                <textarea id="description" name="description" rows="5"></textarea>
+
+                <label for="start_at">プロジェクト開始日</label>
+                <input type="date" id="start_at" name="start_at">
+
+                <label for="end_at">プロジェクト終了日</label>
+                <input type="date" id="end_at" name="end_at">
+
+                <label for="role">役割</label>
+                <input type="text" id="role" name="role" required>
+                
+                <label for="technologies">使用技術</label>
+                <input type="text" id="technologies" name="technologies" required>
+
+                <button type="submit">保存する</button> 
+            </form>
+
+    </body>
 </html>

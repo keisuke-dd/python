@@ -10,10 +10,8 @@
 </head>
 
 <body class="background-image">
-    <div class="header">
-        <img alt="ヘッダー画像" src="/static/images/tom_2.png"/> <!-- tomのロゴ -->
+    
     {% include "header.html" %}
-    </div>
 
     <div class="container">
         
@@ -72,6 +70,24 @@
         <h3>スキルシート一覧</h3>
             <p>スキルシート情報:</p>
             
+            <ul>
+            {% if error %}
+                <p style="color:red;">{{ error }}</p>
+            {% else %}
+                <table border="1">
+                    <tr>
+                        <th>スキル</th>
+                        <th>レベル</th>
+                    </tr>
+                    {% for skill, level in skillsheet.items() %}
+                    <tr>
+                        <td>{{ skill.replace('_', ' ').title() }}</td>
+                        <td>{{ level }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
+        </ul>
             
 
     

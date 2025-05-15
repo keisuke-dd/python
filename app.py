@@ -85,6 +85,37 @@ def login():
     return render_template("login.html")
 
 
+
+# 共通関数: Supabaseからデータを取得する
+def get_supabase_data(table_name, user_id, exclude_fields=None):
+    """
+    Supabaseからデータを取得し、指定されたフィールドを除外する。
+
+    :param table_name: Supabaseのテーブル名
+    :param user_id: ユーザーID
+    :param exclude_fields: 除外するフィールドのリスト（デフォルトは["user_id", "created_at", "updated_at"]）
+    :return: 取得したデータの辞書 or None
+    """
+    if exclude_fields is None:
+        exclude_fields = ["user_id", "created_at", "updated_at"]
+
+    try:
+        response = supabase.table(table_name).select("*").eq("user_id", user_id).execute()
+        print(f"{table_name} 取得結果:", response.data)
+
+        if response.data and len(response.data) > 0:
+            # 不要なフィールドを除外したデータを返す
+            return {
+                key: value for key, value in response.data[0].items()
+                if key not in exclude_fields and value
+            }
+        else:
+            return None
+    except Exception as e:
+        print(f"{table_name} 取得エラー:", e)
+        return None
+
+
 #  ダッシュボード（ログイン後のページ）
 @app.route("/dashboard")
 def dashboard():
@@ -94,24 +125,31 @@ def dashboard():
     user_id = session['user_id']
     user_email = session.get('user_email')
 
-    try:
-        # Supabaseからプロフィール取得
-        response = supabase.table("profile").select("*").eq("user_id", user_id).execute()
-        
+    # 取得したいテーブル名と変数名のペア
+    tables = {
+        "profile": "profile",
+        "skillsheet": "skillsheet",
+        "projects": "projects"
+    }
 
-        # デバッグ出力
-        print("プロフィール取得結果:", response.data)
+    # データ取得
+    data = {}
+    for table_name, var_name in tables.items():
+        data[var_name] = get_supabase_data(table_name, user_id)
 
-        if response.data and len(response.data) > 0:
-            profile = response.data[0]
-        else:
-            profile = None
+    # プロジェクトは複数行ある可能性があるので、リスト形式でテンプレートに渡す
+    if data["projects"]:
+        data["projects"] = [data["projects"]] if isinstance(data["projects"], dict) else data["projects"]
 
-    except Exception as e:
-        print("プロフィール取得エラー:", e)
-        profile = None
-
-    return render_template("dashboard.html", user_id=user_id, user_email=user_email, profile=profile)
+    # テンプレートに渡す
+    return render_template(
+        "dashboard.html",
+        user_id=user_id,
+        user_email=user_email,
+        profile=data["profile"],
+        skillsheet=data["skillsheet"],
+        projects=data["projects"]
+    )
 
 
 
@@ -322,20 +360,24 @@ def project_input():
         return redirect(url_for('login'))
 
     if request.method == "POST":
-        project_name = request.form.get("project_name")
+        name = request.form.get("name")
         description = request.form.get("description")
-        start_date = request.form.get("start_date")
-        end_date = request.form.get("end_date")
+        start_at = request.form.get("start_at")
+        end_at = request.form.get("end_at")
+        role = request.form.get("role")
+        technologies = request.form.getlist("technologies")
 
         try:
             # Supabaseのテーブルにプロジェクトデータを保存
-            result = supabase.table("projects").upsert({
+            result = supabase.table("project").upsert({
                 "user_id": session['user_id'],
-                "project_name": project_name,
+                "name": name,
                 "description": description,
-                "start_date": start_date,
-                "end_date": end_date,
-            }, on_conflict=["user_id", "project_name"]).execute()
+                "start_at": start_at,
+                "end_at": end_at,
+                "role": role,
+                "technologies": technologies,
+            }, on_conflict=["user_id", "name"]).execute()
 
             if result.model_dump().get("error"):
                 print("保存エラー:", result.error)
@@ -357,10 +399,13 @@ def project_output():
         return redirect(url_for('login'))
 
     try:
-        response = supabase.table("projects").select("*").eq("user_id", session['user_id']).execute()
+        response = supabase.table("project").select("*").eq("user_id", session['user_id']).execute()
+
+        # デバッグ出力
+        print("プロジェクト取得結果:", response.data)
 
         if response.data and len(response.data) > 0:
-            return render_template("project_output.html", projects=response.data)
+            return render_template("project_output.html", project=response.data)
         else:
             return render_template("project_output.html", error="プロジェクトが見つかりません。")
 

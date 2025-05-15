@@ -313,3 +313,72 @@ def skillsheet_output():
     except Exception as e:
         print(f"スキルシート取得エラー: {e}")
         return render_template("skillsheet_output.html", error="スキルシートの取得に失敗しました。")
+
+
+
+
+
+# 共通関数: Supabaseからデータを取得する
+def get_supabase_data(table_name, user_id, exclude_fields=None):
+    """
+    Supabaseからデータを取得し、指定されたフィールドを除外する。
+
+    :param table_name: Supabaseのテーブル名
+    :param user_id: ユーザーID
+    :param exclude_fields: 除外するフィールドのリスト（デフォルトは["user_id", "created_at", "updated_at"]）
+    :return: 取得したデータの辞書 or None
+    """
+    if exclude_fields is None:
+        exclude_fields = ["user_id", "created_at", "updated_at"]
+
+    try:
+        response = supabase.table(table_name).select("*").eq("user_id", user_id).execute()
+        print(f"{table_name} 取得結果:", response.data)
+
+        if response.data and len(response.data) > 0:
+            # 不要なフィールドを除外したデータを返す
+            return {
+                key: value for key, value in response.data[0].items()
+                if key not in exclude_fields and value
+            }
+        else:
+            return None
+    except Exception as e:
+        print(f"{table_name} 取得エラー:", e)
+        return None
+
+
+#  ダッシュボード（ログイン後のページ）
+@app.route("/dashboard")
+def dashboard():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    user_id = session['user_id']
+    user_email = session.get('user_email')
+
+    # 取得したいテーブル名と変数名のペア
+    tables = {
+        "profile": "profile",
+        "skillsheet": "skillsheet",
+        "projects": "projects"
+    }
+
+    # データ取得
+    data = {}
+    for table_name, var_name in tables.items():
+        data[var_name] = get_supabase_data(table_name, user_id)
+
+    # プロジェクトは複数行ある可能性があるので、リスト形式でテンプレートに渡す
+    if data["projects"]:
+        data["projects"] = [data["projects"]] if isinstance(data["projects"], dict) else data["projects"]
+
+    # テンプレートに渡す
+    return render_template(
+        "dashboard.html",
+        user_id=user_id,
+        user_email=user_email,
+        profile=data["profile"],
+        skillsheet=data["skillsheet"],
+        projects=data["projects"]
+    )

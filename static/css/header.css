@@ -1,20 +1,22 @@
+body{
+  margin: 0;
+  padding: 0;
+}
+
+/* ヘッダー全体の設定 */
 .header {
   background-color: #fff;
-  border-bottom: 4px solid #4299e1;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 0.5rem 0;
-  height: auto; 
   background-image: url('/static/images/tom_1.png');
-    /* 画像のパスを指定 */
-    
   background-size: cover;
   background-position: center;
-  background-repeat: no-repeat;
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  width: 100%;
   position: relative;
-  
 }
+
+
 
 .header::before {
   content: '';
@@ -27,8 +29,9 @@
   z-index: 0;
 }
 
+/* ヘッダー画像の設定 */
 .header img {
-  height: 80px; 
+  height: 80px;
   width: auto;
   object-fit: contain;
   display: block;
@@ -37,9 +40,14 @@
 }
 
 .nav-links {
-    color: yellow;
     display: flex;
-    gap: 2rem;
-    z-index: 1;
+    justify-content: center;
+    gap: 2rem; /* リンクの間隔を空ける */
+}
+
+.nav-links a {
+    color: yellow;
+    text-decoration: none;
+    padding: 0.5rem 1rem;
     position: relative;
 }
