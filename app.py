@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_session import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -186,33 +186,68 @@ def skillsheet_input():
     if request.method == "POST":
         # フォームの項目名リストを作成
         fields = [
-            # 言語
-            "python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "php", "go", "html", "css", "swift", "kotlin", "vba",
-            # フレームワーク
-            "ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react",
-            # 開発環境
-            "vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio",
-            # OS
-            "windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "ubuntu", "centos", "ms_dos", "raspberrypi_os",
-            # クラウド
-            "aws", "azure", "gcp", "oci",
-            # 仮想化・コンテナ
-            "vmware_vsphere", "oracle_virtualbox", "docker", "kubernetes", "microsoft_hyper_v",
-            # AI・生成AI
-            "chatgpt", "copilot", "gemini", "grok", "perplexity",
-            # ツール類
-            "wireshark", "burp_suite", "owasp_zap", "powershell", "cmd", "tera_term",
-            # セキュリティ製品
-            "microsoft_defender_for_endpoint", "crowdstrike_falcon", "splunk",
-            # 言語（自然言語）
-            "english", "chinese", "korean", "spanish", "portugese"
-            
-        ]
+                    # 言語
+                    "python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba",
+
+                    # フレームワーク
+                    "ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react",
+
+                    # 開発環境
+                    "vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio",
+
+                    # OS
+                    "widows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos",
+                    "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix",
+
+                    # クラウド
+                    "aws", "azure", "gcp", "oci",
+
+                    # セキュリティ製品
+                    "splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam",
+                    "sep(symantec_endpoint_protection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti",
+                    "f5_big_ip", "paloalto_prisma", "tenable",
+
+                    # ネットワーク環境
+                    "cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series",
+                    "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch",
+                    "media_converter", "wireless_network", "other_network_devices",
+
+                    # 仮想化基盤
+                    "vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)",
+                    "docker", "kubernetes",
+
+                    # AI
+                    "gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai",
+
+                    # サーバソフトウェア
+                    "apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish",
+                    "squid", "varnish", "sendmail", "postfix",
+
+                    # データベース
+                    "mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis",
+                    "dynamodb", "elasticsearch", "amazon_rds",
+
+                    # ツール類
+                    "wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira",
+                    "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce",
+
+                    # 言語（自然言語）
+                    "english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian",
+
+                    # セキュリティ調査ツール
+                    "shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis",
+                    "wappalyzer"
+                ]
+
         
         # フォームからデータを取得し、辞書に格納
         data = {field: request.form.get(field) for field in fields}
         data["user_id"] = session['user_id']
-        data["updated_at"] = datetime.utcnow().isoformat()
+        # 修正前:
+        # data["updated_at"] = datetime.utcnow().isoformat()
+
+        # 修正後:
+        data["updated_at"] = datetime.now(timezone.utc).isoformat()
 
         try:
             # Supabaseにデータを保存（upsert：既存データの更新または新規挿入）
@@ -226,7 +261,9 @@ def skillsheet_input():
         except Exception as e:
             print(f"エラー: {e}")
             return render_template("skillsheet_input.html", error="予期せぬエラーが発生しました。")
-
+        
+        # ← ここが抜けていた！
+    return render_template("skillsheet_input.html")
   
 
 
