@@ -5,62 +5,74 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>プロフィール作成</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
+    
 </head>
-<body>
+
+<body class="background-image">
+    <div class="header">
+        <img alt="ヘッダー画像" src="/static/images/tom_2.png"/> <!-- tomのロゴ -->
     {% include "header.html" %}
-  
-    <h1>ダッシュボード</h1>
-    <p>ログイン成功！</p>
-    <p>メールアドレス: {{ user_email }}</p>
+    </div>
 
-    <h3>プロフィール一覧</h3>
-    <p>プロフィール情報:</p>
-    <ul>
-        {% if profile.name %}
-            <li>名前: {{ profile.name }}</li>
-        {% else %}
-            <li>名前: 未設定</li>
-        {% endif %}
-
-        {% if profile.age %}
-            <li>年齢: {{ profile.age }}歳</li>
-        {% else %}
-            <li>年齢: 未設定</li>
-        {% endif %}
-
-        {% if profile.location %}
-            <li>最寄り駅: {{ profile.location }}</li>
-        {% else %}
-            <li>最寄り駅: 未設定</li>
-        {% endif %}
-
-        {% if profile.occupation %}
-            <li>職種: {{ profile.occupation }}</li>
-        {% else %}
-            <li>職種: 未設定</li>
-        {% endif %}
-
-        {% if profile.education %}
-            <li>学歴: {{ profile.education }}</li>
-        {% else %}
-            <li>学歴: 未設定</li>
-        {% endif %}
-
-        {% if profile.certifications %}
-            <li>資格: {{ profile.certifications }}</li>
-        {% else %}
-            <li>資格: 未設定</li>
-        {% endif %}
-
-        {% if profile.bio %}
-            <li>自己紹介: {{ profile.bio }}</li>
-        {% else %}
-            <li>自己紹介: 未設定</li>
-        {% endif %}
-    </ul>
+    <div class="container">
+        
 
     
+        <h1>ダッシュボード</h1>
+        <p>ログイン成功！</p>
+        <p>メールアドレス: {{ user_email }}</p>
+
+        <h3>プロフィール一覧</h3>
+        <p>プロフィール情報:</p>
+        <ul>
+            {% if profile.name %}
+                <li>名前: {{ profile.name }}</li>
+            {% else %}
+                <li>名前: 未設定</li>
+            {% endif %}
+
+            {% if profile.age %}
+                <li>年齢: {{ profile.age }}歳</li>
+            {% else %}
+                <li>年齢: 未設定</li>
+            {% endif %}
+
+            {% if profile.location %}
+                <li>最寄り駅: {{ profile.location }}</li>
+            {% else %}
+                <li>最寄り駅: 未設定</li>
+            {% endif %}
+
+            {% if profile.occupation %}
+                <li>職種: {{ profile.occupation }}</li>
+            {% else %}
+                <li>職種: 未設定</li>
+            {% endif %}
+
+            {% if profile.education %}
+                <li>学歴: {{ profile.education }}</li>
+            {% else %}
+                <li>学歴: 未設定</li>
+            {% endif %}
+
+            {% if profile.certifications %}
+                <li>資格: {{ profile.certifications }}</li>
+            {% else %}
+                <li>資格: 未設定</li>
+            {% endif %}
+
+            {% if profile.bio %}
+                <li>自己紹介: {{ profile.bio }}</li>
+            {% else %}
+                <li>自己紹介: 未設定</li>
+            {% endif %}
+        </ul>
+
+        <h3>スキルシート一覧</h3>
+            <p>スキルシート情報:</p>
+            
+            
 
     
 

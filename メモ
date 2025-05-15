@@ -221,3 +221,95 @@ def skillsheet_input():
             return render_template("skillsheet_input.html", error="予期せぬエラーが発生しました。")
 
     return render_template("skillsheet_input.html")
+
+
+
+    # スキルシート出力画面
+@app.route("/skillsheet_output", methods=["GET"])
+def skillsheet_output():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        response = supabase.table("skillsheet").select("*").eq("user_id", session['user_id']).execute()
+
+        if response.data and len(response.data) > 0:
+            skillsheet_data = response.data[0]
+
+            # user_id や updated_at を除いて、空でないスキルだけ抽出
+            display_skills = {
+                key: value for key, value in skillsheet_data.items()
+                if key not in ["user_id", "updated_at"] and value
+            }
+
+            return render_template("skillsheet_output.html", skillsheet=display_skills)
+
+        else:
+            return render_template("skillsheet_output.html", error="スキルシートが見つかりません。")
+
+    except Exception as e:
+        print(f"スキルシート取得エラー: {e}")
+        return render_template("skillsheet_output.html", error="スキルシートの取得に失敗しました。")
+
+
+
+# skillsheetoutput.html
+<!DOCTYPE html>
+<html>
+<head>
+    <title>スキルシート表示</title>
+</head>
+<body>
+    <h1>スキルシートの内容</h1>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% else %}
+        <table border="1">
+            <tr>
+                <th>スキル</th>
+                <th>レベル</th>
+            </tr>
+            {% for skill, level in skillsheet.items() %}
+            <tr>
+                <td>{{ skill.replace('_', ' ').title() }}</td>
+                <td>{{ level }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</body>
+</html>
+
+
+# スキルシート出力画面 app.py
+@app.route("/skillsheet_output", methods=["GET"])
+def skillsheet_output():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        response = supabase.table("skillsheet").select("*").eq("user_id", session['user_id']).execute()
+       
+        # デバッグ出力
+        print("スキルシート取得結果:", response.data)
+        print("display_skills:", display_skills)
+
+
+
+        if response.data and len(response.data) > 0:
+            skillsheet_data = response.data[0]
+
+            # user_id や updated_at を除いて、空でないスキルだけ抽出
+            display_skills = {
+                key: value for key, value in skillsheet_data.items()
+                if key not in ["user_id", "updated_at"] and value
+            }
+
+            return render_template("skillsheet_output.html", skillsheet=display_skills)
+
+        else:
+            return render_template("skillsheet_output.html", error="スキルシートが見つかりません。")
+
+    except Exception as e:
+        print(f"スキルシート取得エラー: {e}")
+        return render_template("skillsheet_output.html", error="スキルシートの取得に失敗しました。")

@@ -5,20 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>プロフィール作成</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
 </head>
 <body>
     <header>
-        <a href="{{ url_for('dashboard') }}">
-        <img src="{{ url_for('static', filename='images/LOGO_TOM.png') }}" alt="ヘッダー画像">
-        </a>
-
-         <nav class="nav-links">
-            <a href="{{ url_for('dashboard') }}">ダッシュボード</a>
+        <nav class="nav-links">
+            <a href="{{ url_for('dashboard') }}"><P>ダッシュボード</P></a>
             <a href="{{ url_for('profile_input') }}">プロフィール</a>
             <a href="{{ url_for('skillsheet_input') }}">スキルシート</a>
             <a href="{{ url_for('project_input') }}">プロジェクト</a>
             <a href="{{ url_for('logout') }}">ログアウト</a>
         </nav>
-
     </header>

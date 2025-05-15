@@ -15,18 +15,24 @@
         <h1>スキルシート情報</h1>
         <p>スキルシート情報を以下に表示します。</p> 
         <p>スキルシート情報:</p>
+        
+
         <ul>
-            {% if skillsheet.skill_name %}
-                <li>スキル: {{ skillsheet.skill_name }}</li>
+            {% if error %}
+                <p style="color:red;">{{ error }}</p>
             {% else %}
-                <li>スキル: 未設定</li>
-            {% endif %}
-        </ul>
-        <ul>
-            {% if skillsheet.skill_level %}
-                <li>スキルレベル: {{ skillsheet.skill_level }}</li>
-            {% else %}
-                <li>スキルレベル: 未設定</li>
+                <table border="1">
+                    <tr>
+                        <th>スキル</th>
+                        <th>レベル</th>
+                    </tr>
+                    {% for skill, level in skillsheet.items() %}
+                    <tr>
+                        <td>{{ skill.replace('_', ' ').title() }}</td>
+                        <td>{{ level }}</td>
+                    </tr>
+                    {% endfor %}
+                </table>
             {% endif %}
         </ul>
         

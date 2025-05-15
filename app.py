@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_session import Session
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
@@ -16,12 +16,20 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # Flaskの設定
 app = Flask(__name__)
-app.secret_key = "your_secret_key"  # セッション用のシークレットキー
+app.secret_key = "111"  # セッション用のシークレットキー
 
 #  セッションの設定
-# app.config['SESSION_TYPE'] = 'filesystem'
-# app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # 30分で自動ログアウト
-# Session(app)
+app.config['SESSION_TYPE'] = 'filesystem'
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # 30分操作なしで自動ログアウト
+
+# セッションの永続化を有効にする
+# セッションの永続化を有効にする
+@app.before_request
+def before_request():
+    session.permanent = True  # 永続的なセッション設定
+    if 'user_id' in session:
+        # セッションが存在している場合のみ更新
+        session.modified = True
 
 #  セキュリティの強化設定
 app.config['SESSION_COOKIE_SECURE'] = False     # HTTPSのみでクッキー送信 localhost環境のため一時出来にflase
@@ -89,6 +97,7 @@ def dashboard():
     try:
         # Supabaseからプロフィール取得
         response = supabase.table("profile").select("*").eq("user_id", user_id).execute()
+        
 
         # デバッグ出力
         print("プロフィール取得結果:", response.data)
@@ -204,7 +213,7 @@ def skillsheet_input():
 
                     # セキュリティ製品
                     "splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam",
-                    "sep(symantec_endpoint_protection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti",
+                    "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti",
                     "f5_big_ip", "paloalto_prisma", "tenable",
 
                     # ネットワーク環境
@@ -236,7 +245,7 @@ def skillsheet_input():
 
                     # セキュリティ調査ツール
                     "shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis",
-                    "wappalyzer"
+                    "wappalyzer","wireshark"
                 ]
 
         
@@ -252,6 +261,7 @@ def skillsheet_input():
         try:
             # Supabaseにデータを保存（upsert：既存データの更新または新規挿入）
             result = supabase.table("skillsheet").upsert(data, on_conflict=["user_id"]).execute()
+
 
             if result.model_dump().get("error"):
                 return render_template("skillsheet_input.html", error="スキルシートの保存に失敗しました。")
@@ -276,9 +286,25 @@ def skillsheet_output():
 
     try:
         response = supabase.table("skillsheet").select("*").eq("user_id", session['user_id']).execute()
-        
+
+        display_skills = {}  # ← ここで初期化しておくことで、どのパスでも存在する
+
+        # デバッグ出力
+        print("スキルシート取得結果:", response.data)
+        print("display_skills:", display_skills)
+
+
         if response.data and len(response.data) > 0:
-            return render_template("skillsheet_output.html", skillsheet=response.data[0])
+            skillsheet_data = response.data[0]
+
+            # user_id や updated_at を除いて、空でないスキルだけ抽出
+            display_skills = {
+                key: value for key, value in skillsheet_data.items()
+                if key not in ["user_id","created_at", "updated_at"] and value
+            }
+
+            return render_template("skillsheet_output.html", skillsheet=display_skills)
+
         else:
             return render_template("skillsheet_output.html", error="スキルシートが見つかりません。")
 
