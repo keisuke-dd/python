@@ -21,51 +21,21 @@
         <p>ログイン成功！</p>
         <p>メールアドレス: {{ user_email }}</p>
 
+        
         <h3>プロフィール一覧</h3>
         <p>プロフィール情報:</p>
         <ul>
-            {% if profile.name %}
-                <li>名前: {{ profile.name }}</li>
-            {% else %}
-                <li>名前: 未設定</li>
-            {% endif %}
-
-            {% if profile.age %}
-                <li>年齢: {{ profile.age }}歳</li>
-            {% else %}
-                <li>年齢: 未設定</li>
-            {% endif %}
-
-            {% if profile.location %}
-                <li>最寄り駅: {{ profile.location }}</li>
-            {% else %}
-                <li>最寄り駅: 未設定</li>
-            {% endif %}
-
-            {% if profile.occupation %}
-                <li>職種: {{ profile.occupation }}</li>
-            {% else %}
-                <li>職種: 未設定</li>
-            {% endif %}
-
-            {% if profile.education %}
-                <li>学歴: {{ profile.education }}</li>
-            {% else %}
-                <li>学歴: 未設定</li>
-            {% endif %}
-
-            {% if profile.certifications %}
-                <li>資格: {{ profile.certifications }}</li>
-            {% else %}
-                <li>資格: 未設定</li>
-            {% endif %}
-
-            {% if profile.bio %}
-                <li>自己紹介: {{ profile.bio }}</li>
-            {% else %}
-                <li>自己紹介: 未設定</li>
-            {% endif %}
+            <li>名前: {{ profile.name | default("未設定") }}</li>
+            <li>年齢: {{ profile.age | default("未設定") }}{% if profile.age %}歳{% endif %}</li>
+            <li>最寄り駅: {{ profile.location | default("未設定") }}</li>
+            <li>職種: {{ profile.occupation | default("未設定") }}</li>
+            <li>学歴: {{ profile.education | default("未設定") }}</li>
+            <li>資格: {{ profile.certifications | default("未設定") }}</li>
+            <li>自己紹介: {{ profile.bio | default("未設定") }}</li>
         </ul>
+
+        <!-- 編集リンク -->
+        <p><a href="{{ url_for('profile_input') }}">プロフィールを編集する</a></p>
 
         <h3>スキルシート一覧</h3>
             <p>スキルシート情報:</p>
@@ -90,6 +60,9 @@
                     <p>スキルシートが見つかりません。</p>
                 {% endif %}
             </ul>
+            
+        <!-- スキルシート編集リンク -->
+        <p><a href="{{ url_for('skillsheet_input') }}">スキルシートを編集する</a></p>
             
         <a href="{{ url_for('project_input') }}">
             <button>新しいプロジェクトを作成</button>

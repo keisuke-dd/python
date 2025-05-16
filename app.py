@@ -239,7 +239,7 @@ def profile_input():
             print(f"エラー: {e}")
             return render_template("profile_input.html", error="予期せぬエラーが発生しました。")
 
-    return redirect(url_for("profile_input"))
+    return render_template("profile_input.html")
             
 
 
@@ -349,14 +349,14 @@ def skillsheet_input():
             if result.model_dump().get("error"):
                 return render_template("skillsheet_input.html", error="スキルシートの保存に失敗しました。")
             
-            return redirect(url_for("skillsheet_output"))
+            return redirect(url_for("dashboard"))
 
         except Exception as e:
             print(f"エラー: {e}")
             return render_template("skillsheet_input.html", error="予期せぬエラーが発生しました。")
         
         # ← ここが抜けていた！
-    return redirect(url_for("dashboard"))
+    return render_template("skillsheet_input.html")
   
 
 
@@ -428,13 +428,13 @@ def project_input():
                 print("保存エラー:", result.error)
                 return render_template("project_input.html", error="プロジェクトの保存に失敗しました。")
 
-            return redirect(url_for("project_output"))
+            return redirect(url_for("dashboard"))
 
         except Exception as e:
             print(f"エラー: {e}")
             return render_template("project_input.html", error="予期せぬエラーが発生しました。")
 
-    return redirect(url_for("dashboard"))
+    return render_template("project_input.html")
 
 
 # プロジェクト削除ページ
