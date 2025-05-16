@@ -239,7 +239,7 @@ def profile_input():
             print(f"エラー: {e}")
             return render_template("profile_input.html", error="予期せぬエラーが発生しました。")
 
-    return render_template("profile_input.html")
+    return redirect(url_for("dashboard"))
             
 
 
@@ -356,7 +356,7 @@ def skillsheet_input():
             return render_template("skillsheet_input.html", error="予期せぬエラーが発生しました。")
         
         # ← ここが抜けていた！
-    return render_template("skillsheet_input.html")
+    return redirect(url_for("dashboard"))
   
 
 
@@ -434,7 +434,7 @@ def project_input():
             print(f"エラー: {e}")
             return render_template("project_input.html", error="予期せぬエラーが発生しました。")
 
-    return render_template("project_input.html")
+    return redirect(url_for("dashboard"))
 
 
 # プロジェクト削除ページ
