@@ -71,23 +71,25 @@
             <p>スキルシート情報:</p>
             
             <ul>
-            {% if error %}
-                <p >{{ error }}</p>
-            {% else %}
-                <table >
-                    <tr>
-                        <th>スキル</th>
-                        <th>レベル</th>
-                    </tr>
-                    {% for skill, level in skillsheet.items() %}
-                    <tr>
-                        <td>{{ skill.replace('_', ' ').title() }}</td>
-                        <td>{{ level }}</td>
-                    </tr>
-                    {% endfor %}
-                </table>
-            {% endif %}
-        </ul>
+                {% if error %}
+                    <p>{{ error }}</p>
+                {% elif skillsheet %}
+                    <table>
+                        <tr>
+                            <th>スキル</th>
+                            <th>レベル</th>
+                        </tr>
+                        {% for skill, level in skillsheet.items() %}
+                        <tr>
+                            <td>{{ skill.replace('_', ' ').title() }}</td>
+                            <td>{{ level }}</td>
+                        </tr>
+                        {% endfor %}
+                    </table>
+                {% else %}
+                    <p>スキルシートが見つかりません。</p>
+                {% endif %}
+            </ul>
             
         <a href="{{ url_for('project_input') }}">
             <button>新しいプロジェクトを作成</button>
