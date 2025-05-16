@@ -167,11 +167,10 @@ def dashboard():
     user_id = session['user_id']
     user_email = session.get('user_email')
 
-    # 取得したいテーブル名と変数名のペア
+    # 単一レコード取得用
     tables = {
         "profile": "profile",
         "skillsheet": "skillsheet",
-        "project": "project"
     }
 
     # データ取得
@@ -179,18 +178,22 @@ def dashboard():
     for table_name, var_name in tables.items():
         data[var_name] = get_supabase_data(table_name, user_id)
 
-    # プロジェクトは複数行ある可能性があるので、リスト形式でテンプレートに渡す
-    if data["project"]:
-        data["project"] = [data["project"]] if isinstance(data["project"], dict) else data["project"]
+    # 複数レコードのprojectは個別取得
+    try:
+        response = supabase.table("project").select("*").eq("user_id", user_id).execute()
+        print("project 取得結果:", response.data)
+        projects = response.data if response.data else []
+    except Exception as e:
+        print("project 取得エラー:", e)
+        projects = []
 
-    # テンプレートに渡す
     return render_template(
         "dashboard.html",
         user_id=user_id,
         user_email=user_email,
         profile=data["profile"],
         skillsheet=data["skillsheet"],
-        projects=data["project"]
+        projects=projects  # ← ここはリスト
     )
 
 
