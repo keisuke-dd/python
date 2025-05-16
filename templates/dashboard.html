@@ -72,9 +72,9 @@
             
             <ul>
             {% if error %}
-                <p style="color:red;">{{ error }}</p>
+                <p >{{ error }}</p>
             {% else %}
-                <table border="1">
+                <table >
                     <tr>
                         <th>スキル</th>
                         <th>レベル</th>
@@ -89,6 +89,43 @@
             {% endif %}
         </ul>
             
+        <a href="{{ url_for('project_input') }}">
+            <button>新しいプロジェクトを作成</button>
+        </a>
+
+        {% if projects %}
+            <table >
+                <thead>
+                    <tr>
+                        <th>プロジェクト名</th>
+                        <th>説明</th>
+                        <th>期間</th>
+                        <th>役割</th>
+                        <th>使用技術</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for project in projects %}
+                    <tr>
+                        <td>{{ project.name }}</td>
+                        <td>{{ project.description }}</td>
+                        <td>
+                            {{ project.start_at[:10] if project.start_at }} ～ {{ project.end_at[:10] if project.end_at }}
+                        </td>
+                        <td>{{ project.role }}</td>
+                        <td>{{ project.technologies }}</td>
+                        <td>
+                            <a href="{{ url_for('project_edit', project_id=project.id) }}">編集</a> |
+                            <a href="{{ url_for('project_delete', project_id=project.id) }}" onclick="return confirm('本当に削除しますか？');">削除</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>プロジェクトがありません。</p>
+        {% endif %}
 
     
 

@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>メールアドレス更新</title>
+</head>
+<body>
+    <h2>メールアドレスの更新</h2>
+    {% if success %}
+        <p style="color: green;">{{ success }}</p>
+    {% elif error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    <form method="POST">
+        <label for="new_email">新しいメールアドレス:</label>
+        <input type="email" name="new_email" required>
+        <button type="submit">更新</button>
+    </form>
+</body>
+</html>

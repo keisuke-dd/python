@@ -9,7 +9,7 @@
     <h1>ログイン</h1>
     
     {% if error %}
-        <p style="color:red;">{{ error }}</p>
+        <p >{{ error }}</p>
     {% endif %}
 
     <form action="{{ url_for('login') }}" method="POST">

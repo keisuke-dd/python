@@ -6,23 +6,27 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 import requests
 
+
 # 環境変数の読み込み
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+
 # Supabaseクライアントの作成
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+
 # Flaskの設定
 app = Flask(__name__)
-app.secret_key = "111"  # セッション用のシークレットキー
+app.secret_key = "your_secret_key"  # セッション用のシークレットキー
+
 
 #  セッションの設定
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # 30分操作なしで自動ログアウト
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)  # 15分操作なしで自動ログアウト
 
-# セッションの永続化を有効にする
+
 # セッションの永続化を有効にする
 @app.before_request
 def before_request():
@@ -31,10 +35,12 @@ def before_request():
         # セッションが存在している場合のみ更新
         session.modified = True
 
+
 #  セキュリティの強化設定
 app.config['SESSION_COOKIE_SECURE'] = False     # HTTPSのみでクッキー送信 localhost環境のため一時出来にflase
 app.config['SESSION_COOKIE_HTTPONLY'] = True   # JavaScriptからのアクセスを防止
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # クロスサイトのCSRF防止
+
 
 #  ホームページ (ログインかサインアップを選ぶ画面)
 @app.route("/", methods=["GET"])
@@ -85,6 +91,42 @@ def login():
     return render_template("login.html")
 
 
+@app.route("/update_email", methods=["GET", "POST"])
+def update_email():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        new_email = request.form["new_email"]
+
+        try:
+            # ユーザー情報の更新
+            user = supabase.auth.update_user({
+                "email": new_email
+            })
+            return render_template("update_email.html", success="メールアドレスを更新しました。")
+        except Exception as e:
+            print(f"メールアドレスの更新失敗: {e}")
+            return render_template("update_email.html", error="メールアドレスの更新に失敗しました。")
+
+    return render_template("update_email.html")
+
+
+# パスワードリセットページ
+@app.route("/reset_password", methods=["GET", "POST"])
+def reset_password():
+    if request.method == "POST":
+        email = request.form.get("email")
+        try:
+            # Supabaseにパスワードリセットリンクをリクエスト
+            supabase.auth.reset_password_for_email(email)
+            return "パスワードリセットのリンクが送信されました。"
+        except Exception as e:
+            print(f"エラー: {e}")
+            return "送信に失敗しました。"
+    return render_template("reset_password.html")
+
+
 
 # 共通関数: Supabaseからデータを取得する
 def get_supabase_data(table_name, user_id, exclude_fields=None):
@@ -129,7 +171,7 @@ def dashboard():
     tables = {
         "profile": "profile",
         "skillsheet": "skillsheet",
-        "projects": "projects"
+        "project": "project"
     }
 
     # データ取得
@@ -138,8 +180,8 @@ def dashboard():
         data[var_name] = get_supabase_data(table_name, user_id)
 
     # プロジェクトは複数行ある可能性があるので、リスト形式でテンプレートに渡す
-    if data["projects"]:
-        data["projects"] = [data["projects"]] if isinstance(data["projects"], dict) else data["projects"]
+    if data["project"]:
+        data["project"] = [data["project"]] if isinstance(data["project"], dict) else data["project"]
 
     # テンプレートに渡す
     return render_template(
@@ -148,7 +190,7 @@ def dashboard():
         user_email=user_email,
         profile=data["profile"],
         skillsheet=data["skillsheet"],
-        projects=data["projects"]
+        projects=data["project"]
     )
 
 
@@ -369,7 +411,7 @@ def project_input():
 
         try:
             # Supabaseのテーブルにプロジェクトデータを保存
-            result = supabase.table("project").upsert({
+            result = supabase.table("project").insert({
                 "user_id": session['user_id'],
                 "name": name,
                 "description": description,
@@ -377,7 +419,7 @@ def project_input():
                 "end_at": end_at,
                 "role": role,
                 "technologies": technologies,
-            }, on_conflict=["user_id", "name"]).execute()
+            }).execute()
 
             if result.model_dump().get("error"):
                 print("保存エラー:", result.error)
@@ -392,6 +434,79 @@ def project_input():
     return render_template("project_input.html")
 
 
+# プロジェクト削除ページ
+@app.route("/project_delete/<project_id>", methods=["POST"])
+def project_delete(project_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    try:
+        result = supabase.table("project").delete().eq("id", project_id).eq("user_id", session['user_id']).execute()
+
+        if result.model_dump().get("error"):
+            print("削除エラー:", result.error)
+            return redirect(url_for("project_output", error="削除に失敗しました。"))
+
+        return redirect(url_for("project_output"))
+
+    except Exception as e:
+        print("削除例外:", e)
+        return redirect(url_for("project_output"))
+
+
+
+# プロジェクト編集ページ
+@app.route("/project_edit/<project_id>", methods=["GET", "POST"])
+def project_edit(project_id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    if request.method == "POST":
+        name = request.form.get("name")
+        description = request.form.get("description")
+        start_at = request.form.get("start_at")
+        if start_at == "":
+                start_at = None
+
+        end_at = request.form.get("end_at")
+        if end_at == "":
+                end_at = None
+        role = request.form.get("role")
+        technologies= request.form.get("technologies")
+        
+
+        try:
+            result = supabase.table("project").update({
+                "name": name,
+                "description": description,
+                "start_at": start_at,
+                "end_at": end_at,
+                "role": role,
+                "technologies": technologies,
+            }).eq("id", project_id).eq("user_id", session['user_id']).execute()
+
+            return redirect(url_for("project_output"))
+
+        except Exception as e:
+            print("更新エラー:", e)
+            return render_template("project_edit.html", error="更新に失敗しました。")
+
+    else:
+        try:
+            response = supabase.table("project").select("*").eq("id", project_id).eq("user_id", session['user_id']).single().execute()
+            project = response.data
+
+            if not project:
+                return redirect(url_for("project_output"))
+
+            return render_template("project_edit.html", project=project)
+
+        except Exception as e:
+            print("取得エラー:", e)
+            return redirect(url_for("project_output"))
+
+
+
 # プロジェクト表示ページ
 @app.route("/project_output", methods=["GET"])
 def project_output():
@@ -401,17 +516,17 @@ def project_output():
     try:
         response = supabase.table("project").select("*").eq("user_id", session['user_id']).execute()
 
-        # デバッグ出力
         print("プロジェクト取得結果:", response.data)
 
         if response.data and len(response.data) > 0:
-            return render_template("project_output.html", project=response.data)
+            return render_template("project_output.html", projects=response.data)
         else:
             return render_template("project_output.html", error="プロジェクトが見つかりません。")
 
     except Exception as e:
         print(f"プロジェクト取得エラー: {e}")
         return render_template("project_output.html", error="プロジェクトの取得に失敗しました。")
+
     
 
 

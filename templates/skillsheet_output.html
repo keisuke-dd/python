@@ -9,11 +9,9 @@
 </head>
 
 <body>
-    <div class="header">
-        <img alt="ヘッダー画像" src="/static/images/tom_2.png"/> <!-- tomのロゴ -->
+    
     {% include "header.html" %}
-    </div>
-    <div class="container">
+    
         
 
         <h1>スキルシート情報</h1>
@@ -23,9 +21,9 @@
 
         <ul>
             {% if error %}
-                <p style="color:red;">{{ error }}</p>
+                <p >{{ error }}</p>
             {% else %}
-                <table border="1">
+                <table >
                     <tr>
                         <th>スキル</th>
                         <th>レベル</th>

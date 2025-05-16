@@ -1,0 +1,89 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: #f7fafc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.header {
+  width: 100%;
+  background-color: #fff;
+  border-bottom: 4px solid #4299e1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
+  background-image: url('/static/images/tom_1.png');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+}
+
+.header img {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  display: block;
+  position: relative;
+  z-index: 1;
+}
+
+.login-container {
+  background-color: white;
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+input {
+  padding: 0.75rem;
+  font-size: 1rem;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+}
+
+button {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  background-color: #4299e1;
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #3182ce;
+}
+
+a {
+  color: #4299e1;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+.error {
+  color: red;
+  margin-top: 1rem;
+}
