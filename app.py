@@ -232,14 +232,14 @@ def profile_input():
                 return render_template("profile_input.html", error="保存に失敗しました。")
 
             # 成功の場合
-            return redirect(url_for("profile_output"))
+            return redirect(url_for("dashboard"))
 
         except Exception as e:
             # 例外処理
             print(f"エラー: {e}")
             return render_template("profile_input.html", error="予期せぬエラーが発生しました。")
 
-    return redirect(url_for("dashboard"))
+    return redirect(url_for("profile_input"))
             
 
 
