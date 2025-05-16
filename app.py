@@ -239,33 +239,14 @@ def profile_input():
             print(f"エラー: {e}")
             return render_template("profile_input.html", error="予期せぬエラーが発生しました。")
 
-    return render_template("profile_input.html")
+    # GET時：既存データを取得してフォームに反映
+    user_id = session['user_id']
+    profile_data = get_supabase_data("profile", user_id) or {}
+    # 取得したデータをフォームに表示
+    return render_template("profile_input.html", profile=profile_data)
             
 
 
-# プロフィールアウトプット表示
-@app.route("/profile_output", methods=["GET"])
-def profile_output():
-    if 'user_id' in session:
-        user_id = session['user_id']
-
-        try:
-            response = supabase.table("profile").select("*").eq("user_id", user_id).execute()
-
-            # デバッグ出力
-            print("取得結果:", response.data)
-
-            if response.data and len(response.data) > 0:
-                # 最初のデータを渡す
-                return render_template("profile_output.html", profile=response.data[0])
-            else:
-                return render_template("profile_output.html", error="プロフィールが見つかりません。")
-
-        except Exception as e:
-            print(f"プロフィール取得に失敗しました。エラー内容: {e}")
-            return render_template("profile_output.html", error="プロフィールの取得に失敗しました。")
-    else:
-        return redirect(url_for('login'))
     
 
 
@@ -275,125 +256,41 @@ def skillsheet_input():
     if 'user_id' not in session:
         return redirect(url_for('login'))
 
+    categories = {
+        "プログラミング言語": ["python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba"],
+        "フレームワーク": ["ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react"],
+        "開発環境": ["vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio"],
+        "OS": ["windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos", "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix"],
+        "クラウド": ["aws", "azure", "gcp", "oci"],
+        "セキュリティ製品": ["splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam", "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti", "f5_big_ip", "paloalto_prisma", "tenable"],
+        "ネットワーク環境": ["cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series", "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch", "media_converter", "wireless_network", "other_network_devices"],
+        "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes"],
+        "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai"],
+        "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix"],
+        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds"],
+        "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce"],
+        "言語": ["english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian"],
+        "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark"]
+    }
+
+    skillsheet_data = get_supabase_data("skillsheet", session['user_id'])
+
     if request.method == "POST":
-        # フォームの項目名リストを作成
-        fields = [
-                    # 言語
-                    "python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba",
-
-                    # フレームワーク
-                    "ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react",
-
-                    # 開発環境
-                    "vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio",
-
-                    # OS
-                    "widows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos",
-                    "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix",
-
-                    # クラウド
-                    "aws", "azure", "gcp", "oci",
-
-                    # セキュリティ製品
-                    "splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam",
-                    "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti",
-                    "f5_big_ip", "paloalto_prisma", "tenable",
-
-                    # ネットワーク環境
-                    "cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series",
-                    "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch",
-                    "media_converter", "wireless_network", "other_network_devices",
-
-                    # 仮想化基盤
-                    "vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)",
-                    "docker", "kubernetes",
-
-                    # AI
-                    "gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai",
-
-                    # サーバソフトウェア
-                    "apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish",
-                    "squid", "varnish", "sendmail", "postfix",
-
-                    # データベース
-                    "mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis",
-                    "dynamodb", "elasticsearch", "amazon_rds",
-
-                    # ツール類
-                    "wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira",
-                    "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce",
-
-                    # 言語（自然言語）
-                    "english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian",
-
-                    # セキュリティ調査ツール
-                    "shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis",
-                    "wappalyzer","wireshark"
-                ]
-
-        
-        # フォームからデータを取得し、辞書に格納
-        data = {field: request.form.get(field) for field in fields}
+        data = {field: request.form.get(field) for fields in categories.values() for field in fields}
         data["user_id"] = session['user_id']
-        # 修正前:
-        # data["updated_at"] = datetime.utcnow().isoformat()
-
-        # 修正後:
         data["updated_at"] = datetime.now(timezone.utc).isoformat()
 
-        try:
-            # Supabaseにデータを保存（upsert：既存データの更新または新規挿入）
-            result = supabase.table("skillsheet").upsert(data, on_conflict=["user_id"]).execute()
+        result = supabase.table("skillsheet").upsert(data, on_conflict=["user_id"]).execute()
+        if result.model_dump().get("error"):
+            return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, error="保存に失敗しました")
 
+        return redirect(url_for("dashboard"))
 
-            if result.model_dump().get("error"):
-                return render_template("skillsheet_input.html", error="スキルシートの保存に失敗しました。")
-            
-            return redirect(url_for("dashboard"))
-
-        except Exception as e:
-            print(f"エラー: {e}")
-            return render_template("skillsheet_input.html", error="予期せぬエラーが発生しました。")
-        
-        # ← ここが抜けていた！
-    return render_template("skillsheet_input.html")
+    return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data)
   
 
 
 
-#  スキルシート表示ページ
-@app.route("/skillsheet_output", methods=["GET"])
-def skillsheet_output():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    try:
-        response = supabase.table("skillsheet").select("*").eq("user_id", session['user_id']).execute()
-
-        display_skills = {}  # ← ここで初期化しておくことで、どのパスでも存在する
-
-        # デバッグ出力
-        print("スキルシート取得結果:", response.data)
-        print("display_skills:", display_skills)
-
-
-        if response.data and len(response.data) > 0:
-            skillsheet_data = response.data[0]
-
-            # user_id や updated_at を除いて、空でないスキルだけ抽出
-            display_skills = {
-                key: value for key, value in skillsheet_data.items()
-                if key not in ["user_id","created_at", "updated_at"] and value
-            }
-
-            return render_template("skillsheet_output.html", skillsheet=display_skills)
-
-        else:
-            return render_template("skillsheet_output.html", error="スキルシートが見つかりません。")
-
-    except Exception as e:
-        print(f"スキルシート取得エラー: {e}")
-        return render_template("skillsheet_output.html", error="スキルシートの取得に失敗しました。")
 
 
 
@@ -448,13 +345,13 @@ def project_delete(project_id):
 
         if result.model_dump().get("error"):
             print("削除エラー:", result.error)
-            return redirect(url_for("project_output", error="削除に失敗しました。"))
+            return redirect(url_for("dashboard", error="削除に失敗しました。"))
 
-        return redirect(url_for("project_output"))
+        return redirect(url_for("dashboard"))
 
     except Exception as e:
         print("削除例外:", e)
-        return redirect(url_for("project_output"))
+        return redirect(url_for("dashboard"))
 
 
 
@@ -488,7 +385,7 @@ def project_edit(project_id):
                 "technologies": technologies,
             }).eq("id", project_id).eq("user_id", session['user_id']).execute()
 
-            return redirect(url_for("project_output"))
+            return redirect(url_for("dashboard"))
 
         except Exception as e:
             print("更新エラー:", e)
@@ -500,35 +397,16 @@ def project_edit(project_id):
             project = response.data
 
             if not project:
-                return redirect(url_for("project_output"))
+                return redirect(url_for("project_edit"))
 
             return render_template("project_edit.html", project=project)
 
         except Exception as e:
             print("取得エラー:", e)
-            return redirect(url_for("project_output"))
+            return redirect(url_for("project_edit"))
 
 
 
-# プロジェクト表示ページ
-@app.route("/project_output", methods=["GET"])
-def project_output():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    try:
-        response = supabase.table("project").select("*").eq("user_id", session['user_id']).execute()
-
-        print("プロジェクト取得結果:", response.data)
-
-        if response.data and len(response.data) > 0:
-            return render_template("project_output.html", projects=response.data)
-        else:
-            return render_template("project_output.html", error="プロジェクトが見つかりません。")
-
-    except Exception as e:
-        print(f"プロジェクト取得エラー: {e}")
-        return render_template("project_output.html", error="プロジェクトの取得に失敗しました。")
 
     
 

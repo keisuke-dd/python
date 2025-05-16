@@ -60,7 +60,7 @@
                     <p>スキルシートが見つかりません。</p>
                 {% endif %}
             </ul>
-            
+
         <!-- スキルシート編集リンク -->
         <p><a href="{{ url_for('skillsheet_input') }}">スキルシートを編集する</a></p>
             
@@ -92,8 +92,11 @@
                         <td>{{ project.technologies }}</td>
                         <td>
                             <a href="{{ url_for('project_edit', project_id=project.id) }}">編集</a> |
-                            <a href="{{ url_for('project_delete', project_id=project.id) }}" onclick="return confirm('本当に削除しますか？');">削除</a>
+                             <form action="{{ url_for('project_delete', project_id=project.id) }}" method="post" style="display:inline;">
+                                <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+                            </form>
                         </td>
+
                     </tr>
                     {% endfor %}
                 </tbody>

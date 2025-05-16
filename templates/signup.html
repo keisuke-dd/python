@@ -3,19 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>サインアップ</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
-
-  
+    <title>サインアップ</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
 </head>
-<body class="background-image">
+<body>
+    <div class="header">
+        <img src="{{ url_for('static', filename='images/tom_1.png') }}" class="header-bg" alt="背景画像">
+        <img src="{{ url_for('static', filename='images/tom_2.png') }}" class="header-logo" alt="ロゴ">
+    </div>
 
-  <div class="header">
-    <img src="tom_2.png" alt="ヘッダー画像"> /* tomのロゴ */
-
-  <div class="container">
-    <h2>サインアップ</h2>
+    <div class="signup-container">
+        <h2>サインアップ</h2>
 
     <!-- サインアップフォーム -->
     <form action="/signup" method="POST">
