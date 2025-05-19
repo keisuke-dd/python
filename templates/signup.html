@@ -3,47 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>サインアップ</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
+  <title>サインアップ</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/signup.css') }}">
 </head>
 <body>
-    <div class="header">
-        <img src="{{ url_for('static', filename='images/tom_1.png') }}" class="header-bg" alt="背景画像">
-        <img src="{{ url_for('static', filename='images/tom_2.png') }}" class="header-logo" alt="ロゴ">
-    </div>
+  <div class="header">
+    <img src="{{ url_for('static', filename='images/tom_1.png') }}" class="header-bg" alt="背景画像">
+    <img src="{{ url_for('static', filename='images/tom_2.png') }}" class="header-logo" alt="ロゴ">
+  </div>
 
-    <div class="signup-container">
-        <h2>サインアップ</h2>
+  <div class="signup-container">
+    <h1>サインアップ</h1> <!-- h2 → h1 に変更 -->
 
     <!-- サインアップフォーム -->
     <form action="/signup" method="POST">
-        <div>
-            <label for="email">メールアドレス:</label>
-            <input type="email" id="email" name="email" required>
-        </div>
+      <div>
+        <label for="email">メールアドレス:</label>
+        <input type="email" id="email" name="email" required>
+      </div>
 
-        <div>
-            <label for="password">パスワード:</label>
-            <input type="password" id="password" name="password" required>
-            <p>パスワードは最低６文字</p>
-        </div>
+      <div>
+        <label for="password">パスワード:</label>
+        <input type="password" id="password" name="password" required>
+        <p><strong>パスワードは最低６文字</strong></p> <!-- 太字 -->
+      </div>
 
-        <div>
-            <button type="submit">サインアップ</button>
-        </div>
+      <div>
+        <button type="submit">サインアップ</button>
+      </div>
     </form>
 
     <!-- 成功メッセージ -->
     {% if success %}
-        <p style="color: green;">{{ success }}</p>
+      <p style="color: green;">{{ success }}</p>
     {% endif %}
 
     <!-- エラーメッセージ -->
     {% if error %}
-        <p style="color: red;">{{ error }}</p>
+      <p style="color: red;">{{ error }}</p>
     {% endif %}
 
     <!-- ホームに戻るリンク -->
-    <p><a href="/">ホームに戻る</a></p>
+    <p><a href="/"><strong>ホームに戻る</strong></a></p> <!-- 太字 -->
+  </div>
 </body>
 </html>

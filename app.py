@@ -1,10 +1,5 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from flask_session import Session
-from datetime import datetime, timezone, timedelta
-import os
-from supabase import create_client, Client
-from dotenv import load_dotenv
-import requests
+# 必要なライブラリのインポート
+from requirements import *
 
 
 # 環境変数の読み込み
@@ -16,6 +11,8 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 # Supabaseクライアントの作成
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# 1回だけ日本語フォントを登録（フォント名は自由に決められます）
+pdfmetrics.registerFont(TTFont('IPAexGothic', 'static/fonts/ipaexg.ttf'))
 
 # Flaskの設定
 app = Flask(__name__)
@@ -408,7 +405,113 @@ def project_edit(project_id):
 
 
 
+
+# PDF作成ページ
+@app.route("/create_pdf", methods=["GET"])
+def create_pdf():
+    user_id = session.get('user_id')
+    if not user_id:
+        return redirect(url_for("login"))
     
+    # Supabaseからデータ取得
+    profile = supabase.table("profile").select("*").eq("user_id", user_id).single().execute().data
+    skillsheet = supabase.table("skillsheet").select("*").eq("user_id", user_id).single().execute().data
+    projects = supabase.table("project").select("*").eq("user_id", user_id).execute().data
+
+    # PDF初期化
+    buffer = BytesIO()
+    p = canvas.Canvas(buffer, pagesize=A4)
+    width, height = A4
+    y = height - 50
+
+    # ========== 紺色の背景ブロック ==========
+    block_width = 180
+    block_height = 220
+    p.setFillColor(navy)
+    p.rect(0, height - block_height, block_width, block_height, fill=True, stroke=0)
+
+    # ========== 画像挿入 ==========
+    try:
+        image_path = "./static/images/tom_2.png"
+        p.drawImage(image_path, 40, height - 100, width=90, height=50, mask='auto')
+    except Exception as e:
+        print("画像読み込みエラー:", e)
+
+    # ========== タイトル（ブロック内に） ==========
+    p.setFillColorRGB(1, 1, 1)  # 白文字
+    p.setFont("IPAexGothic", 16)
+    p.drawString(40, height - 120, "スキルシート")
+
+    # ========== テキストを黒に戻す ==========
+    p.setFillColor(black)
+
+    # プロフィール表示位置（ブロックの右端より右側）
+    profile_x = block_width + 10  # 210
+    profile_y = height - 50  # 紺ブロックの少し下あたりから開始
+
+    p.setFont("IPAexGothic", 12)
+    p.drawString(profile_x, profile_y, f"氏名: {profile.get('name', '')}")
+    p.drawString(profile_x, profile_y - 18, f"年齢: {profile.get('age', '')}")
+    p.drawString(profile_x, profile_y - 36, f"職業: {profile.get('occupation', '')}")
+
+    # スキル一覧描画開始Y座標はプロフィールのさらに下あたりに設定
+    y = profile_y - 180
+
+    # ========== スキル ==========
+    p.setFont("IPAexGothic", 12)
+    p.drawString(100, y, "■ スキル一覧")
+    y -= 30
+    for skill, level in skillsheet.items():
+        if skill != "user_id" and level:
+            p.drawString(120, y, f"{skill.replace('_', ' ').title()}: {level}")
+            y -= 15
+            if y < 100:
+                p.showPage()
+                y = height - 50
+                p.setFont("IPAexGothic", 12)
+
+    y -= 20
+    p.drawString(100, y, "■ プロジェクト一覧")
+    y -= 20
+
+    for project in projects:
+        if y < 120:
+            p.showPage()
+            y = height - 50
+            p.setFont("IPAexGothic", 12)
+
+        p.drawString(120, y, f"・{project.get('name', '')}")
+        y -= 15
+
+        if project.get('description'):
+            p.drawString(140, y, f"{project['description']}")
+            y -= 15
+
+        if project.get('start_at') or project.get('end_at'):
+            p.drawString(140, y, f"期間: {project.get('start_at', '')} ～ {project.get('end_at', '')}")
+            y -= 15
+
+        if project.get('role'):
+            p.drawString(140, y, f"役割: {project['role']}")
+            y -= 15
+
+        if project.get('technologies'):
+            techs = ", ".join(project['technologies']) if isinstance(project['technologies'], list) else str(project['technologies'])
+            p.drawString(140, y, f"技術: {techs}")
+            y -= 25
+
+    # フッター日付
+    p.setFont("IPAexGothic", 9)
+    p.drawString(100, 30, f"作成日: {datetime.now().strftime('%Y/%m/%d')}")
+
+    p.showPage()
+    p.save()
+    buffer.seek(0)
+
+    return make_response(buffer.read(), {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'inline; filename=skillsheet.pdf'
+    })
 
 
 #  ログアウト処理

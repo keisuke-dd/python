@@ -35,19 +35,23 @@ body{
   width: auto;
   object-fit: contain;
   display: block;
-  z-index: 1;
+  margin: auto;
   position: relative;
+
 }
 
 .nav-links {
     display: flex;
     justify-content: center;
     gap: 2rem; /* リンクの間隔を空ける */
+    margin: auto;
 }
 
 .nav-links a {
-    color: yellow;
+    color: #2d3748; /* リンクの色 */
     text-decoration: none;
     padding: 0.5rem 1rem;
     position: relative;
+    font-weight: bold;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }

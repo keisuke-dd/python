@@ -1,25 +1,24 @@
 /* skillsheet_input */
 body {
-        font-family: 'Inter', sans-serif;
-        background-color: #f7fafc;
-        color: #1a202c;
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-    }
+    font-family: 'Inter', sans-serif;
+    background-color: #f7fafc;
+    color: #1a202c;
+    margin: 0;
+    padding: 2rem 1rem;
+    min-height: 100vh;
+    overflow-x: hidden;
+}
 
-    .container {
-        background-color: #fff;
-        padding: 2rem;
-        border-radius: 0.75rem;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-        width: 100%;
-        max-width: 800px;
-        box-sizing: border-box;
-    }
+.container {
+    background-color: #fff;
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    width: 100%;
+    max-width: 800px;
+    margin: 0 auto; /* ← 中央揃え */
+    box-sizing: border-box;
+}
 
     h1 {
         color: #2d3748;

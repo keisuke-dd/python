@@ -1,28 +1,40 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ログイン</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ログイン</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
+
+  <!-- ヘッダー -->
+  <div class="header">
+    <img src="{{ url_for('static', filename='images/tom_1.png') }}" class="header-bg" alt="背景画像">
+    <img src="{{ url_for('static', filename='images/tom_2.png') }}" class="header-logo" alt="ロゴ">
+  </div>
+
+  <!-- ログインフォーム（枠付き） -->
+  <div class="login-container">
     <h1>ログイン</h1>
-    
+
     {% if error %}
-        <p >{{ error }}</p>
+      <p class="error">{{ error }}</p>
     {% endif %}
 
     <form action="{{ url_for('login') }}" method="POST">
-        <label for="email">メールアドレス:</label>
-        <input type="email" name="email" required><br>
+      <label for="email">メールアドレス:</label>
+      <input type="email" id="email" name="email" required>
 
-        <label for="password">パスワード:</label>
-        <input type="password" name="password" required><br>
+      <label for="password">パスワード:</label>
+      <input type="password" id="password" name="password" required>
 
-        <button type="submit">ログイン</button>
+      <button type="submit">ログイン</button>
     </form>
 
     <p>まだアカウントをお持ちでないですか？ <a href="{{ url_for('signup') }}">サインアップ</a></p>
     <p><a href="{{ url_for('home') }}">ホームに戻る</a></p>
+  </div>
+
 </body>
 </html>
