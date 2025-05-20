@@ -14,6 +14,7 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 # 1回だけ日本語フォントを登録（フォント名は自由に決められます）
 pdfmetrics.registerFont(TTFont('IPAexGothic', 'static/fonts/ipaexg.ttf'))
 
+
 # Flaskの設定
 app = Flask(__name__)
 app.secret_key = "your_secret_key"  # セッション用のシークレットキー
@@ -195,6 +196,8 @@ def dashboard():
 
 
 
+
+
 #  プロフィール入力処理
 @app.route("/profile_input", methods=["GET", "POST"])
 def profile_input():
@@ -202,7 +205,8 @@ def profile_input():
         return redirect(url_for('login'))
 
     if request.method == 'POST':
-        name = request.form.get("name")
+        last_name = request.form.get("last_name")
+        first_name = request.form.get("first_name")
         age = request.form.get("age")
         location = request.form.get("location")
         occupation = request.form.get("occupation")
@@ -210,17 +214,50 @@ def profile_input():
         certifications = request.form.get("certifications")
         bio = request.form.get("bio")
 
+        # ローマ字イニシャルを生成
+        def generate_initial(last_name, first_name):
+            if not last_name or not first_name:
+                return ""
+            
+            # インスタンスの作成
+            kakasi_instance = kakasi()
+            # pykakasiを使用してローマ字変換
+            kakasi_instance.setMode('J', 'a')  # 漢字→ローマ字
+            kakasi_instance.setMode('H', 'a')  # ひらがな→ローマ字
+            kakasi_instance.setMode('K', 'a')  # カタカナ→ローマ字
+            kakasi_instance.setMode("r", "Hepburn")  # ヘボン式（例: し = shi）
+
+
+            converter = kakasi_instance.getConverter()
+
+
+            # 苗字と名前をローマ字に変換
+            last_name_romaji = converter.do(last_name).strip()
+            first_name_romaji = converter.do(first_name).strip()
+            
+            # 最初の文字を取得
+            last_initial = last_name_romaji[0].upper() if last_name_romaji else ""
+            first_initial = first_name_romaji[0].upper() if first_name_romaji else ""
+            
+            return f"{last_initial}{first_initial}"
+
+        initial = generate_initial(last_name, first_name)
+        full_name = f"{last_name} {first_name}"
+
         # supabaseのtableにデータを追加
         try:
             result = supabase.table("profile").upsert({
                 "user_id": session['user_id'],  # ユーザーID
-                "name": name,
+                "last_name": last_name,
+                "first_name": first_name,
+                "name": full_name,  # フルネームも保存
                 "age": age,
                 "location": location,
                 "occupation": occupation,
                 "education": education,
                 "certifications": certifications,
                 "bio": bio,
+                "initial": initial,  # イニシャルを追加
             }, on_conflict=["user_id"]).execute()
 
             # レスポンスのステータスコードを確認
@@ -425,84 +462,287 @@ def create_pdf():
     y = height - 50
 
     # ========== 紺色の背景ブロック ==========
-    block_width = 180
-    block_height = 220
+    block_width = 200
+    block_height = 300
     p.setFillColor(navy)
     p.rect(0, height - block_height, block_width, block_height, fill=True, stroke=0)
 
     # ========== 画像挿入 ==========
     try:
         image_path = "./static/images/tom_2.png"
-        p.drawImage(image_path, 40, height - 100, width=90, height=50, mask='auto')
+        p.drawImage(image_path, 50, height - 120, width=100, height=60, mask='auto')
     except Exception as e:
         print("画像読み込みエラー:", e)
 
     # ========== タイトル（ブロック内に） ==========
     p.setFillColorRGB(1, 1, 1)  # 白文字
-    p.setFont("IPAexGothic", 16)
-    p.drawString(40, height - 120, "スキルシート")
+    p.setFont("IPAexGothic", 20)
+    p.drawString(50, height - 180, "スキルシート")
 
     # ========== テキストを黒に戻す ==========
     p.setFillColor(black)
 
     # プロフィール表示位置（ブロックの右端より右側）
-    profile_x = block_width + 10  # 210
-    profile_y = height - 50  # 紺ブロックの少し下あたりから開始
+    profile_x = block_width + 30
+    profile_y = height - 50
 
+    # プロフィール情報の表示
+    p.setFont("IPAexGothic", 16)
+    p.drawString(profile_x, profile_y, f"イニシャル: {profile.get('initial', '')}")
     p.setFont("IPAexGothic", 12)
-    p.drawString(profile_x, profile_y, f"氏名: {profile.get('name', '')}")
-    p.drawString(profile_x, profile_y - 18, f"年齢: {profile.get('age', '')}")
-    p.drawString(profile_x, profile_y - 36, f"職業: {profile.get('occupation', '')}")
+    p.drawString(profile_x, profile_y - 25, f"年齢: {profile.get('age', '')}")
+    p.drawString(profile_x, profile_y - 45, f"職業: {profile.get('occupation', '')}")
+    if profile.get('location'):
+        p.drawString(profile_x, profile_y - 65, f"所在地: {profile.get('location', '')}")
+    if profile.get('education'):
+        p.drawString(profile_x, profile_y - 85, f"学歴: {profile.get('education', '')}")
+    if profile.get('certifications'):
+        p.drawString(profile_x, profile_y - 105, f"資格: {profile.get('certifications', '')}")
+    if profile.get('bio'):
+        p.drawString(profile_x, profile_y - 125, f"自己紹介: {profile.get('bio', '')}")
 
-    # スキル一覧描画開始Y座標はプロフィールのさらに下あたりに設定
-    y = profile_y - 180
+    # スキル一覧描画開始Y座標（紺色ブロックの下から開始）
+    y = height - block_height - 50
 
     # ========== スキル ==========
-    p.setFont("IPAexGothic", 12)
-    p.drawString(100, y, "■ スキル一覧")
-    y -= 30
-    for skill, level in skillsheet.items():
-        if skill != "user_id" and level:
-            p.drawString(120, y, f"{skill.replace('_', ' ').title()}: {level}")
-            y -= 15
-            if y < 100:
-                p.showPage()
-                y = height - 50
+    p.setFillColor(navy)
+    p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)  # 下線のみ
+    p.setFillColor(black)
+    
+    p.setFont("IPAexGothic", 14)
+    p.drawString(60, y, "■ スキル一覧")
+    y -= 40
+
+    # スキルをカテゴリごとに分類
+    categories = {
+        "プログラミング言語": ["python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba"],
+        "フレームワーク": ["ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react"],
+        "開発環境": ["vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio"],
+        "OS": ["windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos", "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix"],
+        "クラウド": ["aws", "azure", "gcp", "oci"],
+        "セキュリティ製品": ["splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam", "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti", "f5_big_ip", "paloalto_prisma", "tenable"],
+        "ネットワーク環境": ["cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series", "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch", "media_converter", "wireless_network", "other_network_devices"],
+        "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes"],
+        "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai"],
+        "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix"],
+        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds"],
+        "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce"],
+        "言語": ["english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian"],
+        "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark"]
+    }
+
+    # スキルを2列に分けて表示
+    col1_x = 60
+    col2_x = width / 2 + 20
+    col1_y = y
+    col2_y = y
+    current_col = 1
+
+    def draw_level_bar(x, y, level):
+        # バーの基本設定
+        bar_height = 1  # バーをより細く
+        bar_width = 100  # バーの幅
+        bar_y = y - 1  # テキストの中央にバーを配置
+        
+        # レベルに応じたバーの長さを計算
+        if level == 'S':
+            fill_width = bar_width
+        elif level == 'A':
+            fill_width = bar_width * 0.8
+        elif level == 'B':
+            fill_width = bar_width * 0.6
+        elif level == 'C':
+            fill_width = bar_width * 0.4
+        elif level == 'D':
+            fill_width = 0
+        else:
+            fill_width = 0
+
+        # レベル表示（バーの下）
+        p.setFont("IPAexGothic", 8)
+        # 各レベルの位置を計算
+        level_positions = {
+            'S': x + bar_width,
+            'A': x + bar_width * 0.8,
+            'B': x + bar_width * 0.6,
+            'C': x + bar_width * 0.4,
+            'D': x + bar_width * 0.2
+        }
+        
+        # 背景のバー（薄いグレー）
+        p.setFillColorRGB(0.9, 0.9, 0.9)
+        p.rect(x, bar_y, bar_width, bar_height, fill=True, stroke=0)
+        
+        # 塗りつぶしバー（紺色）
+        p.setFillColor(navy)
+        p.rect(x, bar_y, fill_width, bar_height, fill=True, stroke=0)
+        
+        # 現在のレベル位置に●を表示
+        current_pos = level_positions.get(level, 0)
+        p.setFillColor(navy)
+        p.circle(current_pos, bar_y + bar_height/2, 2, fill=True)  # 半径2の円
+        
+        # レベル表示（バーの下）
+        for lvl, pos in level_positions.items():
+            p.setFillColor(black)
+            p.drawString(pos - 3, y - 10, lvl)  # バーの下に表示
+        
+        # テキストを黒に戻す
+        p.setFillColor(black)
+        p.setFont("IPAexGothic", 12)  # フォントサイズを元に戻す
+
+    # カテゴリごとにスキルを表示
+    for category, skills in categories.items():
+        # カテゴリ内のスキルをフィルタリング（Dレベルのスキルを除外）
+        category_skills = {skill: skillsheet.get(skill) for skill in skills if skillsheet.get(skill) and skillsheet.get(skill) != 'D'}
+        
+        if category_skills:  # カテゴリにスキルがある場合のみ表示
+            # カテゴリタイトルを表示
+            if current_col == 1:
                 p.setFont("IPAexGothic", 12)
+                p.setFillColor(navy)
+                p.drawString(col1_x, col1_y, f"【{category}】")
+                p.setFillColor(black)
+                col1_y -= 25
+            else:
+                p.setFont("IPAexGothic", 12)
+                p.setFillColor(navy)
+                p.drawString(col2_x, col2_y, f"【{category}】")
+                p.setFillColor(black)
+                col2_y -= 25
 
-    y -= 20
-    p.drawString(100, y, "■ プロジェクト一覧")
-    y -= 20
+            # カテゴリ内のスキルを表示
+            for skill, level in category_skills.items():
+                if current_col == 1:
+                    # スキル名を表示
+                    p.setFont("IPAexGothic", 10)
+                    p.drawString(col1_x, col1_y, f"・{skill.replace('_', ' ').title()}")
+                    # レベルバーを描画
+                    draw_level_bar(col1_x + 150, col1_y, level)
+                    col1_y -= 20
+                    if col1_y < 100:
+                        current_col = 2
+                        col1_y = y
+                else:
+                    # スキル名を表示
+                    p.setFont("IPAexGothic", 10)
+                    p.drawString(col2_x, col2_y, f"・{skill.replace('_', ' ').title()}")
+                    # レベルバーを描画
+                    draw_level_bar(col2_x + 150, col2_y, level)
+                    col2_y -= 20
+                    if col2_y < 100:
+                        p.showPage()
+                        y = height - 50
+                        col1_y = y
+                        col2_y = y
+                        current_col = 1
+                        p.setFont("IPAexGothic", 12)
 
-    for project in projects:
-        if y < 120:
+            # カテゴリ間の余白
+            if current_col == 1:
+                col1_y -= 10
+            else:
+                col2_y -= 10
+
+    # プロジェクト一覧は必ず新しいページに表示
+    p.showPage()
+    y = height - 50
+
+    # ヘッダーの装飾
+    p.setFillColor(navy)
+    p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)
+    p.setFillColor(black)
+    
+    p.setFont("IPAexGothic", 16)
+    p.drawString(60, y, "■ プロジェクト履歴")
+    y -= 50
+
+    # プロジェクトを時系列順にソート
+    sorted_projects = sorted(projects, key=lambda x: x.get('start_at', ''), reverse=True)
+
+    # タイムラインの中心線
+    timeline_x = 120
+    timeline_width = 0.3  # 線をさらに細く
+
+    # 最初のプロジェクトの位置を保存
+    first_project_y = y
+
+    for project in sorted_projects:
+        if y < 150:
             p.showPage()
             y = height - 50
             p.setFont("IPAexGothic", 12)
+            # 新しいページでもタイムラインを継続
+            p.setFillColor(navy)
+            p.rect(timeline_x - timeline_width/2, y + 5, timeline_width, height - y - 5, fill=True)
+            p.setFillColor(black)
 
-        p.drawString(120, y, f"・{project.get('name', '')}")
-        y -= 15
+        # タイムラインの点（線の丸）
+        p.setFillColor(navy)
+        p.circle(timeline_x, y, 4, fill=False, stroke=True)  # 外側の円（線のみ）
+        p.setFillColor(black)
 
-        if project.get('description'):
-            p.drawString(140, y, f"{project['description']}")
-            y -= 15
+        # 日付表示（タイムラインの左側）
+        if project.get('start_at'):
+            p.setFont("IPAexGothic", 9)
+            date_text = project.get('start_at', '')
+            # 日付の幅を計算
+            date_width = p.stringWidth(date_text, "IPAexGothic", 9)
+            p.drawString(timeline_x - date_width - 15, y + 3, date_text)
+
+        # プロジェクト名（タイムラインの右側）
+        p.setFont("IPAexGothic", 12)
+        p.setFillColor(navy)
+        p.drawString(timeline_x + 20, y + 5, f"・{project.get('name', '')}")
+        p.setFillColor(black)
+
+        # プロジェクト詳細（タイムラインの右側）
+        detail_x = timeline_x + 20
+        detail_y = y - 15
+
+        # 詳細情報の装飾
+        p.setFillColor(navy)
+        p.rect(detail_x - 5, detail_y - 2, width - detail_x - 50, 1, fill=True, stroke=0)
+        p.setFillColor(black)
 
         if project.get('start_at') or project.get('end_at'):
-            p.drawString(140, y, f"期間: {project.get('start_at', '')} ～ {project.get('end_at', '')}")
-            y -= 15
+            p.setFont("IPAexGothic", 10)
+            p.drawString(detail_x, detail_y, f"期間: {project.get('start_at', '')} ～ {project.get('end_at', '')}")
+            detail_y -= 20
 
         if project.get('role'):
-            p.drawString(140, y, f"役割: {project['role']}")
-            y -= 15
+            p.setFont("IPAexGothic", 10)
+            p.drawString(detail_x, detail_y, f"役割: {project['role']}")
+            detail_y -= 20
+
+        if project.get('description'):
+            p.setFont("IPAexGothic", 10)
+            p.drawString(detail_x, detail_y, f"説明: {project['description']}")
+            detail_y -= 20
 
         if project.get('technologies'):
+            p.setFont("IPAexGothic", 10)
             techs = ", ".join(project['technologies']) if isinstance(project['technologies'], list) else str(project['technologies'])
-            p.drawString(140, y, f"技術: {techs}")
-            y -= 25
+            p.drawString(detail_x, detail_y, f"技術: {techs}")
+            detail_y -= 20
 
-    # フッター日付
+        # 次のプロジェクトとの間隔
+        y = detail_y - 40  # 間隔を広げる
+
+    # 最後のプロジェクトの位置を保存
+    last_project_y = y + 30
+
+    # タイムラインの線を描画（最初から最後まで）
+    p.setFillColor(navy)
+    p.rect(timeline_x - timeline_width/2, last_project_y, timeline_width, first_project_y - last_project_y, fill=True)
+    p.setFillColor(black)
+
+    # フッター
+    p.setFillColor(navy)
+    p.rect(0, 30, width, 1, fill=True, stroke=0)
+    p.setFillColor(black)
     p.setFont("IPAexGothic", 9)
-    p.drawString(100, 30, f"作成日: {datetime.now().strftime('%Y/%m/%d')}")
+    p.drawString(50, 20, f"作成日: {datetime.now().strftime('%Y/%m/%d')}")
 
     p.showPage()
     p.save()
@@ -510,7 +750,7 @@ def create_pdf():
 
     return make_response(buffer.read(), {
         'Content-Type': 'application/pdf',
-        'Content-Disposition': 'inline; filename=skillsheet.pdf'
+        'Content-Disposition': f'inline; filename={profile.get("initial", "skillsheet")}.pdf'
     })
 
 

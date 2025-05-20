@@ -1,6 +1,7 @@
-body{
+body {
   margin: 0;
   padding: 0;
+  margin-top: 80px; /* ヘッダー高さ分だけ下げる */
 }
 
 /* ヘッダー全体の設定 */
@@ -13,11 +14,15 @@ body{
   align-items: center;
   padding: 0.5rem 1rem;
   width: 100%;
-  position: relative;
+  position: fixed; /* 固定ヘッダー */
+  top: 0;
+  left: 0;
+  z-index: 1000; /* 前面に表示 */
+  border-bottom: none;
+  height: 80px; /* 高さを明示しておくと安定 */
 }
 
-
-
+/* 白の半透明オーバーレイ */
 .header::before {
   content: '';
   position: absolute;
@@ -25,33 +30,34 @@ body{
   right: 0;
   bottom: 0;
   left: 0;
-  background-color: rgba(255, 255, 255, 0.7); /* 白の半透明でロゴとテキストを見やすくする */
+  background-color: rgba(255, 255, 255, 0.7);
   z-index: 0;
 }
 
-/* ヘッダー画像の設定 */
+/* ヘッダー内画像（ロゴ） */
 .header img {
-  height: 80px;
+  height: 60px; /* 小さめロゴ */
   width: auto;
   object-fit: contain;
   display: block;
   margin: auto;
   position: relative;
-
 }
 
+/* ナビゲーションリンク */
 .nav-links {
-    display: flex;
-    justify-content: center;
-    gap: 2rem; /* リンクの間隔を空ける */
-    margin: auto;
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .nav-links a {
-    color: #2d3748; /* リンクの色 */
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    position: relative;
-    font-weight: bold;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  color: #2d3748;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
 }

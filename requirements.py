@@ -6,6 +6,8 @@ import os
 from supabase import create_client, Client
 from dotenv import load_dotenv
 import requests
+from pykakasi import kakasi
+
 
 # pdf作成に必要なライブラリ
 from io import BytesIO

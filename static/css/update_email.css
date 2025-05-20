@@ -1,14 +1,13 @@
-/* ベーススタイル */
 body {
   margin: 0;
-  padding: 0;
   font-family: 'Inter', Arial, sans-serif;
-  font-size: 16px;
-  background-color: #f7fafc;
-  color: #333;
+  background-color: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
 }
 
-/* ヘッダー */
 .header {
   position: relative;
   height: 160px;
@@ -29,7 +28,7 @@ body {
 
 .header-logo {
   position: absolute;
-  top: 40px;
+  top: 50px;
   left: 50%;
   transform: translateX(-50%);
   height: 80px;
@@ -39,40 +38,43 @@ body {
   margin-right: auto;
 }
 
-/* 枠付きフォーム */
-.login-container {
+.update-container {
   background: white;
   width: 400px;
+  max-width: 90%;
   margin: 40px auto;
   padding: 30px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
-  text-align: center;
-}
-
-.login-container h1 {
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-.login-container label {
-  display: block;
-  margin-top: 10px;
-  font-weight: bold;
+  box-sizing: border-box;
   text-align: left;
 }
 
-.login-container input {
+.update-container h2 {
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.update-container label {
+  display: block;
+  margin-top: 10px;
+  color: #333;
+  font-weight: 600;
+}
+
+.update-container input[type="email"] {
   width: 100%;
   padding: 10px;
   margin-top: 5px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  font-size: 16px;
+  box-sizing: border-box;
+  font-size: 1rem;
 }
 
-.login-container button {
+.update-container button {
   width: 100%;
   background-color: #3498db;
   color: white;
@@ -81,28 +83,23 @@ body {
   border-radius: 4px;
   cursor: pointer;
   font-weight: bold;
-  font-size: 16px;
+  font-size: 1rem;
+  transition: background-color 0.3s ease;
 }
 
-.login-container button:hover {
+.update-container button:hover {
   background-color: #2980b9;
 }
 
-.login-container a {
-  display: block;
-  text-align: center;
-  margin-top: 10px;
-  color: #6c63ff;
-  text-decoration: none;
-  font-size: 14px;
+.update-container p {
+  margin-top: 15px;
+  font-size: 0.9rem;
 }
 
-.login-container a:hover {
-  text-decoration: underline;
+.update-container p.success {
+  color: green;
 }
 
-.login-container .error {
+.update-container p.error {
   color: red;
-  margin-top: 10px;
-  font-size: 14px; 
-  }
+}

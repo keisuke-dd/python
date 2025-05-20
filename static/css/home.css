@@ -14,7 +14,7 @@ body {
 
 .header-bg {
   width: 100%;
-  height: 160px;
+  height: 150px;
   object-fit: cover;
   opacity: 0.25;
   position: absolute;
@@ -25,7 +25,7 @@ body {
 
 .header-logo {
   position: absolute;
-  top: 50px;
+  top: 40px;
   left: 50%;
   transform: translateX(-50%);
   height: 80px;

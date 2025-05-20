@@ -1,9 +1,18 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>メールアドレス更新</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>メールアドレス更新</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/update_email.css') }}" />
 </head>
 <body>
+    <div class="header">
+    <img src="{{ url_for('static', filename='images/tom_1.png') }}" class="header-bg" alt="背景画像">
+    <img src="{{ url_for('static', filename='images/tom_2.png') }}" class="header-logo" alt="ロゴ">
+  </div>
+
+  <div class="update-container">
     <h2>メールアドレスの更新</h2>
     {% if success %}
         <p style="color: green;">{{ success }}</p>
