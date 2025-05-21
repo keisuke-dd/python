@@ -12,15 +12,37 @@
     <body class="background-image">
         
         {% include "header.html" %}
+            
 
         <div class="container">
+
+                
             <h1>スキルシート入力フォーム</h1>
+
+                
+    <nav>
+        <ul>
+            <li><a href="#プログラミング言語">プログラミング言語</a></li>
+            <li><a href="#フレームワーク">フレームワーク</a></li>
+            <li><a href="#開発環境">開発環境</a></li>
+            <li><a href="#OS">OS</a></li>
+            <li><a href="#クラウド">クラウド</a></li>
+            <li><a href="#セキュリティ製品">セキュリティ製品</a></li>
+            <li><a href="#ネットワーク環境">ネットワーク環境</a></li>
+            <li><a href="#仮想基盤">仮想基盤</a></li>
+            <li><a href="#AI">AI</a></li>
+            <li><a href="#サーバーソフトウェア">サーバーソフトウェア</a></li>
+            <li><a href="#データベース">データベース</a></li>
+            <li><a href="#ツール類">ツール類</a></li>
+            <li><a href="#言語">言語</a></li>
+            <li><a href="#セキュリティ調査ツール">セキュリティ調査ツール</a></li>
+    </nav>
 
             {% if error %}<p class="error-message">{{ error }}</p>{% endif %}
 
             <form method="POST" action="/skillsheet_input">
                 {% for category_name, fields in categories.items() %}
-                <section class="section">
+                <section class="section" id="{{ category_name.replace(' ', '_').replace('・', '_') }}">
                     <h2 class="section-title">{{ category_name }}</h2>
                     <div class="language-select-group">
                         {% for field in fields %}

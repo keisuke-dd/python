@@ -8,30 +8,50 @@ body {
   align-items: center;
 }
 
-/* コンテナ中央寄せ */
-.container {
-  background-color: white;
-  margin-top: 2rem;
-  padding: 2.5rem;
-  border-radius: 12px;
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
-  max-width: 600px;
-  width: 90%;
+/* ヘッダー */
+.header {
+  width: 100%;
+  background-color: #fff;
+  border-bottom: 4px solid #4299e1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem 0;
 }
 
-/* 見出し */
-h1 {
+.header img {
+  max-width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  display: block;
+}
+
+
+.container {
+  background-color: white;             
+  margin-top: 2rem;
+  padding: 2rem;
+  border-radius: 12px;                 
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
+  max-width: 600px;
+  width: 100%;
+  text-align: left;
+}
+
+
+.container h1 {
   color: #2d3748;
   margin-bottom: 1rem;
+  text-align: center;
 }
 
-/* 説明文 */
-p {
+.container p {
   color: #4a5568;
   margin-bottom: 2rem;
+  text-align: center;
 }
 
-/* ラベルと入力フィールド */
+/* フォーム内容 */
 form {
   display: flex;
   flex-direction: column;
@@ -47,9 +67,10 @@ input,
 textarea {
   padding: 0.75rem;
   border: 1px solid #cbd5e0;
-  border-radius: 6px;
+  border-radius: 4px;
   font-size: 1rem;
   background-color: #fff;
+  width: 100%;
 }
 
 textarea {
@@ -58,32 +79,33 @@ textarea {
 
 /* ボタン */
 button {
-  padding: 0.75rem 1.5rem;
+  padding: 0.75rem;
   background-color: #4299e1;
   color: white;
   font-weight: 600;
   border: none;
-  border-radius: 6px;
+  border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  align-self: flex-start;
 }
 
 button:hover {
   background-color: #3182ce;
 }
 
-/* エラー表示 */
-div.error {
+/* エラーメッセージ */
+.error-message {
   color: red;
   margin-bottom: 1rem;
   font-weight: bold;
+  text-align: center;
 }
 
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
   .container {
     padding: 1.5rem;
+    width: 90%;
   }
 
   body {

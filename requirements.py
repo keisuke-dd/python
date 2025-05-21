@@ -15,6 +15,7 @@ from reportlab.pdfgen import canvas
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.colors import purple, white, black, red, green, blue, yellow, navy
+from reportlab.lib.colors import Color, HexColor
 from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4

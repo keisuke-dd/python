@@ -7,6 +7,8 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+# カスタムカラーの定義
+navy = HexColor("#3B0997")  # 紺色を16進数カラーコードで定義
 
 # Supabaseクライアントの作成
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
@@ -462,22 +464,22 @@ def create_pdf():
     y = height - 50
 
     # ========== 紺色の背景ブロック ==========
-    block_width = 200
-    block_height = 300
+    block_width = 180
+    block_height = 250
     p.setFillColor(navy)
     p.rect(0, height - block_height, block_width, block_height, fill=True, stroke=0)
 
     # ========== 画像挿入 ==========
     try:
-        image_path = "./static/images/tom_2.png"
-        p.drawImage(image_path, 50, height - 120, width=100, height=60, mask='auto')
+        image_path = "./static/images/tom_3.png"
+        p.drawImage(image_path, 30, height - 120, width=120, height=60, mask='auto')
     except Exception as e:
         print("画像読み込みエラー:", e)
 
     # ========== タイトル（ブロック内に） ==========
     p.setFillColorRGB(1, 1, 1)  # 白文字
-    p.setFont("IPAexGothic", 20)
-    p.drawString(50, height - 180, "スキルシート")
+    p.setFont("IPAexGothic", 12)
+    p.drawString(35, height - 160, "TECHNICAL SHEET")
 
     # ========== テキストを黒に戻す ==========
     p.setFillColor(black)
@@ -488,7 +490,7 @@ def create_pdf():
 
     # プロフィール情報の表示
     p.setFont("IPAexGothic", 16)
-    p.drawString(profile_x, profile_y, f"イニシャル: {profile.get('initial', '')}")
+    p.drawString(profile_x, profile_y, f"氏名：{profile.get('initial', '')}")
     p.setFont("IPAexGothic", 12)
     p.drawString(profile_x, profile_y - 25, f"年齢: {profile.get('age', '')}")
     p.drawString(profile_x, profile_y - 45, f"職業: {profile.get('occupation', '')}")
@@ -512,6 +514,28 @@ def create_pdf():
     p.setFont("IPAexGothic", 14)
     p.drawString(60, y, "■ スキル一覧")
     y -= 40
+
+     # スキルレベルの判断基準を追加
+    p.setFont("IPAexGothic", 12)
+    p.setFillColor(navy)
+    p.drawString(60, y, "【スキルレベルの判断基準】")
+    p.setFillColor(black)
+    y -= 25
+
+    criteria = [
+        "S: 専門家レベル - その分野のエキスパートとして、複雑な問題解決や指導が可能",
+        "A: 上級レベル - 実務経験が豊富で、独力でプロジェクトを遂行可能",
+        "B: 中級レベル - 基本的な実務経験があり、チーム内で活躍可能",
+        "C: 初級レベル - 基礎知識があり、サポート業務が可能",
+        "D: 学習中 - 現在学習中のスキル"
+    ]
+
+    for criterion in criteria:
+        p.setFont("IPAexGothic", 10)
+        p.drawString(70, y, criterion)
+        y -= 20
+
+    y -= 20  # スキル一覧との間隔を確保
 
     # スキルをカテゴリごとに分類
     categories = {
@@ -541,7 +565,7 @@ def create_pdf():
     def draw_level_bar(x, y, level):
         # バーの基本設定
         bar_height = 1  # バーをより細く
-        bar_width = 100  # バーの幅
+        bar_width = 80  # バーの幅
         bar_y = y - 1  # テキストの中央にバーを配置
         
         # レベルに応じたバーの長さを計算
@@ -618,7 +642,7 @@ def create_pdf():
                     p.setFont("IPAexGothic", 10)
                     p.drawString(col1_x, col1_y, f"・{skill.replace('_', ' ').title()}")
                     # レベルバーを描画
-                    draw_level_bar(col1_x + 150, col1_y, level)
+                    draw_level_bar(col1_x + 100, col1_y, level)
                     col1_y -= 20
                     if col1_y < 100:
                         current_col = 2
@@ -628,7 +652,7 @@ def create_pdf():
                     p.setFont("IPAexGothic", 10)
                     p.drawString(col2_x, col2_y, f"・{skill.replace('_', ' ').title()}")
                     # レベルバーを描画
-                    draw_level_bar(col2_x + 150, col2_y, level)
+                    draw_level_bar(col2_x + 100, col2_y, level)
                     col2_y -= 20
                     if col2_y < 100:
                         p.showPage()
@@ -664,23 +688,36 @@ def create_pdf():
     timeline_x = 120
     timeline_width = 0.3  # 線をさらに細く
 
-    # 最初のプロジェクトの位置を保存
-    first_project_y = y
+    # 前のプロジェクトの位置を記録
+    prev_y = y
 
-    for project in sorted_projects:
+    for i, project in enumerate(sorted_projects):
         if y < 150:
+            # 現在のページの最後まで線を引く
+            p.setFillColor(navy)
+            p.rect(timeline_x - timeline_width/2, prev_y, timeline_width, y - prev_y, fill=True)
+            p.setFillColor(black)
+            
+            # 新しいページを開始
             p.showPage()
             y = height - 50
             p.setFont("IPAexGothic", 12)
-            # 新しいページでもタイムラインを継続
+            
+            # 新しいページの開始位置から線を引く
             p.setFillColor(navy)
-            p.rect(timeline_x - timeline_width/2, y + 5, timeline_width, height - y - 5, fill=True)
+            p.rect(timeline_x - timeline_width/2, y, timeline_width, 1, fill=True)
             p.setFillColor(black)
 
         # タイムラインの点（線の丸）
         p.setFillColor(navy)
         p.circle(timeline_x, y, 4, fill=False, stroke=True)  # 外側の円（線のみ）
         p.setFillColor(black)
+
+        # 前のプロジェクトとの間の線を引く（最後のプロジェクト以外）
+        if i > 0 and i < len(sorted_projects) - 1:
+            p.setFillColor(navy)
+            p.rect(timeline_x - timeline_width/2, prev_y, timeline_width, y - prev_y, fill=True)
+            p.setFillColor(black)
 
         # 日付表示（タイムラインの左側）
         if project.get('start_at'):
@@ -727,15 +764,8 @@ def create_pdf():
             detail_y -= 20
 
         # 次のプロジェクトとの間隔
+        prev_y = y
         y = detail_y - 40  # 間隔を広げる
-
-    # 最後のプロジェクトの位置を保存
-    last_project_y = y + 30
-
-    # タイムラインの線を描画（最初から最後まで）
-    p.setFillColor(navy)
-    p.rect(timeline_x - timeline_width/2, last_project_y, timeline_width, first_project_y - last_project_y, fill=True)
-    p.setFillColor(black)
 
     # フッター
     p.setFillColor(navy)
@@ -748,11 +778,27 @@ def create_pdf():
     p.save()
     buffer.seek(0)
 
-    return make_response(buffer.read(), {
-        'Content-Type': 'application/pdf',
-        'Content-Disposition': f'inline; filename={profile.get("initial", "skillsheet")}.pdf'
-    })
+    # PDFを一時ファイルとして保存
+    temp_pdf_path = f"static/temp/{user_id}_skillsheet.pdf"
+    os.makedirs("static/temp", exist_ok=True)
+    with open(temp_pdf_path, "wb") as f:
+        f.write(buffer.getvalue())
 
+    return redirect(url_for('view_pdf'))
+
+# PDF表示ページ
+@app.route("/view_pdf")
+def view_pdf():
+    if 'user_id' not in session:
+        return redirect(url_for("login"))
+    
+    user_id = session['user_id']
+    pdf_path = f"static/temp/{user_id}_skillsheet.pdf"
+    
+    if not os.path.exists(pdf_path):
+        return redirect(url_for('create_pdf'))
+    
+    return render_template("view_pdf.html", pdf_path=pdf_path)
 
 #  ログアウト処理
 @app.route("/logout")

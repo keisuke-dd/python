@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <title>PDF表示ページ</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/create_pdf.css') }}">
+    </head>
+    <body>
+        {% include "header.html" %}
+
+        <div class="container">
+        
+            <h1>スキルシートPDFの作成</h1>
+            <p>下のボタンをクリックすると、PDFが生成されます。</p>
+            
+        </div>
+
+        <div class="container mt-4">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h4 class="mb-0">スキルシートPDF</h4>
+                            <div>
+                                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">ダッシュボードに戻る</a>
+                                <a href="{{ url_for('create_pdf') }}" class="btn btn-primary">PDFを再生成</a>
+                                <a href="/{{ pdf_path }}" class="btn btn-success" download>PDFをダウンロード</a>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="pdf-container">
+                                <iframe src="/{{ pdf_path }}" width="70%" height="800px" frameborder="0"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- cssいずれ移行 -->
+            <style>
+            .pdf-container {
+                background-color: #f8f9fa;
+                padding: 20px;
+                border-radius: 5px;
+            }
+
+            iframe {
+                box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            }
+            </style>
+
+
+    </body>
+</html>
+
