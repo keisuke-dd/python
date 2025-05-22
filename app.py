@@ -200,6 +200,7 @@ def dashboard():
 
 
 
+
 #  プロフィール入力処理
 @app.route("/profile_input", methods=["GET", "POST"])
 def profile_input():
@@ -209,6 +210,8 @@ def profile_input():
     if request.method == 'POST':
         last_name = request.form.get("last_name")
         first_name = request.form.get("first_name")
+        last_name_kana = request.form.get("last_name_kana")
+        first_name_kana = request.form.get("first_name_kana")
         age = request.form.get("age")
         location = request.form.get("location")
         occupation = request.form.get("occupation")
@@ -216,34 +219,40 @@ def profile_input():
         certifications = request.form.get("certifications")
         bio = request.form.get("bio")
 
-        # ローマ字イニシャルを生成
-        def generate_initial(last_name, first_name):
-            if not last_name or not first_name:
+        # カタカナからローマ字のイニシャルを生成
+        def generate_initial(last_name_kana, first_name_kana):
+            if not last_name_kana or not first_name_kana:
                 return ""
             
-            # インスタンスの作成
-            kakasi_instance = kakasi()
-            # pykakasiを使用してローマ字変換
-            kakasi_instance.setMode('J', 'a')  # 漢字→ローマ字
-            kakasi_instance.setMode('H', 'a')  # ひらがな→ローマ字
-            kakasi_instance.setMode('K', 'a')  # カタカナ→ローマ字
-            kakasi_instance.setMode("r", "Hepburn")  # ヘボン式（例: し = shi）
-
-
-            converter = kakasi_instance.getConverter()
-
-
-            # 苗字と名前をローマ字に変換
-            last_name_romaji = converter.do(last_name).strip()
-            first_name_romaji = converter.do(first_name).strip()
+            # カタカナからローマ字への変換マップ
+            kana_to_romaji = {
+                'ア': 'A', 'イ': 'I', 'ウ': 'U', 'エ': 'E', 'オ': 'O',
+                'カ': 'K', 'キ': 'K', 'ク': 'K', 'ケ': 'K', 'コ': 'K',
+                'サ': 'S', 'シ': 'S', 'ス': 'S', 'セ': 'S', 'ソ': 'S',
+                'タ': 'T', 'チ': 'C', 'ツ': 'T', 'テ': 'T', 'ト': 'T',
+                'ナ': 'N', 'ニ': 'N', 'ヌ': 'N', 'ネ': 'N', 'ノ': 'N',
+                'ハ': 'H', 'ヒ': 'H', 'フ': 'F', 'ヘ': 'H', 'ホ': 'H',
+                'マ': 'M', 'ミ': 'M', 'ム': 'M', 'メ': 'M', 'モ': 'M',
+                'ヤ': 'Y', 'ユ': 'Y', 'ヨ': 'Y',
+                'ラ': 'R', 'リ': 'R', 'ル': 'R', 'レ': 'R', 'ロ': 'R',
+                'ワ': 'W', 'ヲ': 'O',
+                'ン': 'N',
+                'ガ': 'G', 'ギ': 'G', 'グ': 'G', 'ゲ': 'G', 'ゴ': 'G',
+                'ザ': 'Z', 'ジ': 'J', 'ズ': 'Z', 'ゼ': 'Z', 'ゾ': 'Z',
+                'ダ': 'D', 'ヂ': 'J', 'ヅ': 'Z', 'デ': 'D', 'ド': 'D',
+                'バ': 'B', 'ビ': 'B', 'ブ': 'B', 'ベ': 'B', 'ボ': 'B',
+                'パ': 'P', 'ピ': 'P', 'プ': 'P', 'ペ': 'P', 'ポ': 'P',
+                'ャ': 'Y', 'ュ': 'Y', 'ョ': 'Y',
+                'ッ': '',  # 小さい「ッ」は次の文字の子音を重ねる
+            }
             
-            # 最初の文字を取得
-            last_initial = last_name_romaji[0].upper() if last_name_romaji else ""
-            first_initial = first_name_romaji[0].upper() if first_name_romaji else ""
+            # カタカナの最初の文字を取得してローマ字に変換
+            last_initial = kana_to_romaji.get(last_name_kana[0], last_name_kana[0])
+            first_initial = kana_to_romaji.get(first_name_kana[0], first_name_kana[0])
             
             return f"{last_initial}{first_initial}"
 
-        initial = generate_initial(last_name, first_name)
+        initial = generate_initial(last_name_kana, first_name_kana)
         full_name = f"{last_name} {first_name}"
 
         # supabaseのtableにデータを追加
@@ -252,6 +261,8 @@ def profile_input():
                 "user_id": session['user_id'],  # ユーザーID
                 "last_name": last_name,
                 "first_name": first_name,
+                "last_name_kana": last_name_kana,
+                "first_name_kana": first_name_kana,
                 "name": full_name,  # フルネームも保存
                 "age": age,
                 "location": location,
@@ -429,7 +440,7 @@ def project_edit(project_id):
 
     else:
         try:
-            response = supabase.table("project").select("*").eq("id", project_id).eq("user_id", session['user_id']).single().execute()
+            response = supabase.table("project").select("*").eq("id", project_id).eq("user_id", session['user_id']).maybe_single().execute()
             project = response.data
 
             if not project:
@@ -451,11 +462,44 @@ def create_pdf():
     user_id = session.get('user_id')
     if not user_id:
         return redirect(url_for("login"))
-    
-    # Supabaseからデータ取得
-    profile = supabase.table("profile").select("*").eq("user_id", user_id).single().execute().data
-    skillsheet = supabase.table("skillsheet").select("*").eq("user_id", user_id).single().execute().data
-    projects = supabase.table("project").select("*").eq("user_id", user_id).execute().data
+
+    # ─── ① from_() を使ってクエリし、execute() の結果を必ず受け取る ───
+    profile_res = (
+        supabase
+        .from_("profile")
+        .select("*")
+        .eq("user_id", user_id)
+        .maybe_single()
+        .execute()
+    )
+    skillsheet_res = (
+        supabase
+        .from_("skillsheet")
+        .select("*")
+        .eq("user_id", user_id)
+        .maybe_single()
+        .execute()
+    )
+    projects_res = (
+        supabase
+        .from_("project")
+        .select("*")
+        .eq("user_id", user_id)
+        .execute()
+    )
+
+    # ─── ② execute() が None を返していないか、error がないかチェック ───
+    for name, res in [("profile", profile_res), ("skillsheet", skillsheet_res), ("projects", projects_res)]:
+        if res is None:
+            abort(500, f"Supabase client returned None for {name}")
+        if hasattr(res, "error") and res.error:
+            app.logger.error(f"{name} query error: {res.error}")
+            abort(500, f"Database error when fetching {name}")
+
+    # ─── ③ data 部分が None の場合は「レコードなし」として扱う ───
+    profile = profile_res.data or {}
+    skillsheet = skillsheet_res.data or {}
+    projects = projects_res.data or []
 
     # PDF初期化
     buffer = BytesIO()
@@ -555,18 +599,20 @@ def create_pdf():
         "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark"]
     }
 
-    # スキルを2列に分けて表示
-    col1_x = 60
-    col2_x = width / 2 + 20
+    # スキルを3列に分けて表示
+    col1_x = 50  # 左端の余白を60から50に調整
+    col2_x = width / 3 + 10  # 列間の余白を調整
+    col3_x = (width / 3) * 2 + 10  # 列間の余白を調整
     col1_y = y
     col2_y = y
+    col3_y = y
     current_col = 1
 
     def draw_level_bar(x, y, level):
         # バーの基本設定
-        bar_height = 1  # バーをより細く
-        bar_width = 80  # バーの幅
-        bar_y = y - 1  # テキストの中央にバーを配置
+        bar_height = 1.2  # バーの高さを0.8から1.2に増加
+        bar_width = 70  # バーの幅を50から70に増加
+        bar_y = y - 1
         
         # レベルに応じたバーの長さを計算
         if level == 'S':
@@ -604,16 +650,16 @@ def create_pdf():
         # 現在のレベル位置に●を表示
         current_pos = level_positions.get(level, 0)
         p.setFillColor(navy)
-        p.circle(current_pos, bar_y + bar_height/2, 2, fill=True)  # 半径2の円
+        p.circle(current_pos, bar_y + bar_height/2, 2.5, fill=True)  # 円のサイズを2から2.5に増加
         
         # レベル表示（バーの下）
         for lvl, pos in level_positions.items():
             p.setFillColor(black)
-            p.drawString(pos - 3, y - 10, lvl)  # バーの下に表示
+            p.drawString(pos - 3, y - 10, lvl)
         
         # テキストを黒に戻す
         p.setFillColor(black)
-        p.setFont("IPAexGothic", 12)  # フォントサイズを元に戻す
+        p.setFont("IPAexGothic", 4)
 
     # カテゴリごとにスキルを表示
     for category, skills in categories.items():
@@ -627,46 +673,65 @@ def create_pdf():
                 p.setFillColor(navy)
                 p.drawString(col1_x, col1_y, f"【{category}】")
                 p.setFillColor(black)
-                col1_y -= 25
-            else:
+                col1_y -= 30
+            elif current_col == 2:
                 p.setFont("IPAexGothic", 12)
                 p.setFillColor(navy)
                 p.drawString(col2_x, col2_y, f"【{category}】")
                 p.setFillColor(black)
-                col2_y -= 25
+                col2_y -= 30
+            else:
+                p.setFont("IPAexGothic", 12)
+                p.setFillColor(navy)
+                p.drawString(col3_x, col3_y, f"【{category}】")
+                p.setFillColor(black)
+                col3_y -= 30
 
             # カテゴリ内のスキルを表示
             for skill, level in category_skills.items():
                 if current_col == 1:
-                    # スキル名を表示
-                    p.setFont("IPAexGothic", 10)
-                    p.drawString(col1_x, col1_y, f"・{skill.replace('_', ' ').title()}")
+                    # スキル名を表示（線の上に小さく）
+                    p.setFont("IPAexGothic", 7)
+                    p.drawString(col1_x, col1_y + 8, f"・{skill.replace('_', ' ').title()}")
                     # レベルバーを描画
-                    draw_level_bar(col1_x + 100, col1_y, level)
-                    col1_y -= 20
+                    draw_level_bar(col1_x + 60, col1_y, level)  # 左に移動（90から60に）
+                    col1_y -= 25
                     if col1_y < 100:
                         current_col = 2
                         col1_y = y
-                else:
-                    # スキル名を表示
-                    p.setFont("IPAexGothic", 10)
-                    p.drawString(col2_x, col2_y, f"・{skill.replace('_', ' ').title()}")
+                elif current_col == 2:
+                    # スキル名を表示（線の上に小さく）
+                    p.setFont("IPAexGothic", 7)
+                    p.drawString(col2_x, col2_y + 8, f"・{skill.replace('_', ' ').title()}")
                     # レベルバーを描画
-                    draw_level_bar(col2_x + 100, col2_y, level)
-                    col2_y -= 20
+                    draw_level_bar(col2_x + 60, col2_y, level)  # 左に移動（90から60に）
+                    col2_y -= 25
                     if col2_y < 100:
+                        current_col = 3
+                        col2_y = y
+                else:
+                    # スキル名を表示（線の上に小さく）
+                    p.setFont("IPAexGothic", 7)
+                    p.drawString(col3_x, col3_y + 8, f"・{skill.replace('_', ' ').title()}")
+                    # レベルバーを描画
+                    draw_level_bar(col3_x + 60, col3_y, level)  # 左に移動（90から60に）
+                    col3_y -= 25
+                    if col3_y < 100:
                         p.showPage()
                         y = height - 50
                         col1_y = y
                         col2_y = y
+                        col3_y = y
                         current_col = 1
-                        p.setFont("IPAexGothic", 12)
+                        p.setFont("IPAexGothic", 4)
 
             # カテゴリ間の余白
             if current_col == 1:
-                col1_y -= 10
+                col1_y -= 10  # カテゴリ間の余白を増加
+            elif current_col == 2:
+                col2_y -= 10  # カテゴリ間の余白を増加
             else:
-                col2_y -= 10
+                col3_y -= 10  # カテゴリ間の余白を増加
 
     # プロジェクト一覧は必ず新しいページに表示
     p.showPage()
@@ -797,8 +862,43 @@ def view_pdf():
     
     if not os.path.exists(pdf_path):
         return redirect(url_for('create_pdf'))
-    
-    return render_template("view_pdf.html", pdf_path=pdf_path)
+
+    # ← ここで profile, skillsheet, projects を再フェッチ
+    profile_res = (
+        supabase
+        .from_("profile")
+        .select("*")
+        .eq("user_id", user_id)
+        .maybe_single()
+        .execute()
+    )
+    skillsheet_res = (
+        supabase
+        .from_("skillsheet")
+        .select("*")
+        .eq("user_id", user_id)
+        .maybe_single()
+        .execute()
+    )
+    projects_res = (
+        supabase
+        .from_("project")
+        .select("*")
+        .eq("user_id", user_id)
+        .execute()
+    )
+
+    profile   = profile_res.data   or {}
+    skillsheet = skillsheet_res.data or {}
+    projects  = projects_res.data  or []
+
+    return render_template(
+        "view_pdf.html",
+        pdf_path=pdf_path,
+        profile=profile,
+        skillsheet=skillsheet,
+        projects=projects
+    )
 
 #  ログアウト処理
 @app.route("/logout")

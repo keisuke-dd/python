@@ -21,17 +21,33 @@
       {% endif %}
 
       <form method="POST" action="/profile_input">
+
+
+          <div class="name-group">
+            <div class="form-group">
+              <label for="last_name_kana">姓（カタカナ）</label>
+              <input type="text" id="last_name_kana" name="last_name_kana" required value="{{ profile.last_name_kana or '' }}">
+            </div>
+
+            <div class="form-group">
+              <label for="first_name_kana">名（カタカナ）</label>
+              <input type="text" id="first_name_kana" name="first_name_kana" required value="{{ profile.first_name_kana or '' }}">
+            </div>
+          </div>
+
+          <div class="name-group">
+          <div class="form-group">
+            <label for="last_name">姓</label>
+            <input type="text" id="last_name" name="last_name" required value="{{ profile.last_name or '' }}">
+          </div>
+
+          <div class="form-group">
+            <label for="first_name">名</label>
+            <input type="text" id="first_name" name="first_name" required value="{{ profile.first_name or '' }}">
+          </div>
+        </div>
+
         
-
-        <div class="form-group">
-          <label for="last_name">姓</label>
-          <input type="text" id="last_name" name="last_name" required value="{{ profile.last_name or '' }}">
-        </div>
-
-        <div class="form-group">
-          <label for="first_name">名</label>
-          <input type="text" id="first_name" name="first_name" required value="{{ profile.first_name or '' }}">
-        </div>
 
         {% if profile.initial %}
         <div class="initial-display">

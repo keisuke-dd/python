@@ -1,5 +1,5 @@
 # FlaskとSupabaseのインポート
-from flask import Flask, make_response, render_template, request, redirect, url_for, session
+from flask import Flask, make_response, render_template, request, abort, flash, redirect, url_for, session
 from flask_session import Session
 from datetime import datetime, timezone, timedelta
 import os

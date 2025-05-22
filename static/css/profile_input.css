@@ -31,7 +31,7 @@ body {
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 統一された影 */
-    max-width: 600px;
+    max-width: 800px;
     width: 100%;
     text-align: left;
 }
@@ -149,6 +149,14 @@ button:hover {
 }
 
 .form-group {
+    margin-bottom: 1rem;
+}
+
+/* 姓と名の横並び用スタイル */
+.name-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
     margin-bottom: 1rem;
 }
 
