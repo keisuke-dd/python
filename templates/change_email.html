@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>メールアドレスの変更</title>
+</head>
+<body>
+    <h1>メールアドレスの変更</h1>
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+    {% if success %}
+        <p style="color:green;">{{ success }}</p>
+    {% endif %}
+    <form method="post">
+        <label>新しいメールアドレス:</label>
+        <input type="email" name="new_email" required>
+        <input type="hidden" name="access_token" value="{{ access_token }}">
+        <button type="submit">変更</button>
+    </form>
+</body>
+</html>

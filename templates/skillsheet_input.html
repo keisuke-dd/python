@@ -6,43 +6,73 @@
         <title>スキルシート入力</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/skillsheet_input.css') }}">
-        
+        <style>
+            .section {
+                display: none;
+            }
+            .section.active {
+                display: block;
+            }
+            .navigation-buttons {
+                display: flex;
+                justify-content: space-between;
+                margin: 20px 0;
+            }
+            .nav-button {
+                padding: 10px 20px;
+                background-color: #3B0997;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+            .nav-button:hover {
+                background-color: #2a0770;
+            }
+            .nav-button:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+            .progress-bar {
+                width: 100%;
+                height: 4px;
+                background-color: #e2e8f0;
+                margin: 20px 0;
+                border-radius: 2px;
+            }
+            .progress {
+                height: 100%;
+                background-color: #3B0997;
+                border-radius: 2px;
+                transition: width 0.3s ease;
+            }
+        </style>
     </head>
 
     <body class="background-image">
-        
         {% include "header.html" %}
-            
 
         <div class="container">
-
-                
             <h1>スキルシート入力フォーム</h1>
 
-                
-    <nav>
-        <ul>
-            <li><a href="#プログラミング言語">プログラミング言語</a></li>
-            <li><a href="#フレームワーク">フレームワーク</a></li>
-            <li><a href="#開発環境">開発環境</a></li>
-            <li><a href="#OS">OS</a></li>
-            <li><a href="#クラウド">クラウド</a></li>
-            <li><a href="#セキュリティ製品">セキュリティ製品</a></li>
-            <li><a href="#ネットワーク環境">ネットワーク環境</a></li>
-            <li><a href="#仮想基盤">仮想基盤</a></li>
-            <li><a href="#AI">AI</a></li>
-            <li><a href="#サーバーソフトウェア">サーバーソフトウェア</a></li>
-            <li><a href="#データベース">データベース</a></li>
-            <li><a href="#ツール類">ツール類</a></li>
-            <li><a href="#言語">言語</a></li>
-            <li><a href="#セキュリティ調査ツール">セキュリティ調査ツール</a></li>
-    </nav>
+            <div class="progress-bar">
+                <div class="progress" id="progressBar"></div>
+            </div>
+
+            <nav>
+                <ul>
+                    {% for category in categories.keys() %}
+                    <li><a href="#{{ category }}" class="nav-link" data-category="{{ category }}">{{ category }}</a></li>
+                    {% endfor %}
+                </ul>
+            </nav>
 
             {% if error %}<p class="error-message">{{ error }}</p>{% endif %}
 
             <form method="POST" action="/skillsheet_input">
                 {% for category_name, fields in categories.items() %}
-                <section class="section" id="{{ category_name.replace(' ', '_').replace('・', '_') }}">
+                <section class="section" id="{{ category_name }}" data-category="{{ category_name }}">
                     <h2 class="section-title">{{ category_name }}</h2>
                     <div class="language-select-group">
                         {% for field in fields %}
@@ -62,8 +92,77 @@
                 </section>
                 {% endfor %}
 
+                <div class="navigation-buttons">
+                    <button type="button" class="nav-button" id="prevButton" disabled>前へ</button>
+                    <button type="button" class="nav-button" id="nextButton">次へ</button>
+                </div>
+
                 <button type="submit">保存する</button>
             </form>
         </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const sections = document.querySelectorAll('.section');
+                const navLinks = document.querySelectorAll('.nav-link');
+                const prevButton = document.getElementById('prevButton');
+                const nextButton = document.getElementById('nextButton');
+                const progressBar = document.getElementById('progressBar');
+                let currentIndex = 0;
+
+                // 最初のセクションを表示
+                sections[0].classList.add('active');
+                navLinks[0].classList.add('current');
+                updateProgress();
+
+                // ナビゲーションリンクのクリックイベント
+                navLinks.forEach((link, index) => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        showSection(index);
+                    });
+                });
+
+                // 前へボタンのクリックイベント
+                prevButton.addEventListener('click', () => {
+                    if (currentIndex > 0) {
+                        showSection(currentIndex - 1);
+                    }
+                });
+
+                // 次へボタンのクリックイベント
+                nextButton.addEventListener('click', () => {
+                    if (currentIndex < sections.length - 1) {
+                        showSection(currentIndex + 1);
+                    }
+                });
+
+                function showSection(index) {
+                    // 現在のセクションを非表示
+                    sections[currentIndex].classList.remove('active');
+                    navLinks[currentIndex].classList.remove('current');
+
+                    // 新しいセクションを表示
+                    currentIndex = index;
+                    sections[currentIndex].classList.add('active');
+                    navLinks[currentIndex].classList.add('current');
+
+                    // ボタンの状態を更新
+                    prevButton.disabled = currentIndex === 0;
+                    nextButton.disabled = currentIndex === sections.length - 1;
+
+                    // プログレスバーを更新
+                    updateProgress();
+
+                    // セクションまでスクロール
+                    sections[currentIndex].scrollIntoView({ behavior: 'smooth' });
+                }
+
+                function updateProgress() {
+                    const progress = ((currentIndex + 1) / sections.length) * 100;
+                    progressBar.style.width = `${progress}%`;
+                }
+            });
+        </script>
     </body>
 </html>

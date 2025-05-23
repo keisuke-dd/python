@@ -112,19 +112,83 @@ def update_email():
     return render_template("update_email.html")
 
 
-# パスワードリセットページ
-@app.route("/reset_password", methods=["GET", "POST"])
-def reset_password():
+# パスワードリセットリクエストページ（忘れた時）
+@app.route("/password_reset_request", methods=["GET", "POST"])
+def password_reset_request():
+    message = None
     if request.method == "POST":
         email = request.form.get("email")
+        access_token = request.args.get("access_token")
         try:
-            # Supabaseにパスワードリセットリンクをリクエスト
-            supabase.auth.reset_password_for_email(email)
-            return "パスワードリセットのリンクが送信されました。"
+            response = supabase.auth.reset_password_for_email(
+                email,
+                {
+                    "redirectTo": "http://localhost:5000/password_reset_redirect"
+                }
+            )
+            print(f"パスワードリセットメール送信成功: {response}")
+            message = f"{email} にパスワードリセット用のメールを送信しました。"
         except Exception as e:
-            print(f"エラー: {e}")
-            return "送信に失敗しました。"
-    return render_template("reset_password.html")
+            print(f"パスワードリセットメール送信失敗: {e}")
+            message = "メール送信に失敗しました。メールアドレスを確認してください。"
+
+    return render_template("password_reset_request.html", message=message)
+
+
+@app.route("/password_reset_redirect")
+def password_reset_redirect():
+    # 中間ページ。JavaScriptでハッシュからクエリに変換しリダイレクトするだけ
+    return render_template("password_reset_redirect.html")
+
+
+
+@app.route("/password_reset_form", methods=["GET", "POST"])
+def password_reset_form():
+    access_token = request.args.get("access_token")
+    type_ = request.args.get("type")
+
+    if request.method == "POST":
+        new_password = request.form.get("new_password")
+        confirm_password = request.form.get("confirm_password")
+
+        if not new_password or not confirm_password:
+            return render_template("password_reset_form.html", error="すべての項目を入力してください。", access_token=access_token, type=type_)
+
+        if new_password != confirm_password:
+            return render_template("password_reset_form.html", error="パスワードが一致しません。", access_token=access_token, type=type_)
+
+        try:
+            # リカバリトークンでセッション確立
+            login_response = requests.post(
+                f"{SUPABASE_URL}/auth/v1/token?grant_type=recovery",
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Content-Type": "application/json"
+                },
+                json={"token": access_token}
+            )
+            login_response.raise_for_status()
+            tokens = login_response.json()
+            jwt = tokens["access_token"]
+
+            # JWT でパスワードを更新
+            update_response = requests.put(
+                f"{SUPABASE_URL}/auth/v1/user",
+                headers={
+                    "apikey": SUPABASE_KEY,
+                    "Authorization": f"Bearer {jwt}",
+                    "Content-Type": "application/json"
+                },
+                json={"password": new_password}
+            )
+            update_response.raise_for_status()
+
+            return redirect(url_for("login", message="パスワードが更新されました。ログインしてください。"))
+        except Exception as e:
+            print("パスワード更新失敗:", e)
+            return render_template("password_reset_form.html", error="パスワード更新に失敗しました。", access_token=access_token, type=type_)
+
+    return render_template("password_reset_form.html", access_token=access_token, type=type_)
 
 
 
@@ -212,12 +276,21 @@ def profile_input():
         first_name = request.form.get("first_name")
         last_name_kana = request.form.get("last_name_kana")
         first_name_kana = request.form.get("first_name_kana")
-        age = request.form.get("age")
+        birth_date = request.form.get("birth_date")
         location = request.form.get("location")
         occupation = request.form.get("occupation")
         education = request.form.get("education")
         certifications = request.form.get("certifications")
         bio = request.form.get("bio")
+
+        # 生年月日から年齢を計算
+        if birth_date:
+            birth_date = datetime.strptime(birth_date, '%Y-%m-%d')
+            today = datetime.now()
+            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+        else:
+            age = None
+
 
         # カタカナからローマ字のイニシャルを生成
         def generate_initial(last_name_kana, first_name_kana):
@@ -536,10 +609,9 @@ def create_pdf():
     p.setFont("IPAexGothic", 16)
     p.drawString(profile_x, profile_y, f"氏名：{profile.get('initial', '')}")
     p.setFont("IPAexGothic", 12)
-    p.drawString(profile_x, profile_y - 25, f"年齢: {profile.get('age', '')}")
-    p.drawString(profile_x, profile_y - 45, f"職業: {profile.get('occupation', '')}")
+    p.drawString(profile_x, profile_y - 25, f"年齢: {profile.get('age', '')}")  
     if profile.get('location'):
-        p.drawString(profile_x, profile_y - 65, f"所在地: {profile.get('location', '')}")
+        p.drawString(profile_x, profile_y - 65, f"最寄り駅: {profile.get('location', '')}")
     if profile.get('education'):
         p.drawString(profile_x, profile_y - 85, f"学歴: {profile.get('education', '')}")
     if profile.get('certifications'):
@@ -888,9 +960,10 @@ def view_pdf():
         .execute()
     )
 
-    profile   = profile_res.data   or {}
-    skillsheet = skillsheet_res.data or {}
-    projects  = projects_res.data  or []
+    profile    = profile_res.data    if profile_res and profile_res.data else {}
+    skillsheet = skillsheet_res.data if skillsheet_res and skillsheet_res.data else {}
+    projects   = projects_res.data   if projects_res and projects_res.data else []
+
 
     return render_template(
         "view_pdf.html",

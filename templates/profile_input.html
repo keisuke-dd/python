@@ -21,79 +21,85 @@
       {% endif %}
 
       <form method="POST" action="/profile_input">
-
-
-          <div class="name-group">
-            <div class="form-group">
-              <label for="last_name_kana">姓（カタカナ）</label>
-              <input type="text" id="last_name_kana" name="last_name_kana" required value="{{ profile.last_name_kana or '' }}">
-            </div>
-
-            <div class="form-group">
-              <label for="first_name_kana">名（カタカナ）</label>
-              <input type="text" id="first_name_kana" name="first_name_kana" required value="{{ profile.first_name_kana or '' }}">
-            </div>
-          </div>
-
-          <div class="name-group">
-          <div class="form-group">
-            <label for="last_name">姓</label>
-            <input type="text" id="last_name" name="last_name" required value="{{ profile.last_name or '' }}">
-          </div>
-
-          <div class="form-group">
-            <label for="first_name">名</label>
-            <input type="text" id="first_name" name="first_name" required value="{{ profile.first_name or '' }}">
-          </div>
-        </div>
-
         
 
-        {% if profile.initial %}
-        <div class="initial-display">
-          <span>イニシャル: {{ profile.initial }}</span>
-        </div>
-        {% endif %}
+        <div class="name-group">
+          <div class="form-group">
+            <label for="last_name_kana">姓（カタカナ）</label>
+            <input type="text" id="last_name_kana" name="last_name_kana" required value="{{ profile.last_name_kana or '' }}">
+          </div>
 
-        <div class="form-group">
-          <label for="age">年齢</label>
-          <input type="number" id="age" name="age" required value="{{ profile.age or '' }}">
+          <div class="form-group">
+            <label for="first_name_kana">名（カタカナ）</label>
+            <input type="text" id="first_name_kana" name="first_name_kana" required value="{{ profile.first_name_kana or '' }}">
+          </div>
         </div>
+        <p class="note">※カタカナで入力してください。（例：ヤマダ　タロウ）</p>
+        
 
+        <div class="name-group">
         <div class="form-group">
-          <label for="location">最寄り駅</label>
-          <input type="text" id="location" name="location" required value="{{ profile.location or '' }}">
-        </div>
-
-        <div class="form-group">
-          <label for="occupation">職種</label>
-          <input type="text" id="occupation" name="occupation" required value="{{ profile.occupation or '' }}">
-        </div>
-
-        <div class="form-group">
-          <label for="education">学歴</label>
-          <input type="text" id="education" name="education" value="{{ profile.education or '' }}">
+          <label for="last_name">姓</label>
+          <input type="text" id="last_name" name="last_name" required value="{{ profile.last_name or '' }}">
         </div>
 
         <div class="form-group">
-          <label for="certifications">資格</label>
-          <input type="text" id="certifications" name="certifications" value="{{ profile.certifications or '' }}">
+          <label for="first_name">名</label>
+          <input type="text" id="first_name" name="first_name" required value="{{ profile.first_name or '' }}">
         </div>
-
-        <div class="form-group">
-          <label for="bio">自己紹介</label>
-          <textarea id="bio" name="bio" rows="5">{{ profile.bio or '' }}</textarea>
-        </div>
-
-        <button type="submit">保存する</button>
-      </form>
+      </div>
+      <p class="note">※フルネームで入力してください。（例：山田　太郎）</p>
 
       
 
-      <div style="text-align: right;">
-        <a href="{{ url_for('dashboard') }}" class="back-button">ダッシュボードに戻る</a>
+      <!-- イニシャル -->
+      <!--{% if profile.initial %}
+      <div class="initial-display">
+        <span>イニシャル: {{ profile.initial }}</span>
       </div>
+      {% endif %}-->
+
+      <div class="form-group">
+        <label for="birth_date">生年月日</label>
+        <input type="date" id="birth_date" name="birth_date" required value="{{ profile.birth_date or '' }}">
+        
+      </div>
+
+      <div class="form-group">
+        <label for="location">最寄り駅</label>
+        <input type="text" id="location" name="location" required value="{{ profile.location or '' }}">
+        <p class="note">※路線名と駅名を入力してください（例：JR宇都宮線 新宿駅）</p>
+      </div>
+
+      
+
+      <div class="form-group">
+        <label for="education">学歴</label>
+        <input type="text" id="education" name="education" value="{{ profile.education or '' }}">
+        <p class="note">※最終学歴、学部名や学科名を入力してください。（例：〇〇大学 〇〇学部、〇〇専門学校 〇〇学科）</p>
+      </div>
+
+      <div class="form-group">
+        <label for="certifications">資格</label>
+        <input type="text" id="certifications" name="certifications" value="{{ profile.certifications or '' }}">
+        <p class="note">※保有資格を入力してください（例：基本情報技術者、応用情報技術者）</p>
+      </div>
+
+      <div class="form-group">
+        <label for="bio">自己紹介</label>
+        <textarea id="bio" name="bio" rows="5">{{ profile.bio or '' }}</textarea>
+        <p class="note">※自己PRや経歴、スキルなどを入力してください</p>
+      </div>
+
+      <button type="submit">保存する</button>
+    </form>
+
+    
+
+    <div style="text-align: right;">
+      <a href="{{ url_for('dashboard') }}" class="back-button">ダッシュボードに戻る</a>
     </div>
+  </div>
 
 </body>
 </html>
