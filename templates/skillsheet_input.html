@@ -6,6 +6,8 @@
         <title>スキルシート入力</title>
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="{{ url_for('static', filename='css/skillsheet_input.css') }}">
+
+        <!--javascripにて作成した箇所のcss-->
         <style>
             .section {
                 display: none;
@@ -48,6 +50,7 @@
                 transition: width 0.3s ease;
             }
         </style>
+
     </head>
 
     <body class="background-image">
@@ -101,6 +104,7 @@
             </form>
         </div>
 
+        <!--javascriptにてボタン作成-->
         <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const sections = document.querySelectorAll('.section');

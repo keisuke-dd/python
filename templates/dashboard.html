@@ -17,21 +17,28 @@
         
 
     
+        <!-- ログインメッセージ-->
         <h1>ダッシュボード</h1>
         <p>ログイン成功！</p>
         <p>メールアドレス: {{ user_email }}</p>
 
+
+        <!-- 未入力でのPDF作成時のエラーメッセージ -->
+        {% if error %}
+        <div class="error-message" style="color: red;" > 
+            {{ error }}
+        </div>
+        {% endif %}
+
+        <!-- プロフィール表示 -->
         
         <h3>プロフィール一覧</h3>
         <p>プロフィール情報:</p>
         <ul>
-            <li>名前: {{ profile.last_name | default("未設定") }} {{ profile.first_name | default("未設定") }}</li>
-            {% if profile.initial %}
-            <li>イニシャル: {{ profile.initial }}</li>
-            {% endif %}
+            <li>名前: {{ profile.name | default("未設定") }}</li>
             <li>年齢: {{ profile.age | default("未設定") }}{% if profile.age %}歳{% endif %}</li>
             <li>最寄り駅: {{ profile.location | default("未設定") }}</li>
-            
+            <li>職種: {{ profile.occupation | default("未設定") }}</li>
             <li>学歴: {{ profile.education | default("未設定") }}</li>
             <li>資格: {{ profile.certifications | default("未設定") }}</li>
             <li>自己紹介: {{ profile.bio | default("未設定") }}</li>
@@ -39,73 +46,41 @@
 
         <p><a href="{{ url_for('profile_input') }}">プロフィールを編集する</a></p>
 
+        <!-- スキルシート表示 -->
+
         <h3>スキルシート一覧</h3>
-        <p>スキルシート情報:</p>
-        {% if error %}
-            <p>{{ error }}</p>
-        {% endif %}
-        <table style="width:100%; border-collapse: collapse;">
-            <thead>
-                <tr>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">スキルカテゴリ</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">スキル</th>
-                    <th style="border: 1px solid #ddd; padding: 8px; text-align: left;">レベル</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% if skillsheet %}
-                    {# skillsheet_input.htmlで定義されているカテゴリリストを複製 #}
-                    {% set categories = {
-                        "プログラミング言語": ["python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba"],
-                        "フレームワーク": ["ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react"],
-                        "開発環境": ["vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio"],
-                        "OS": ["windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos", "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix"],
-                        "クラウド": ["aws", "azure", "gcp", "oci"],
-                        "セキュリティ製品": ["splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam", "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti", "f5_big_ip", "paloalto_prisma", "tenable"],
-                        "ネットワーク環境": ["cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series", "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch", "media_converter", "wireless_network", "other_network_devices"],
-                        "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes"],
-                        "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai"],
-                        "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix"],
-                        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds"],
-                        "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce"],
-                        "言語": ["english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian"],
-                        "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark"]
-                    } %}
-                    {% for category_name, fields in categories.items() %}
-                        {# カテゴリ内で値が設定されているスキルをフィルタリング #}
-                        {% set skills_in_category = [] %}
-                        {% for field in fields %}
-                            {% if skillsheet.get(field) and skillsheet.get(field) != '' %}
-                                {% set skills_in_category = skills_in_category + [(field, skillsheet.get(field))] %}
-                            {% endif %}
+            <p>スキルシート情報:</p>
+            
+            <ul>
+                {% if error %}
+                    <p>{{ error }}</p>
+                {% elif skillsheet %}
+                    <table class="skillsheet-table"> {# ここに class="skillsheet-table" を追加 #}
+                        <tr>
+                            <th>スキル</th>
+                            <th>レベル</th>
+                        </tr>
+                        {% for skill, level in skillsheet.items() %}
+                        <tr>
+                            <td>{{ skill.replace('_', ' ').title() }}</td>
+                            <td>{{ level }}</td>
+                        </tr>
                         {% endfor %}
-
-                        {# フィルタリングされたスキルがあれば表示 #}
-                        {% if skills_in_category %}
-                            {% for skill_name, skill_level in skills_in_category %}
-                            <tr>
-                                {% if loop.first %}
-                                <td rowspan="{{ skills_in_category|length }}" style="border: 1px solid #ddd; padding: 8px;">{{ category_name }}</td>
-                                {% endif %}
-                                <td style="border: 1px solid #ddd; padding: 8px;">{{ skill_name.replace('_', ' ').title() }}</td>
-                                <td style="border: 1px solid #ddd; padding: 8px;">{{ skill_level }}</td>
-                            </tr>
-                            {% endfor %}
-                        {% endif %}
-                    {% endfor %}
+                    </table>
                 {% else %}
-                    <tr>
-                        <td colspan="3" style="border: 1px solid #ddd; padding: 8px;">スキルシートが見つかりません。</td>
-                    </tr>
+                    <p>スキルシートが見つかりません。</p>
                 {% endif %}
-            </tbody>
-        </table>
-
-        
+            </ul>
 
         <p><a href="{{ url_for('skillsheet_input') }}">スキルシートを編集する</a></p>
-            
+
+        <!-- プロジェクト一覧 -->
+        <h3>プロジェクト一覧</h3>
+        <p>プロジェクト情報:</p>
+        <p>以下のボタンからプロジェクトを追加できます。</p>
+       
         <a href="{{ url_for('project_input') }}">
+        
             <button>新しいプロジェクトを作成</button>
         </a>
 
