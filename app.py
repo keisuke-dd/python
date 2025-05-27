@@ -67,49 +67,32 @@ def signup():
     return render_template("signup.html")
 
 
-#  ログインページ & ログイン処理
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-        try:
-            user = supabase.auth.sign_in_with_password({
-                "email": email,
-                "password": password
-            })
-            if user.user.email_confirmed_at:
-                # セッションにユーザーIDとメールアドレスを保存
-                session['user_id'] = user.user.id
-                session['user_email'] = user.user.email
-                print(f"ログイン成功！ユーザーID: {email}")
-                return redirect(url_for('dashboard'))
-            else:
-                return render_template("login.html", error="メールの確認が完了していません。")
-        except Exception as e:
-            print(f"ログイン失敗: {e}")
-            return render_template("login.html", error="ログインに失敗しました。")
-    return render_template("login.html")
-
-
 # emailアドレス更新ページ & 処理
 @app.route("/update_email", methods=["GET", "POST"])
 def update_email():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
+    if 'access_token' not in session:
+        return redirect(url_for("login"))
 
     if request.method == "POST":
-        new_email = request.form["new_email"]
+        new_email = request.form.get("new_email")
+
+        if not new_email:
+            return render_template("update_email.html", error="新しいメールアドレスを入力してください。")
 
         try:
-            # ユーザー情報の更新
-            user = supabase.auth.update_user({
-                "email": new_email
+            # メール変更とリダイレクトURLを指定
+            supabase.auth.session = lambda: {"access_token": session["access_token"]}
+            supabase.auth.update_user({
+                "email": new_email,
+                "options": {
+                    "redirectTo": "http://localhost:5000/login"
+                }
             })
-            return render_template("update_email.html", success="メールアドレスを更新しました。")
+
+            return render_template("update_email.html", success=f"{new_email} に確認メールを送信しました。")
         except Exception as e:
-            print(f"メールアドレスの更新失敗: {e}")
-            return render_template("update_email.html", error="メールアドレスの更新に失敗しました。")
+            print("❌ メールアドレス変更失敗:", e)
+            return render_template("update_email.html", error="リンクの送信に失敗しました。")
 
     return render_template("update_email.html")
 
