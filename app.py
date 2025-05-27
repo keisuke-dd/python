@@ -143,7 +143,6 @@ def password_reset_redirect():
     return render_template("password_reset_redirect.html")
 
 
-
 # パスワードリセットフォーム（メールからのリンクでアクセス）
 @app.route("/password_reset_form", methods=["GET", "POST"])
 def password_reset_form():
@@ -247,10 +246,6 @@ def dashboard():
         projects=projects,  # ← ここはリスト
         error=error  # エラーメッセージをテンプレートに渡す
     )
-
-
-
-
 
 
 #  プロフィール入力処理
@@ -370,10 +365,6 @@ def profile_input():
     # 取得したデータをフォームに表示
     return render_template("profile_input.html", profile=profile_data)
             
-
-
-    
-
 
 #  スキルシート作成ページ & 処理
 @app.route("/skillsheet_input", methods=["GET", "POST"])

@@ -1,4 +1,29 @@
-body{
-    margin: 0;
-    padding: 0;
+/* モバイル対応 */
+@media (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+
+  .container, .login-container, .reset-container {
+    width: 90%;
+    padding: 15px;
+  }
+
+  .header-logo {
+    height: 60px;
+  }
+}
+
+@media (max-width: 480px) {
+  html {
+    font-size: 14px;
+  }
+
+  .header {
+    height: 120px;
+  }
+
+  .header-logo {
+    height: 50px;
+  }
 }
