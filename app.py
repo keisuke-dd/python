@@ -67,6 +67,35 @@ def signup():
     return render_template("signup.html")
 
 
+#  ログインページ & ログイン処理
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+        try:
+            user = supabase.auth.sign_in_with_password({
+                "email": email,
+                "password": password
+            })
+
+            if user.user.email_confirmed_at:
+                session["access_token"] = user.session.access_token
+                session["refresh_token"] = user.session.refresh_token
+                session["user_id"] = user.user.id
+                session["user_email"] = user.user.email
+
+                print(f"ログイン成功！ユーザーID: {email}")
+                return redirect(url_for('dashboard'))
+            else:
+                return render_template("login.html", error="メールの確認が完了していません。")
+        except Exception as e:
+            print(f"ログイン失敗: {e}")
+            return render_template("login.html", error="ログインに失敗しました。")
+
+    return render_template("login.html")
+
+
 # emailアドレス更新ページ & 処理
 @app.route("/update_email", methods=["GET", "POST"])
 def update_email():
