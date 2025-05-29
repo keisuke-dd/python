@@ -12,9 +12,6 @@
         
         {% include "header.html" %}
 
-        
-          
-
         <h1>プロジェクト編集</h1>
         <p>プロジェクト情報を編集してください。</p>
         <p>プロジェクト情報:</p>
@@ -39,12 +36,9 @@
             <label>使用技術</label>
             <input type="text" name="technologies" value="{{ project.technologies }}">
 
-            
-        
-
-            {% else %}
-                <p>プロジェクトデータが見つかりません。</p>
-            {% endif %}
+        {% else %}
+            <p>プロジェクトデータが見つかりません。</p>
+        {% endif %}
 
 
             <button type="submit">更新</button>
