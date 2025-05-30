@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AI文章生成</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/ai_create.css') }}">
+</head>
+<body>
+    {% include "header.html" %}
+
+    <h1>AI文章生成</h1>
+    <form method="POST">
+        <label>プロジェクト概要を入力してください（例：Pythonでスキル管理システムを開発）</label><br>
+        <textarea name="project_summary" rows="4" cols="60"></textarea><br>
+        <input type="submit" value="生成">
+      </form>
+
+      {% if result %}
+      <div class="result-section">
+          <h2 class="result-title">AI生成結果</h2>
+          <div class="result-box">
+              {{ result }}
+          </div>
+      </div>
+  {% endif %}
+  
+</body>
+</html>

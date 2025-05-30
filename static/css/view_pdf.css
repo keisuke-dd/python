@@ -1,52 +1,32 @@
 body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif; /* または 'Inter', sans-serif; など、好みに応じて調整 */
-    background-color: #f7fafc; /* skillsheet_input.css を維持 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f7fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-.header { /* skillsheet_input.html で使用される .header クラス */
-    width: 100%;
-    background-color: #fff;
-    border-bottom: 4px solid #4299e1; /* skillsheet_input.css を維持 */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem 0;
-}
+    .header {
+      width: 100%;
+      background-color: #fff;
+      border-bottom: 4px solid #4299e1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem 0;
+    }
 
-.header img {
-    max-width: 100%;
-    max-height: 200px;
-    object-fit: contain;
-    display: block;
-}
+    .header img {
+      max-width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      display: block;
+    }
 
-    /* main-contentのスタイル */
-.main-content {
-  /* bodyにpadding-topが適用されているため、ここではトップパディングは不要 */
-  padding-left: 1rem;
-  padding-right: 1rem;
-  max-width: 1200px; /* 必要に応じて調整 */
-  margin: 2rem auto 0 auto; /* ヘッダーの下に適切なマージンをとり、中央揃え */
-  text-align: center; /* ここでテキストを中央揃えにする */
-}
 
-.main-content h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-}
-
-.main-content p {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
-}
-
-/* aタグの基本スタイル（view_pdf.css固有のものがあれば） */
-a {
+   a {
   color: #4a90e2;
   text-decoration: none;
   margin-right: 1rem;
@@ -113,9 +93,6 @@ button:hover {
     margin-right: auto;
 }
 
-/* この .pdf-viewer はiframe自体に当てられている可能性があるので、
-   もしiframeにclass="pdf-viewer"が設定されているならこれを使う
-*/
 .pdf-viewer { /* HTMLのiframeにこのクラスが指定されている場合 */
     width: 100%; /* 親要素の幅に合わせて100%に */
     height: 90vh; /* 画面の高さの90% */

@@ -8,6 +8,9 @@ from dotenv import load_dotenv
 import requests
 from pykakasi import kakasi
 
+# AI生成に必要なライブラリ
+import google.generativeai as genai
+
 
 # pdf作成に必要なライブラリ
 from io import BytesIO

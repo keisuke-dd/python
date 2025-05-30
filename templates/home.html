@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ホームページ</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/home.css') }}">
-</head>
-<body>
-  <div class="header">
-    <img src="{{ url_for('static', filename='images/tom_1.png') }}" class="header-bg" alt="背景画像">
-    <img src="{{ url_for('static', filename='images/tom_2.png') }}" class="header-logo" alt="ロゴ">
-  </div>
+<!-- templates/home.html -->
+{% extends "base.html" %}
 
-  <div class="home-container">
+{% block title %}ホームページ{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
     <h1>Welcome to Home Page</h1>
-    <a href="{{ url_for('signup') }}">サインアップ</a> | 
-    <a href="{{ url_for('login') }}">ログイン</a>
-    <a href="{{ url_for('password_reset_request') }}">パスワードリセット</a> | 
-    <a href="{{ url_for('update_email') }}">メールアドレス変更</a>
-</body>
-</html>
+
+    <a href="{{ url_for('signup') }}" class="button-link">サインアップ</a>
+    <a href="{{ url_for('login') }}" class="button-link">ログイン</a>
+    <a href="{{ url_for('password_reset_request') }}" class="button-link">パスワードリセット</a>
+    <a href="{{ url_for('update_email') }}" class="button-link">メールアドレス変更</a>
+  </div>
+{% endblock %}

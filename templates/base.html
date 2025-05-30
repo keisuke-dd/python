@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{% block title %}My App{% endblock %}</title>
+
+  <!-- 共通CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+
+  <!-- ページ固有CSS差し込み用 -->
+  {% block extra_css %}{% endblock %}
+</head>
+<body>
+  <header class="header">
+    <img src="{{ url_for('static', filename='images/tom_1.png') }}" alt="背景画像" class="header-bg" />
+    <img src="{{ url_for('static', filename='images/tom_2.png') }}" alt="ロゴ" class="header-logo" />
+  </header>
+
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="footer">
+  </footer>
+
+  <!-- 共通JS差し込み用 -->
+  {% block extra_js %}{% endblock %}
+</body>
+</html>

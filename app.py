@@ -1007,6 +1007,43 @@ def view_pdf():
         projects=projects
     )
 
+
+
+# AI生成ページ
+@app.route("/ai_create", methods=["GET", "POST"])
+def ai_create():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    result = ""
+    if request.method == "POST":
+        summary = request.form.get("project_summary", "")
+        prompt = f"""
+                あなたは日本の天才ITプロジェクトマネージャーです。
+                あなたのチームにほしいと思えるような人材を探しています。
+                以下のプロジェクト概要はパートナー企業のエンジニアから提出された過去の参画プロジェクトに関する説明文章です。
+                あなたが上席から承認を得るために、提出された文章を適切な形に整える必要があります。
+                この文脈を推測し、正式な職務経歴書に記載できるような簡潔かつ具体的な説明文を箇条書きで作成してください。
+                - セキュリティへの配慮や対策があればそれを強調してください。
+                - 技術要素（使用言語やフレームワークなど）が読み取れる場合は含めてください。
+                - 成果や貢献が推測できる場合は補足してください。
+                - 適度な文章量で作成してください。
+
+                【プロジェクト概要】
+                {summary}
+                """
+
+        try:
+            model = genai.GenerativeModel(model_name="gemini-2.0-flash-lite")
+            response = model.generate_content(prompt)
+            result = response.text
+        except Exception as e:
+            print("Gemini生成失敗:", e)
+            result = "エラーが発生しました。"
+
+    return render_template("ai_create.html", result=result)
+
+
 #  ログアウト処理
 @app.route("/logout")
 def logout():
