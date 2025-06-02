@@ -49,81 +49,95 @@
 
         <!-- スキルシート表示 -->
 
-        <h3>スキルシート一覧</h3>
-            <p>スキルシート情報:</p>
-            
-            <ul>
-                {% if error %}
-                    <p>{{ error }}</p>
-                {% elif skillsheet %}
-                    <table class="skillsheet-table"> {# ここに class="skillsheet-table" を追加 #}
-                        <tr>
-                            <th>スキル</th>
-                            <th>レベル</th>
-                        </tr>
-                        {% for skill, level in skillsheet.items() %}
-                        <tr>
-                            <td>{{ skill.replace('_', ' ').title() }}</td>
-                            <td>{{ level }}</td>
-                        </tr>
-                        {% endfor %}
-                    </table>
-                {% else %}
-                    <p>スキルシートが見つかりません。</p>
-                {% endif %}
-            </ul>
+<h3>スキルシート一覧</h3>
+<p>スキルシート情報:</p>
 
-        <p><a href="{{ url_for('skillsheet_input') }}">スキルシートを編集する</a></p>
+{% if error %}
+    <p>{{ error }}</p>
+{% elif skillsheet %}
+    <div class="accordion-category-item">
+        <button class="accordion-category-header">
+            <span>スキルシートを表示/非表示</span>
+            <span class="accordion-icon">▼</span>
+        </button>
+        <div class="accordion-category-content">
+            <table class="skillsheet-table">
+                <tr>
+                    <th>スキル</th>
+                    <th>レベル</th>
+                </tr>
+                {% for skill, level in skillsheet.items() %}
+                    {% if level and level != 'D' %} {# D=学習中 の場合は除外（不要なら外してOK） #}
+                    <tr>
+                        <td>{{ skill.replace('_', ' ').title() }}</td>
+                        <td>{{ level }}</td>
+                    </tr>
+                    {% endif %}
+                {% endfor %}
+            </table>
+        </div>
+    </div>
+{% else %}
+    <p>スキルシートが見つかりません。</p>
+{% endif %}
+
+<p><a href="{{ url_for('skillsheet_input') }}">スキルシートを編集する</a></p>
 
         <!-- プロジェクト一覧 -->
+        
         <h3>プロジェクト一覧</h3>
         <p>プロジェクト情報:</p>
         <p>以下のボタンからプロジェクトを追加できます。</p>
        
         <a href="{{ url_for('project_input') }}">
-        
             <button>新しいプロジェクトを作成</button>
         </a>
 
         {% if projects %}
-            <table >
-                <thead>
-                    <tr>
-                        <th>プロジェクト名</th>
-                        <th>説明</th>
-                        <th>期間</th>
-                        <th>役割</th>
-                        <th>使用技術</th>
-                        <th>操作</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for project in projects %}
-                    <tr>
-                        <td>{{ project.name }}</td>
-                        <td>{{ project.description }}</td>
-                        <td>
-                            {{ project.start_at[:10] if project.start_at }} ～ {{ project.end_at[:10] if project.end_at }}
-                        </td>
-                        <td>{{ project.role }}</td>
-                        <td>{{ project.technologies }}</td>
-                        <td>
-                            <a href="{{ url_for('project_edit', project_id=project.id) }}">編集</a> |
-                             <form action="{{ url_for('project_delete', project_id=project.id) }}" method="post" style="display:inline;">
-                                <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+            <div class="table-responsive">
+                <table class="project-table">
+                    <thead>
+                        <tr>
+                            <th>プロジェクト名</th>
+                            <th>説明</th>
+                            <th>期間</th>
+                            <th>役割</th>
+                            <th>使用技術</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project in projects %}
+                        <tr>
+                            <td>{{ project.name }}</td>
+                            <td>{{ project.description }}</td>
+                            <td>
+                                {{ project.start_at[:10] if project.start_at }} ～ {{ project.end_at[:10] if project.end_at }}
+                            </td>
+                            <td>{{ project.role }}</td>
+                            <td>{{ project.technologies }}</td>
+                            <td>
+                            <form action="{{ url_for('project_edit', project_id=project.id) }}" method="get" style="display:inline;">
+                            <button type="submit">編集</button>
                             </form>
-                        </td>
+                              |
+                            <form action="{{ url_for('project_delete', project_id=project.id) }}" method="post" style="display:inline;">
+                            <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+                            </form>
+                            </td>
 
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         {% else %}
             <p>プロジェクトがありません。</p>
         {% endif %}
 
-    
+    </div>
 
-
+    {# アコーディオンとハンバーガーメニューのJavaScriptをここで読み込む #}
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script> 
 </body>
 </html>

@@ -7,10 +7,12 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 import requests
 from pykakasi import kakasi
+import logging
+
 
 # AI生成に必要なライブラリ
 import google.generativeai as genai
-
+import markdown
 
 # pdf作成に必要なライブラリ
 from io import BytesIO

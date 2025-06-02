@@ -11,7 +11,6 @@ SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 navy = HexColor("#3B0997")  # 紺色を16進数カラーコードで定義
 
 # Supabaseクライアントの作成
-
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # 1回だけ日本語フォントを登録（フォント名は自由に決められます）
@@ -25,7 +24,7 @@ app.secret_key = "your_secret_key"  # セッション用のシークレットキ
 
 #  セッションの設定
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=15)  # 15分操作なしで自動ログアウト
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # 15分操作なしで自動ログアウト
 
 
 # セッションの永続化を有効にする
@@ -41,6 +40,17 @@ def before_request():
 app.config['SESSION_COOKIE_SECURE'] = False     # HTTPSのみでクッキー送信 localhost環境のため一時出来にflase
 app.config['SESSION_COOKIE_HTTPONLY'] = True   # JavaScriptからのアクセスを防止
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # クロスサイトのCSRF防止
+
+
+# ログ出力
+logging.basicConfig(
+    filename='log.txt',
+    level=logging.DEBUG,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    encoding='utf-8'
+)
+#コンソールにログを表示
+app.logger.addHandler(logging.StreamHandler())
 
 
 #  ホームページ (ログインかサインアップを選ぶ画面)
@@ -378,11 +388,36 @@ def profile_input():
     return render_template("profile_input.html", profile=profile_data)
             
 
+
+
+
+
+
+
 #  スキルシート作成ページ & 処理
 @app.route("/skillsheet_input", methods=["GET", "POST"])
 def skillsheet_input():
     if 'user_id' not in session:
         return redirect(url_for('login'))
+    
+
+    # Flaskセッションにユーザーがいる前提
+    user_id = session.get("user_id")
+
+    if not user_id:
+        return redirect(url_for("login"))
+
+    # データ送信
+    data = {
+        "user_id": user_id,
+        "python": request.form.get("python"),
+        
+    }
+
+    result = supabase.table("skillsheet").upsert(data).execute()
+    print(result)
+
+
 
     # スキルシートのカテゴリとスキルを定義
     categories = {
@@ -1019,29 +1054,29 @@ def ai_create():
     if request.method == "POST":
         summary = request.form.get("project_summary", "")
         prompt = f"""
-                あなたは日本の天才ITプロジェクトマネージャーです。
-                あなたのチームにほしいと思えるような人材を探しています。
-                以下のプロジェクト概要はパートナー企業のエンジニアから提出された過去の参画プロジェクトに関する説明文章です。
-                あなたが上席から承認を得るために、提出された文章を適切な形に整える必要があります。
-                この文脈を推測し、正式な職務経歴書に記載できるような簡潔かつ具体的な説明文を箇条書きで作成してください。
-                - セキュリティへの配慮や対策があればそれを強調してください。
-                - 技術要素（使用言語やフレームワークなど）が読み取れる場合は含めてください。
-                - 成果や貢献が推測できる場合は補足してください。
-                - 適度な文章量で作成してください。
+                # 役割
+                あなたはSES事業の営業担当です。
 
-                【プロジェクト概要】
+                # 目的
+                自社のエンジニアをお客様先に推薦したいと考えています。
+
+                # 指示
+                以下の文章はエンジニアの過去の参画プロジェクトの内容です。  
+                これをもとに、以下の条件を満たすように**箇条書き**で簡潔かつ具体的にまとめてください：
+                
+                # プロジェクト概要
                 {summary}
                 """
-
         try:
             model = genai.GenerativeModel(model_name="gemini-2.0-flash-lite")
             response = model.generate_content(prompt)
-            result = response.text
+            result = markdown.markdown(response.text)
         except Exception as e:
             print("Gemini生成失敗:", e)
-            result = "エラーが発生しました。"
+            result = "<p style='color:red'>エラーが発生しました。</p>"
 
     return render_template("ai_create.html", result=result)
+    
 
 
 #  ログアウト処理

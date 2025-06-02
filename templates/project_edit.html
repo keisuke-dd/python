@@ -12,38 +12,37 @@
         
         {% include "header.html" %}
 
-        <h1>プロジェクト編集</h1>
-        <p>プロジェクト情報を編集してください。</p>
-        <p>プロジェクト情報:</p>
+<div class="container">
+    <h1>プロジェクト編集</h1>
+    <p>プロジェクト情報を編集してください。</p>
+    <p>プロジェクト情報:</p>
 
-        {% if project %}
-        <form method="POST">
-            <label>プロジェクト名</label>
-            <input type="text" name="name" value="{{ project.name }}" required>
+    {% if project %}
+    <form method="POST">
+        <label>プロジェクト名</label>
+        <input type="text" name="name" value="{{ project.name }}" required>
 
-            <label>説明</label>
-            <textarea name="description">{{ project.description }}</textarea>
+        <label>説明</label>
+        <textarea name="description">{{ project.description }}</textarea>
 
-            <label>開始日</label>
-            <input type="date" name="start_at" value="{{ project.start_at[:10] if project.start_at }}">
+        <label>開始日</label>
+        <input type="date" name="start_at" value="{{ project.start_at[:10] if project.start_at }}">
 
-            <label>終了日</label>
-            <input type="date" name="end_at" value="{{ project.end_at[:10] if project.end_at }}">
+        <label>終了日</label>
+        <input type="date" name="end_at" value="{{ project.end_at[:10] if project.end_at }}">
 
-            <label>役割</label>
-            <input type="text" name="role" value="{{ project.role }}">
+        <label>役割</label>
+        <input type="text" name="role" value="{{ project.role }}">
 
-            <label>使用技術</label>
-            <input type="text" name="technologies" value="{{ project.technologies }}">
+        <label>使用技術</label>
+        <input type="text" name="technologies" value="{{ project.technologies }}">
 
-        {% else %}
-            <p>プロジェクトデータが見つかりません。</p>
-        {% endif %}
-
-
-            <button type="submit">更新</button>
-        </form>
-
+        <button type="submit">更新</button>
+    </form>
+    {% else %}
+        <p>プロジェクトデータが見つかりません。</p>
+    {% endif %}
+</div>
 
     </body>
 </html>
