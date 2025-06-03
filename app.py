@@ -42,15 +42,30 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True   # JavaScriptからのアクセス
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # クロスサイトのCSRF防止
 
 
-# ログ出力
-logging.basicConfig(
-    filename='log.txt',
-    level=logging.DEBUG,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    encoding='utf-8'
-)
-#コンソールにログを表示
-app.logger.addHandler(logging.StreamHandler())
+# ログフォーマット共通
+formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+
+# INFOレベル用ファイルハンドラー（info.txt）
+info_handler = logging.FileHandler('info.txt', encoding='utf-8')
+info_handler.setLevel(logging.INFO)
+info_handler.addFilter(lambda record: record.levelno == logging.INFO)  # INFOレベルだけ
+info_handler.setFormatter(formatter)
+
+# WARNING以上のファイルハンドラー（error.txt）
+warning_handler = logging.FileHandler('error.txt', encoding='utf-8')
+warning_handler.setLevel(logging.WARNING)  # WARNING以上（WARNING, ERROR, CRITICAL）
+warning_handler.setFormatter(formatter)
+
+# コンソール出力（任意）
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+console_handler.setFormatter(formatter)
+
+# ハンドラーを Flask の logger に追加
+app.logger.setLevel(logging.DEBUG)
+app.logger.addHandler(info_handler)
+app.logger.addHandler(warning_handler)
+app.logger.addHandler(console_handler)
 
 
 #  ホームページ (ログインかサインアップを選ぶ画面)

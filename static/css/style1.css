@@ -101,28 +101,62 @@ body {
   text-decoration: underline;
 }
 
-
+/* 下線が伸びる、背景が透明で紫の文字のボタンのスタイル */
 .button-link {
   display: block;
   width: 200px;
   margin: 10px auto;
   padding: 10px 20px;
-  background-color: #3498db;
-  color: white; /* ← ここを白に変更 */
+  background-color: transparent; /* 背景色を透明にする */
+  color: #6c63ff; /* 文字色を紫に変更 */
   font-size: 16px;
   font-weight: bold;
   text-align: center;
-  text-decoration: none;
-  border-radius: 4px;
-  transition: background-color 0.3s;
+  text-decoration: none; /* デフォルトの下線を削除 */
+  border-radius: 4px; /* 必要であれば角丸を維持 */
+  transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* ホバー時の色と枠線の変化もスムーズにする */
+  position: relative; /* 擬似要素の配置に必要 */
+  overflow: hidden; /* 伸びる線が境界内に収まるようにする */
+  border: 1px solid #6c63ff; /* 白い枠線を追加してボタンの領域を示す */
 }
 
 .button-link:hover {
-  background-color: #2980b9;
+  background-color: rgba(108, 99, 255, 0.1); /* ホバー時にわずかに背景を紫にする（任意） */
+  color: #6c63ff; /* ホバー時も文字色を紫に維持 */
+  border-color: #6c63ff; /* ホバー時も枠線を紫に維持 */
 }
 
 .button-link:visited {
-  color: white;
+  color: #6c63ff; /* 訪問済みリンクも文字色を紫に維持 */
+}
+
+/* 薄いグレーの初期線 */
+.button-link::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px; /* 線の太さ */
+  background-color: #ccc; /* 薄いグレーの色 */
+  z-index: 1;
+}
+
+/* ホバー時の実線 */
+.button-link::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0; /* 幅が0から始まる */
+  height: 2px; /* 線の太さ */
+  background-color: #6c63ff; /* 伸びる線の色（紫） */
+  transition: width 0.3s ease-out; /* 幅の動きのアニメーション */
+  z-index: 2; /* グレーの線の上に表示されるようにする */
+}
+
+.button-link:hover::after {
+  width: 100%; /* ホバー時に全幅に広がる */
 }
 
 .error {
@@ -130,7 +164,6 @@ body {
   margin-top: 10px;
   font-size: 14px;
 }
-
 
 .message {
   color: green;

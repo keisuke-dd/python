@@ -1,92 +1,74 @@
 body {
-    margin: 0;
-    padding: 0;
-    font-family: Arial, sans-serif;
-    background-color: #f7fafc;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f7fafc;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-.header {
-    width: 100%;
-    background-color: #fff;
-    border-bottom: 4px solid #4299e1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 1rem 0;
-}
+    .header {
+      width: 100%;
+      background-color: #fff;
+      border-bottom: 4px solid #4299e1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1rem 0;
+    }
 
-.header img {
-    max-width: 100%;
-    max-height: 200px;
-    object-fit: contain;
-    display: block;
-}
+    .header img {
+      max-width: 100%;
+      max-height: 200px;
+      object-fit: contain;
+      display: block;
+    }
 
-.container {
-    background-color: white;
-    margin-top: 2rem;
-    padding: 2rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
-    width: 100%;
-    text-align: left;
-}
+    .container {
+      background-color: white;
+      margin-top: 2rem;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      max-width: 800px;
+      width: 100%;
+      text-align: left;
+    }
 
-form { 
-    display: flex; 
-    flex-direction: column; 
-    gap: 1rem; 
-}
-input, textarea { 
-    padding: 0.75rem; 
-    border: 1px solid #ccc; 
-    border-radius: 4px; 
-}
-button { 
-    padding: 0.75rem; 
-    background-color: #4299e1; 
-    color: white; 
-    border: none; 
-    border-radius: 4px; 
-    cursor: pointer; 
-}
-button:hover { 
-    background-color: #3182ce; 
-}
+    form { display: flex; flex-direction: column; gap: 1rem; }
+    input, textarea { padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; }
+    button { padding: 0.75rem; background-color: #4299e1; color: white; border: none; border-radius: 4px; cursor: pointer; }
+    button:hover { background-color: #3182ce; }
 
-/* アコーディオンの基本スタイル */
-.skillsheet-accordion {
+    /* スキルシートテーブルのスタイル */
+.skillsheet-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1.5rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.5rem; /* テーブルの下に余白を追加 */
 }
 
-.project-table th,
-.skillsheet-accordion {
-    border: 1px solid #e2e8f0;
+.skillsheet-table th,
+.skillsheet-table td {
+    border: 1px solid #e2e8f0; /* 薄いグレーのボーダー */
     padding: 0.75rem;
     text-align: left;
-    vertical-align: top;
+    vertical-align: top; /* セルの内容が上揃えになるように */
 }
 
-.skillsheet-accordion {
-    background-color: #edf2f7;
+.skillsheet-table th {
+    background-color: #edf2f7; /* ヘッダーの背景色 */
     font-weight: 600;
     color: #2d3748;
 }
 
-.skillsheet-accordion tbody tr:nth-child(even) {
-    background-color: #f7fafc;
+.skillsheet-table tbody tr:nth-child(even) {
+    background-color: #f7fafc; /* 偶数行の背景色 */
 }
 
-.skillsheet-accordion tbody tr:hover {
-    background-color: #ebf8ff;
-     padding: 1rem 1.25rem;
+.skillsheet-table tbody tr:hover {
+    background-color: #ebf8ff; /* ホバー時の背景色 */
 }
 
 /* プロジェクト一覧のテーブルのスタイル */

@@ -1,105 +1,201 @@
 body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f7fafc;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .header {
-      width: 100%;
-      background-color: #fff;
-      border-bottom: 4px solid #4299e1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem 0;
-    }
-
-    .header img {
-      max-width: 100%;
-      max-height: 200px;
-      object-fit: contain;
-      display: block;
-    }
-
-
-   a {
-  color: #4a90e2;
-  text-decoration: none;
-  margin-right: 1rem;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif; /* または 'Inter', sans-serif; など、好みに応じて調整 */
+    background-color: #f7fafc; /* skillsheet_input.css を維持 */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-a:hover {
+.header { /* skillsheet_input.html で使用される .header クラス */
+    width: 100%;
+    background-color: #fff;
+    border-bottom: 4px solid #4299e1; /* skillsheet_input.css を維持 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+}
+
+.header img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    display: block;
+}
+
+/* ナビゲーション */
+.navbar {
+  display: flex;
+  gap: 1.5rem;
+  font-weight: 600;
+}
+
+.navbar a {
+  color: #2d3748;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.navbar a:hover {
+  color: #4299e1;
   text-decoration: underline;
 }
 
-/* コンテナの基本的なスタイル（Bootstrapのcontainerとは別に定義） */
+/* コンテナ */
 .container {
   background-color: white;
-  margin-top: 2rem; /* main-contentの下からのマージン */
+  margin-top: 2rem;
   padding: 2rem;
-  border-radius: 8px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  max-width: 800px; /* コンテナの最大幅 */
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  max-width: 800px;
   width: 100%;
-  text-align: left; /* コンテナ内のテキストは左揃えにする */
-  margin-left: auto; /* 中央揃え */
-  margin-right: auto; /* 中央揃え */
+  text-align: left;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-/* formのスタイル（もしこのページでformがある場合） */
-form { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 1rem; 
-}
-input, textarea { 
-  padding: 0.75rem; 
-  border: 1px solid #ccc; 
-  border-radius: 4px; 
-}
-button { 
-  padding: 0.75rem; 
-  background-color: #4299e1; 
-  color: white; 
-  border: none; 
-  border-radius: 4px; 
-  cursor: pointer; 
-}
-button:hover { 
-  background-color: #3182ce; 
+.container h1 {
+  color: #2d3748;
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
+.container p {
+  color: #4a5568;
+  margin-bottom: 2rem;
+  text-align: center;
+}
 
-/* PDF表示部分 */
+/* カード */
+.card {
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  background-color: #f1f5f9;
+  padding: 1rem;
+  border-bottom: 1px solid #e2e8f0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.card-body {
+  padding: 1.5rem;
+}
+
+/* PDF 表示 */
 .pdf-container {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border-radius: 5px;
-    /* text-align: center; /* iframeを中央に配置したい場合は追加 */
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
 }
 
 .pdf-container iframe {
-    width: 100%; /* 親要素の幅に合わせて100%に */
-    height: 800px; /* 高さ固定 */
-    border: none;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    /* iframeを中央に配置する追加のスタイル */
-    display: block; /* margin: autoが効くようにブロック要素に */
-    margin-left: auto;
-    margin-right: auto;
+  width: 100%;
+  height: 800px;
+  border: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.pdf-viewer { /* HTMLのiframeにこのクラスが指定されている場合 */
-    width: 100%; /* 親要素の幅に合わせて100%に */
-    height: 90vh; /* 画面の高さの90% */
-    border: none;
+/* ボタン共通 */
+button,
+.btn {
+  padding: 0.75rem 1.25rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* アニメーション追加 */
+/* ------------------------------
+   ベーススタイル
+------------------------------ */
+body {
+  margin: 0;
+  padding: 50px 0;
+  font-family: 'Inter', Arial, sans-serif;
+  background-color: #f7fafc;
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* ------------------------------
+   アンダーラインアニメーションリンク
+------------------------------ */
+.sample_btn {
+  display: inline-block;
+  text-align: center;
+  text-decoration: none;
+  outline: none;
+  color: #1B85FB;
+  position: relative;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: color 0.3s ease;
+  padding: 0.25rem 0;
+  letter-spacing: 0.1rem; /* 文字間隔を広げるためにこの行を追加 */
+}
+
+/* ホバー時のテキスト色変更（必要なら） */
+.sample_btn:hover {
+  color: #1B85FB;
+}
+
+/* 下線アニメーション */
+.sample_btn::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 100%;
+  height: 2px;
+  background-color: #1B85FB;
+  transform: scaleX(0);
+  transform-origin: center top;
+  transition: transform 0.4s ease;
+}
+
+.sample_btn:hover::after {
+  transform: scaleX(1);
+}
+
+/* テキスト中央用ユーティリティ */
+.text-center {
+  text-align: center;
+}
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+    width: 90%;
+  }
+
+  body {
+    font-size: 14px;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .navbar {
+    flex-direction: column;
+    align-items: flex-start;
     margin-top: 1rem;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    display: block; /* margin: autoが効くようにブロック要素に */
-    margin-left: auto;
-    margin-right: auto;
+  }
 }

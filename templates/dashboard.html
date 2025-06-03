@@ -48,40 +48,44 @@
         <p><a href="{{ url_for('profile_input') }}">プロフィールを編集する</a></p>
 
         <!-- スキルシート表示 -->
-
-<h3>スキルシート一覧</h3>
-<p>スキルシート情報:</p>
-
-{% if error %}
-    <p>{{ error }}</p>
-{% elif skillsheet %}
-    <div class="accordion-category-item">
-        <button class="accordion-category-header">
+         <h3>スキルシート一覧</h3>
+         <p>スキルシート情報:</p>
+         
+         {% if error %}
+         <p>{{ error }}</p>
+         {% elif skillsheet %}
+         
+         <div class="accordion-category-item">
+         <button class="accordion-category-header">
             <span>スキルシートを表示/非表示</span>
             <span class="accordion-icon">▼</span>
         </button>
         <div class="accordion-category-content">
             <table class="skillsheet-table">
-                <tr>
-                    <th>スキル</th>
-                    <th>レベル</th>
-                </tr>
-                {% for skill, level in skillsheet.items() %}
-                    {% if level and level != 'D' %} {# D=学習中 の場合は除外（不要なら外してOK） #}
+                <thead>
                     <tr>
-                        <td>{{ skill.replace('_', ' ').title() }}</td>
-                        <td>{{ level }}</td>
+                        <th>スキル</th>
+                        <th>レベル</th>
                     </tr>
-                    {% endif %}
-                {% endfor %}
+                </thead>
+                <tbody>
+                    {% for skill, level in skillsheet.items() %}
+                        {% if skill != 'user_id' and level and level != 'D' %}
+                        <tr>
+                            <td>{{ skill.replace('_', ' ').title() }}</td>
+                            <td>{{ level }}</td>
+                        </tr>
+                        {% endif %}
+                    {% endfor %}
+                </tbody>
             </table>
         </div>
     </div>
-{% else %}
-    <p>スキルシートが見つかりません。</p>
-{% endif %}
 
-<p><a href="{{ url_for('skillsheet_input') }}">スキルシートを編集する</a></p>
+    {% else %}
+    <p>スキルシートが見つかりません。</p>
+    {% endif %}
+      <p><a href="{{ url_for('skillsheet_input') }}">スキルシートを編集する</a></p>
 
         <!-- プロジェクト一覧 -->
         
