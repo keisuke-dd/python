@@ -8,6 +8,7 @@
 <body>
     {% include "header.html" %}
 
+    <div class="container">
     <h1>AI文章生成</h1>
     <form method="POST">
         <label>プロジェクト概要を入力してください（例：Pythonでスキル管理システムを開発）</label><br>
@@ -19,10 +20,14 @@
       <div class="result-section">
           <h2 class="result-title">AI生成結果</h2>
           <div class="result-box">
-              {{ result }}
+                {{ result }}
+              
           </div>
       </div>
   {% endif %}
   
-</body>
+  
+    </form>
+
+    </body>
 </html>

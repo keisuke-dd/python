@@ -136,84 +136,62 @@ def update_email():
     return render_template("update_email.html")
 
 
-# パスワードリセットリクエストページ（忘れた時）
-@app.route("/password_reset_request", methods=["GET", "POST"])
-def password_reset_request():
-    message = None
+# 1. OTP送信フォーム
+@app.route("/update_password_request", methods=["GET", "POST"])
+def update_password_request():
     if request.method == "POST":
-        email = request.form.get("email")
-        access_token = request.args.get("access_token")
+        email = request.form["email"]
+        supabase.auth.sign_in_with_otp({"email": email})  # OTPを送信
+        return redirect(url_for("verify_otp", email=email))
+    return render_template("update_password_request.html")
+
+
+# 2. OTP検証フォーム
+@app.route("/verify_otp", methods=["GET", "POST"])
+def verify_otp():
+    email = request.args.get("email")
+    if request.method == "POST":
+        otp = request.form["otp"]
         try:
-            response = supabase.auth.reset_password_for_email(
-                email,
-                {
-                    "redirectTo": "http://localhost:5000/password_reset_redirect"
-                }
-            )
-            print(f"パスワードリセットメール送信成功: {response}")
-            message = f"{email} にパスワードリセット用のメールを送信しました。"
+            result = supabase.auth.verify_otp({
+                "email": email,
+                "token": otp,
+                "type": "email"  # OTPコードによる認証
+            })
+            session = result.session
+            if session and session.access_token and session.refresh_token:
+                # セッションをリダイレクトで渡す
+                return redirect(url_for("update_password_form",
+                                        access_token=session.access_token,
+                                        refresh_token=session.refresh_token))
+            else:
+                return "セッション情報が取得できませんでした", 400
         except Exception as e:
-            print(f"パスワードリセットメール送信失敗: {e}")
-            message = "メール送信に失敗しました。メールアドレスを確認してください。"
-
-    return render_template("password_reset_request.html", message=message)
+            return f"OTP検証失敗: {e}", 400
+    return render_template("verify_otp.html", email=email)
 
 
-@app.route("/password_reset_redirect")
-def password_reset_redirect():
-    # 中間ページ。JavaScriptでハッシュからクエリに変換しリダイレクトするだけ
-    return render_template("password_reset_redirect.html")
-
-
-# パスワードリセットフォーム（メールからのリンクでアクセス）
-@app.route("/password_reset_form", methods=["GET", "POST"])
-def password_reset_form():
+# 3. パスワード更新フォーム
+@app.route("/update_password_form", methods=["GET", "POST"])
+def update_password_form():
     access_token = request.args.get("access_token")
-    type_ = request.args.get("type")
+    refresh_token = request.args.get("refresh_token")
+
+    if not access_token or not refresh_token:
+        return "無効なトークン", 400
+
+    # ✅ Supabaseセッションを明示的に設定
+    supabase.auth.set_session(access_token=access_token, refresh_token=refresh_token)
 
     if request.method == "POST":
-        new_password = request.form.get("new_password")
-        confirm_password = request.form.get("confirm_password")
-
-        if not new_password or not confirm_password:
-            return render_template("password_reset_form.html", error="すべての項目を入力してください。", access_token=access_token, type=type_)
-
-        if new_password != confirm_password:
-            return render_template("password_reset_form.html", error="パスワードが一致しません。", access_token=access_token, type=type_)
-
+        new_password = request.form["password"]
         try:
-            # リカバリトークンでセッション確立
-            login_response = requests.post(
-                f"{SUPABASE_URL}/auth/v1/token?grant_type=recovery",
-                headers={
-                    "apikey": SUPABASE_KEY,
-                    "Content-Type": "application/json"
-                },
-                json={"token": access_token}
-            )
-            login_response.raise_for_status()
-            tokens = login_response.json()
-            jwt = tokens["access_token"]
-
-            # JWT でパスワードを更新
-            update_response = requests.put(
-                f"{SUPABASE_URL}/auth/v1/user",
-                headers={
-                    "apikey": SUPABASE_KEY,
-                    "Authorization": f"Bearer {jwt}",
-                    "Content-Type": "application/json"
-                },
-                json={"password": new_password}
-            )
-            update_response.raise_for_status()
-
-            return redirect(url_for("login", message="パスワードが更新されました。ログインしてください。"))
+            supabase.auth.update_user({"password": new_password})
+            return "パスワードが更新されました"
         except Exception as e:
-            print("パスワード更新失敗:", e)
-            return render_template("password_reset_form.html", error="パスワード更新に失敗しました。", access_token=access_token, type=type_)
+            return f"パスワード更新に失敗しました: {e}", 400
 
-    return render_template("password_reset_form.html", access_token=access_token, type=type_)
-
+    return render_template("update_password_form.html")
 
 
 # 共通関数: Supabaseからデータを取得する
@@ -387,12 +365,6 @@ def profile_input():
     # 取得したデータをフォームに表示
     return render_template("profile_input.html", profile=profile_data)
             
-
-
-
-
-
-
 
 #  スキルシート作成ページ & 処理
 @app.route("/skillsheet_input", methods=["GET", "POST"])
@@ -569,8 +541,6 @@ def project_edit(project_id):
         except Exception as e:
             print("取得エラー:", e)
             return redirect(url_for("project_edit"))
-
-
 
 
 
@@ -1043,7 +1013,6 @@ def view_pdf():
     )
 
 
-
 # AI生成ページ
 @app.route("/ai_create", methods=["GET", "POST"])
 def ai_create():
@@ -1054,23 +1023,47 @@ def ai_create():
     if request.method == "POST":
         summary = request.form.get("project_summary", "")
         prompt = f"""
-                # 役割
-                あなたはSES事業の営業担当です。
+                    # あなたは誰？
+                    あなたは日本の優秀なITプロジェクトマネージャーです。
+                    現在、自社のプロジェクトにふさわしいエンジニアを選定するため、職務経歴書のレビューを行っています。
 
-                # 目的
-                自社のエンジニアをお客様先に推薦したいと考えています。
+                    # 目的
+                    以下のプロ ジェクト概要は、パートナー企業のエンジニアが提出した過去の実績です。
+                    あなたはこの内容をもとに、社内の上席（意思決定者）に提出できるよう、内容を洗練された文章に整える必要があります。
 
-                # 指示
-                以下の文章はエンジニアの過去の参画プロジェクトの内容です。  
-                これをもとに、以下の条件を満たすように**箇条書き**で簡潔かつ具体的にまとめてください：
+                    # 出力形式と条件
+                    以下の条件を満たす、**箇条書き形式の簡潔で具体的な正式の職務経歴文**を作成してください：
+
+                    - **職務内容が明確に伝わるように**整えてください
+                    - **セキュリティ対策や配慮**（例：脆弱性対応、認証・認可設計など）が含まれる場合は、補足してください  
+                    - **使用技術**（例：プログラミング言語、フレームワーク、ミドルウェア、ツール等）が判別できる場合は補足してください  
+                    - **担当工程や役割**（例：要件定義、設計、実装、テスト、運用保守など）を補足または明確にしてください  
+                    - **開発スタイル**（例：アジャイル、ウォーターフォール）や**チーム構成**（例：人数、ポジション）も補足できると望ましいです  
+                    - **成果・改善点・貢献内容**が読み取れる場合は、定量・定性的に表現してください  
+
+                    - **成果や役割**が推測できる場合は**具体的に補足**してください
+                    - 文体は**簡潔かつ読みやすい業務経歴書調**で、**箇条書き**にしてください
                 
                 # プロジェクト概要
                 {summary}
                 """
         try:
             model = genai.GenerativeModel(model_name="gemini-2.0-flash-lite")
-            response = model.generate_content(prompt)
-            result = markdown.markdown(response.text)
+            # Gemini出力後の処理に追加
+            response = model.generate_content(prompt)  # 忘れずに呼び出す
+            # ##見出し削除
+            cleaned_result = re.sub(r'^##\s*', '', response.text, flags=re.MULTILINE)
+
+            # **太字マーク削除
+            cleaned_result = re.sub(r'\*\*(.*?)\*\*', r'\1', cleaned_result)
+
+            # 行頭の箇条書き記号 * または - または + 削除
+            cleaned_result = re.sub(r'^[\*\-\+]\s+', '', cleaned_result, flags=re.MULTILINE)
+
+            #文章中の すべてのアスタリスクの '* ' を削除（行頭の箇条書きマーク削除）
+            cleaned_result = cleaned_result.replace('*', '')
+
+            result = cleaned_result
         except Exception as e:
             print("Gemini生成失敗:", e)
             result = "<p style='color:red'>エラーが発生しました。</p>"

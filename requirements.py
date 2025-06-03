@@ -12,7 +12,7 @@ import logging
 
 # AI生成に必要なライブラリ
 import google.generativeai as genai
-import markdown
+import re
 
 # pdf作成に必要なライブラリ
 from io import BytesIO

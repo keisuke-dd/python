@@ -9,20 +9,29 @@
 </head>
 <body>
     <header class="header">
-            <img alt="ヘッダー画像" src="/static/images/tom_2.png"/> <!-- tomのロゴ -->
-        
-            <nav class="nav-links">
-                <a href="{{ url_for('dashboard') }}">ダッシュボード</a>
-                <a href="{{ url_for('profile_input') }}">プロフィール</a>
-                <a href="{{ url_for('skillsheet_input') }}">スキルシート</a>
-                <a href="{{ url_for('project_input') }}">プロジェクト</a>
-                <a href="{{ url_for('view_pdf') }}">PDFを生成</a>
-                <a href="{{ url_for('update_email') }}">emailを変更</a>
-                <a href="{{ url_for('ai_create') }}">AI文章生成</a>
-                <a href="{{ url_for('logout') }}">ログアウト</a>
-            </nav>
-        
+        <img alt="ヘッダー画像" src="/static/images/tom_2.png"/>
+        <div class="hamburger">&#9776;</div>
+        <nav class="nav-links">
+            <a href="{{ url_for('dashboard') }}">ダッシュボード</a>
+            <a href="{{ url_for('profile_input') }}">プロフィール</a>
+            <a href="{{ url_for('skillsheet_input') }}">スキルシート</a>
+            <a href="{{ url_for('project_input') }}">プロジェクト</a>
+            <a href="{{ url_for('view_pdf') }}">PDFを生成</a>
+            <a href="{{ url_for('update_email') }}">emailを変更</a>
+            <a href="{{ url_for('ai_create') }}">AI文章生成</a>
+            <a href="{{ url_for('logout') }}">ログアウト</a>
+        </nav>
     </header>
-    
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const hamburger = document.querySelector(".hamburger");
+            const navLinks = document.querySelector(".nav-links");
+
+            hamburger.addEventListener("click", function () {
+                navLinks.classList.toggle("active");
+            });
+        });
+    </script>
 </body>
 </html>

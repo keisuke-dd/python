@@ -20,6 +20,8 @@ body {
   z-index: 1000; /* 前面に表示 */
   border-bottom: none;
   height: 80px; /* 高さを明示しておくと安定 */
+  justify-content: flex-start; /* 左寄せにするか、あるいは中央寄りにするためにflex-startに設定 */
+  gap: 20px; /* ロゴとメニューの間のスペースを調整 (必要に応じて値を変更) */
 }
 
 /* 白の半透明オーバーレイ */
@@ -40,18 +42,20 @@ body {
   width: auto;
   object-fit: contain;
   display: block;
-  margin: auto;
   position: relative;
+  z-index: 1; /* ロゴがオーバーレイより手前に表示されるように */
+  margin-left: 50px; /* ロゴを左から少し右に寄せる (必要に応じて値を変更) */
 }
 
 /* ナビゲーションリンク */
 .nav-links {
   display: flex;
-  justify-content: center;
+  justify-content: center; /* メニュー項目自体は中央寄せ */
   gap: 2rem;
-  margin: auto;
   position: relative;
   z-index: 1;
+  margin-left: auto; /* ナビゲーションを右に寄せる */
+  margin-right: 50px; /* ナビゲーションを右端から少し左に寄せる (必要に応じて値を変更) */
 }
 
 .nav-links a {
@@ -60,4 +64,75 @@ body {
   padding: 0.5rem 1rem;
   font-weight: bold;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+/* ハンバーガーメニューアイコン */
+.hamburger {
+  display: none; /* デフォルトでは非表示 */
+  font-size: 2rem;
+  cursor: pointer;
+  z-index: 1001; /* ヘッダーとオーバーレイよりも手前に */
+  color: #2d3748;
+  margin-left: auto; /* ハンバーガーアイコンを右に寄せる */
+  margin-right: 20px; /* ハンバーガーアイコンを右端から少し左に寄せる */
+}
+
+@media (max-width: 768px) {
+  /* ナビゲーションリンク（ハンバーガーメニュー展開時） */
+  .nav-links {
+    display: none; /* 小さい画面ではナビゲーションリンクをデフォルトで非表示 */
+    flex-direction: column;
+    position: absolute;
+    top: 80px; /* ヘッダーの下に配置 */
+    left: 0;
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.95);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    z-index: 999; /* ハンバーガーメニュー展開時に表示される階層 */
+    padding: 1rem 0;
+    margin-left: 0; /* レスポンシブ時にはマージンをリセット */
+    margin-right: 0; /* レスポンシブ時にはマージンをリセット */
+  }
+
+  .nav-links.active {
+    display: flex; /* アクティブ時に表示 */
+  }
+
+  .nav-links a {
+    text-align: center;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
+  }
+
+  .nav-links a:last-child {
+    border-bottom: none;
+  }
+
+  /* ハンバーガーメニューアイコン */
+  .hamburger {
+    display: block; /* 小さい画面ではハンバーガーアイコンを表示 */
+    margin-left: auto; /* ハンバーガーアイコンを右端に寄せる */
+    margin-right: 1rem; /* 右端からの余白を調整。必要に応じて値を変更 */
+    z-index: 1001; /* 他のどの要素よりも前面に表示 */
+    
+    /* ******** 修正・確認ポイントここから ******** */
+    color: #2d3748 !important; /* 文字色を濃い色に設定 (例: #2d3748 はデフォルトの色、または別の濃い色に) */
+    font-size: 2.5rem !important; /* フォントサイズを少し大きくして確認 */
+    line-height: 1; /* 行の高さを調整して中央に寄せる */
+    padding: 0 0.5rem; /* パディングを追加してアイコンとボーダーの間にスペースを作る */
+  
+  }
+
+  /* ヘッダー全体の配置を再確認 */
+  .header {
+    justify-content: space-between; /* ロゴとハンバーガーアイコンを左右に配置 */
+    padding: 0.5rem 1rem; /* ヘッダー全体のパディングを調整 */
+    gap: 0; /* 小さい画面ではgapをリセット */
+  }
+
+  /* ロゴの位置調整（重要） */
+  .header img {
+    margin-left: 1rem; /* ロゴを左端から少し離す */
+    margin-right: auto; /* ロゴとハンバーガーアイコンの間にスペースを空ける */
+  }
 }
