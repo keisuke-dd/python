@@ -8,6 +8,7 @@ from dotenv import load_dotenv
 import requests
 from pykakasi import kakasi
 import logging
+from logging.handlers import RotatingFileHandler
 
 
 # AI生成に必要なライブラリ

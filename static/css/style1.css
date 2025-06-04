@@ -74,7 +74,7 @@ body {
 
 .container button {
   width: 100%;
-  background-color: #3498db;
+  background-color: #6c63ff; /* ここを青から紫 (#6c63ff) に変更 */
   color: white;
   padding: 10px;
   border: none;
@@ -85,7 +85,7 @@ body {
 }
 
 .container button:hover {
-  background-color: #2980b9;
+  background-color: #574eeb; /* ホバー時の色も少し濃い紫に変更（任意） */
 }
 
 .container a {
@@ -107,17 +107,17 @@ body {
   width: 200px;
   margin: 10px auto;
   padding: 10px 20px;
-  background-color: transparent; /* 背景色を透明にする */
-  color: #6c63ff; /* 文字色を紫に変更 */
+  background-color: transparent;
+  color: #6c63ff;
   font-size: 16px;
   font-weight: bold;
   text-align: center;
-  text-decoration: none; /* デフォルトの下線を削除 */
-  border-radius: 4px; /* 必要であれば角丸を維持 */
-  transition: background-color 0.3s, color 0.3s, border-color 0.3s; /* ホバー時の色と枠線の変化もスムーズにする */
-  position: relative; /* 擬似要素の配置に必要 */
-  overflow: hidden; /* 伸びる線が境界内に収まるようにする */
-  border: 1px solid #6c63ff; /* 白い枠線を追加してボタンの領域を示す */
+  text-decoration: none;
+  border-radius: 4px;
+  transition: background-color 0.3s, color 0.3s;
+  position: relative;
+  overflow: hidden;
+  border: none; /* ← 紫の枠を削除 */
 }
 
 .button-link:hover {

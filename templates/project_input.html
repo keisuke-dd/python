@@ -35,17 +35,21 @@
                     プロジェクト概要（新卒チームによる開発版）
                     Python（Flask）とSupabaseを用いて、社内向けのスキル管理Webアプリケーションを新規開発しました。本アプリは、社員一人ひとりの保有スキルや職務経歴をカテゴリ別に入力・更新・閲覧できる機能を備え、データはSupabaseのデータベースで一元管理されます。管理者は、蓄積されたスキル情報をもとに検索やPDF出力を行い、スキルマップの作成や人材配置に活用できます。UIはHTML/CSSおよびJinjaテンプレートを用いて構築し、直感的に操作できるフォーム設計を実現しました。ログイン認証、パスワードリセット、データの自動反映など基本的なユーザー管理機能に加え、SupabaseのRLS（Row Level Security）を用いたセキュアなアクセス制御も実装済みです。なお、本プロジェクトは新卒社員3名によるチーム開発として実施され、要件定義から実装、テスト、社内展開まで一貫して担当しました。技術力と実行力の両面で成長が見られる成果となりました。"></textarea>
 
+                <label for="project_summary">AI生成結果</label>
+                <p name="project_summary" id="project_summary">{{ generated_summary }}</p>
+                
+                <button type="submit" name="action" value="generate">AIで生成</button>
+
+
                 <label for="start_at">プロジェクト開始日</label>
                 <input type="date" id="start_at" name="start_at">
 
                 <label for="end_at">プロジェクト終了日</label>
                 <input type="date" id="end_at" name="end_at">
 
-                <label for="role">役割</label>
-                <input type="text" id="role" name="role" placeholder="開発リーダー">
                 
                 <label for="technologies">使用技術</label>
-                <input type="text" id="technologies" name="technologies" placeholder="Python" required>
+                <input type="text" id="technologies" name="technologies" placeholder="Python" >
 
                 <button type="submit">保存する</button> 
             </form>

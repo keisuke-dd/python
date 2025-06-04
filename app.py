@@ -42,27 +42,39 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True   # JavaScriptからのアクセス
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # クロスサイトのCSRF防止
 
 
-# ログフォーマット共通
-formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+# --- ログディレクトリ設定 ---
+LOG_DIR = os.path.abspath("logs")
+os.makedirs(LOG_DIR, exist_ok=True)
 
-# INFOレベル用ファイルハンドラー（info.txt）
-info_handler = logging.FileHandler('info.txt', encoding='utf-8')
+# --- ログフォーマット ---
+formatter = logging.Formatter(
+    '%(asctime)s [%(levelname)s] %(name)s [%(pathname)s:%(lineno)d - %(funcName)s()] %(message)s'
+)
+
+
+# --- Flaskロガーの初期化 ---
+app.logger.handlers.clear()
+app.logger.setLevel(logging.DEBUG)
+
+# --- INFOログ（INFOのみをinfo.txtに保存） ---
+info_handler = RotatingFileHandler(
+    os.path.join(LOG_DIR, 'info.txt'), maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
 info_handler.setLevel(logging.INFO)
-info_handler.addFilter(lambda record: record.levelno == logging.INFO)  # INFOレベルだけ
+info_handler.addFilter(lambda record: record.levelno == logging.INFO)
 info_handler.setFormatter(formatter)
 
-# WARNING以上のファイルハンドラー（error.txt）
-warning_handler = logging.FileHandler('error.txt', encoding='utf-8')
-warning_handler.setLevel(logging.WARNING)  # WARNING以上（WARNING, ERROR, CRITICAL）
+# --- WARNING以上ログ（WARNING, ERROR, CRITICALをerror.txtに保存） ---
+warning_handler = RotatingFileHandler(
+    os.path.join(LOG_DIR, 'error.txt'), maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
+warning_handler.setLevel(logging.WARNING)
 warning_handler.setFormatter(formatter)
 
-# コンソール出力（任意）
+# --- コンソールログ（DEBUG以上） ---
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.DEBUG)
 console_handler.setFormatter(formatter)
 
-# ハンドラーを Flask の logger に追加
-app.logger.setLevel(logging.DEBUG)
+# --- ハンドラー登録 ---
 app.logger.addHandler(info_handler)
 app.logger.addHandler(warning_handler)
 app.logger.addHandler(console_handler)
@@ -71,6 +83,12 @@ app.logger.addHandler(console_handler)
 #  ホームページ (ログインかサインアップを選ぶ画面)
 @app.route("/", methods=["GET"])
 def home():
+    # ログ出力
+    app.logger.debug("DEBUG ログ")
+    app.logger.info("INFO ログ")
+    app.logger.warning("WARNING ログ")
+    app.logger.error("ERROR ログ")
+    app.logger.critical("CRITICAL ログ")
     return render_template("home.html")
 
 
@@ -381,6 +399,7 @@ def profile_input():
     return render_template("profile_input.html", profile=profile_data)
             
 
+
 #  スキルシート作成ページ & 処理
 @app.route("/skillsheet_input", methods=["GET", "POST"])
 def skillsheet_input():
@@ -439,10 +458,6 @@ def skillsheet_input():
         return redirect(url_for("dashboard"))
 
     return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data)
-  
-
-
-
 
 
 # プロジェクト入力ページ & 処理
@@ -452,36 +467,74 @@ def project_input():
         return redirect(url_for('login'))
 
     if request.method == "POST":
+        # AI生成のためにフォームからプロジェクト情報を取得
+        action = request.form.get("action")
+
         name = request.form.get("name") # プロジェクト名を取得
         description = request.form.get("description") # プロジェクトの説明を取得
         start_at = request.form.get("start_at") # 開始日を取得
         end_at = request.form.get("end_at")     # 終了日を取得
-        role = request.form.get("role") # プロジェクトでの役割を取得
         technologies = request.form.getlist("technologies") # 使用した技術を取得（複数選択可能）
 
-        try:
-            # Supabaseのテーブルにプロジェクトデータを保存
-            result = supabase.table("project").insert({
-                "user_id": session['user_id'],
-                "name": name,
-                "description": description,
-                "start_at": start_at,
-                "end_at": end_at,
-                "role": role,
-                "technologies": technologies,
-            }).execute()
 
-            if result.model_dump().get("error"):
-                print("保存エラー:", result.error)
-                return render_template("project_input.html", error="プロジェクトの保存に失敗しました。")
 
-            return redirect(url_for("dashboard"))
+        if action == "generate":
+            prompt = f"""
+            以下のプロジェクト概要を基に、職務経歴書向けの箇条書き形式で実績説明を生成してください。
 
-        except Exception as e:
-            print(f"エラー: {e}")
-            return render_template("project_input.html", error="予期せぬエラーが発生しました。")
+            # プロジェクト概要:
+            {description}
+            """
 
-    return render_template("project_input.html")
+            try:
+                model = genai.GenerativeModel(model_name="gemini-2.0-flash-lite")
+                response = model.generate_content(prompt)
+                text = response.text
+
+                # Markdown記法や記号の除去
+                cleaned = re.sub(r'^##+\s*', '', text, flags=re.MULTILINE)
+                cleaned = re.sub(r'\*\*(.*?)\*\*', r'\1', cleaned)
+                cleaned = re.sub(r'^[\*\-\+]\s+', '', cleaned, flags=re.MULTILINE)
+                cleaned = re.sub(r'^\*\s+', '', cleaned, flags=re.MULTILINE)
+                cleaned = re.sub(r'\*(\S.*?)\*', r'\1', cleaned)
+                cleaned = cleaned.replace('*', '')
+
+                session['generated_summary'] = cleaned
+
+            except Exception as e:
+                print("AI生成失敗:", e)
+                session['generated_summary'] = "AI生成に失敗しました。"
+
+            return redirect(url_for("project_input"))
+
+        elif action == "save":
+        
+            try:
+                # Supabaseのテーブルにプロジェクトデータを保存
+                result = supabase.table("project").insert({
+                    "user_id": session['user_id'],
+                    "name": name,
+                    "description": description,
+                    "start_at": start_at,
+                    "end_at": end_at,
+                    
+                    "technologies": technologies,
+                }).execute()
+
+                if result.model_dump().get("error"):
+                    print("保存エラー:", result.error)
+                    return render_template("project_input.html", error="プロジェクトの保存に失敗しました。")
+
+                return redirect(url_for("dashboard"))
+
+            except Exception as e:
+                print(f"エラー: {e}")
+                return render_template("project_input.html", error="予期せぬエラーが発生しました。")
+
+    # GET時
+    generated_summary = session.pop('generated_summary', "")
+    # 
+    return render_template("project_input.html", generated_summary=generated_summary)
 
 
 # プロジェクト削除ページ
@@ -521,7 +574,7 @@ def project_edit(project_id):
         end_at = request.form.get("end_at")
         if end_at == "":
                 end_at = None
-        role = request.form.get("role")
+        
         technologies= request.form.get("technologies")
         
 
@@ -532,7 +585,7 @@ def project_edit(project_id):
                 "description": description,
                 "start_at": start_at,
                 "end_at": end_at,
-                "role": role,
+                
                 "technologies": technologies,
             }).eq("id", project_id).eq("user_id", session['user_id']).execute()
 
@@ -935,10 +988,7 @@ def create_pdf():
                 p.drawString(detail_x, detail_y, f"期間: {project.get('start_at', '')} ～ {project.get('end_at', '')}")
                 detail_y -= 20
 
-            if project.get('role'):
-                p.setFont("IPAexGothic", 10)
-                p.drawString(detail_x, detail_y, f"役割: {project['role']}")
-                detail_y -= 20
+            
 
             if project.get('description'):
                 p.setFont("IPAexGothic", 10)
@@ -1066,6 +1116,10 @@ def ai_create():
             model = genai.GenerativeModel(model_name="gemini-2.0-flash-lite")
             # Gemini出力後の処理に追加
             response = model.generate_content(prompt)  # 忘れずに呼び出す
+
+            # 出力取得
+            raw_text = response.text
+
             # ##見出し削除
             cleaned_result = re.sub(r'^##\s*', '', response.text, flags=re.MULTILINE)
 
@@ -1079,11 +1133,20 @@ def ai_create():
             cleaned_result = cleaned_result.replace('*', '')
 
             result = cleaned_result
+
+        
+            # ✅ セッション保存＆リダイレクト
+            session['generated_summary'] = result
+            return redirect(url_for("project_input"))
+
         except Exception as e:
             print("Gemini生成失敗:", e)
             result = "<p style='color:red'>エラーが発生しました。</p>"
+            # エラー時もrender_templateで戻す
+            return render_template("ai_create.html", result=result)
 
-    return render_template("ai_create.html", result=result)
+    # GETリクエストやPOST以外の処理時に空のresultで返す
+    return render_template("ai_create.html", result="")
     
 
 

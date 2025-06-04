@@ -7,32 +7,26 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    
 </head>
 
 <body class="background-image">
-    
     {% include "header.html" %}
 
     <div class="container">
-        
 
-    
         <!-- ログインメッセージ-->
         <h1>ダッシュボード</h1>
         <p>ログイン成功！</p>
         <p>メールアドレス: {{ user_email }}</p>
 
-
         <!-- 未入力でのPDF作成時のエラーメッセージ -->
         {% if error %}
-        <div class="error-message" style="color: red;" > 
+        <div class="error-message" style="color: red;">
             {{ error }}
         </div>
         {% endif %}
 
         <!-- プロフィール表示 -->
-        
         <h3>プロフィール一覧</h3>
         <p>プロフィール情報:</p>
         <ul>
@@ -45,22 +39,16 @@
             <li>自己紹介: {{ profile.bio | default("未設定") }}</li>
         </ul>
 
-        <p><a href="{{ url_for('profile_input') }}">プロフィールを編集する</a></p>
+        <p><a href="{{ url_for('profile_input') }}">
+           <button>プロフィールを編集する</button></a></p>
 
         <!-- スキルシート表示 -->
-         <h3>スキルシート一覧</h3>
-         <p>スキルシート情報:</p>
-         
-         {% if error %}
-         <p>{{ error }}</p>
-         {% elif skillsheet %}
-         
-         <div class="accordion-category-item">
-         <button class="accordion-category-header">
-            <span>スキルシートを表示/非表示</span>
-            <span class="accordion-icon">▼</span>
-        </button>
-        <div class="accordion-category-content">
+        <h3>スキルシート一覧</h3>
+        <p>スキルシート情報:</p>
+
+        {% if error %}
+        <p>{{ error }}</p>
+        {% elif skillsheet %}
             <table class="skillsheet-table">
                 <thead>
                     <tr>
@@ -79,20 +67,18 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
-    </div>
+        {% else %}
+        <p>スキルシートが見つかりません。</p>
+        {% endif %}
 
-    {% else %}
-    <p>スキルシートが見つかりません。</p>
-    {% endif %}
-      <p><a href="{{ url_for('skillsheet_input') }}">スキルシートを編集する</a></p>
+        <p><a href="{{ url_for('skillsheet_input') }}">
+            <button>スキルシートを編集する</button></a></p>
 
         <!-- プロジェクト一覧 -->
-        
         <h3>プロジェクト一覧</h3>
         <p>プロジェクト情報:</p>
         <p>以下のボタンからプロジェクトを追加できます。</p>
-       
+
         <a href="{{ url_for('project_input') }}">
             <button>新しいプロジェクトを作成</button>
         </a>
@@ -118,18 +104,17 @@
                             <td>
                                 {{ project.start_at[:10] if project.start_at }} ～ {{ project.end_at[:10] if project.end_at }}
                             </td>
-                            <td>{{ project.role }}</td>
+                            
                             <td>{{ project.technologies }}</td>
                             <td>
-                            <form action="{{ url_for('project_edit', project_id=project.id) }}" method="get" style="display:inline;">
-                            <button type="submit">編集</button>
-                            </form>
-                              |
-                            <form action="{{ url_for('project_delete', project_id=project.id) }}" method="post" style="display:inline;">
-                            <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
-                            </form>
+                                <form action="{{ url_for('project_edit', project_id=project.id) }}" method="get" style="display:inline;">
+                                    <button type="submit">編集</button>
+                                </form>
+                                |
+                                <form action="{{ url_for('project_delete', project_id=project.id) }}" method="post" style="display:inline;">
+                                    <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+                                </form>
                             </td>
-
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -138,10 +123,7 @@
         {% else %}
             <p>プロジェクトがありません。</p>
         {% endif %}
-
     </div>
 
-    {# アコーディオンとハンバーガーメニューのJavaScriptをここで読み込む #}
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script> 
 </body>
 </html>
