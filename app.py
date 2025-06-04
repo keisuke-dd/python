@@ -427,20 +427,20 @@ def skillsheet_input():
 
     # スキルシートのカテゴリとスキルを定義
     categories = {
-        "プログラミング言語": ["python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba"],
-        "フレームワーク": ["ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react"],
-        "開発環境": ["vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio"],
-        "OS": ["windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos", "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix"],
-        "クラウド": ["aws", "azure", "gcp", "oci"],
-        "セキュリティ製品": ["splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam", "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti", "f5_big_ip", "paloalto_prisma", "tenable"],
+        "プログラミング言語": ["python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba", "other_programming_languages"],
+        "フレームワーク": ["ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react", "other_frameworks"],
+        "開発環境": ["vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio", "other_development_enviroments"],
+        "OS": ["windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos", "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix", "other_oss"],
+        "クラウド": ["aws", "azure", "gcp", "oci", "other_cloud_services"],
+        "セキュリティ製品": ["splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam", "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti", "f5_big_ip", "paloalto_prisma", "tenable", "other_security_products"],
         "ネットワーク環境": ["cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series", "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch", "media_converter", "wireless_network", "other_network_devices"],
-        "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes"],
-        "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai"],
-        "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix"],
-        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds"],
+        "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes", "other_virtual_platforms"],
+        "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai", "other_ai_services"],
+        "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix", "other_server_software"],
+        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds", "other_databases", "other_tools"],
         "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce"],
-        "言語": ["english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian"],
-        "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark"]
+        "言語": ["japanese", "english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian", "other_languages"],
+        "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark", "other_research_tools"],
     }
 
     skillsheet_data = get_supabase_data("skillsheet", session['user_id'])
@@ -458,6 +458,8 @@ def skillsheet_input():
         return redirect(url_for("dashboard"))
 
     return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data)
+
+
 
 
 # プロジェクト入力ページ & 処理
@@ -505,30 +507,45 @@ def project_input():
                 print("AI生成失敗:", e)
                 session['generated_summary'] = "AI生成に失敗しました。"
 
-            return redirect(url_for("project_input"))
+            project = {
+                
+                "name": name,
+                "description": description,
+                "start_at": start_at,
+                "end_at": end_at,
+                "technologies": technologies,
+            }
+
+            return render_template("project_input.html", project=project, generated_summary=cleaned)
 
         elif action == "save":
-        
             try:
-                # Supabaseのテーブルにプロジェクトデータを保存
+                # 空欄をNoneに
+                start_at = start_at or None
+                end_at = end_at or None
+
+                # 必須チェック
+                if not name or not description:
+                    return render_template("project_input.html", error="プロジェクト名と説明は必須です。")
+
                 result = supabase.table("project").insert({
                     "user_id": session['user_id'],
                     "name": name,
                     "description": description,
                     "start_at": start_at,
                     "end_at": end_at,
-                    
                     "technologies": technologies,
                 }).execute()
 
-                if result.model_dump().get("error"):
-                    print("保存エラー:", result.error)
+                # 成功かどうかは result.data で判断
+                if not result.data:
+                    print("保存エラー（dataなし）:", result.model_dump())
                     return render_template("project_input.html", error="プロジェクトの保存に失敗しました。")
 
                 return redirect(url_for("dashboard"))
 
             except Exception as e:
-                print(f"エラー: {e}")
+                print(f"予期せぬエラー: {e}")
                 return render_template("project_input.html", error="予期せぬエラーが発生しました。")
 
     # GET時
@@ -565,50 +582,85 @@ def project_edit(project_id):
         return redirect(url_for('login'))
 
     if request.method == "POST":
+
+        action = request.form.get("action")
+
+        # フォームからプロジェクト情報を取得
         name = request.form.get("name")
         description = request.form.get("description")
-        start_at = request.form.get("start_at")
-        if start_at == "":
-                start_at = None
+        start_at = request.form.get("start_at") or None
+        end_at = request.form.get("end_at") or None
+        technologies = request.form.getlist("technologies")
 
-        end_at = request.form.get("end_at")
-        if end_at == "":
-                end_at = None
-        
-        technologies= request.form.get("technologies")
-        
+        # AI生成のための処理
+        if action == "generate":
+            prompt = f"""
+            以下のプロジェクト概要を基に、職務経歴書向けの箇条書き形式で実績説明を生成してください。
 
-        # technologiesは複数選択可能なので、リストに変換
-        try:
-            result = supabase.table("project").update({
+            # プロジェクト概要:
+            {description}
+            """
+            try:
+                model = genai.GenerativeModel(model_name="gemini-2.0-flash-lite")
+                response = model.generate_content(prompt)
+                text = response.text
+
+                cleaned = re.sub(r'^##+\s*', '', text, flags=re.MULTILINE)
+                cleaned = re.sub(r'\*\*(.*?)\*\*', r'\1', cleaned, flags=re.DOTALL)
+                cleaned = re.sub(r'^[\*\-\+]\s+', '', cleaned, flags=re.MULTILINE)
+                cleaned = re.sub(r'^\*\s+', '', cleaned, flags=re.MULTILINE)
+                cleaned = re.sub(r'\*(\S.*?)\*', r'\1', cleaned)
+                cleaned = cleaned.replace('*', '')
+
+                session['generated_summary'] = cleaned
+
+            except Exception as e:
+                print("AI生成失敗:", e)
+                session['generated_summary'] = "AI生成に失敗しました。"
+
+            project = {
+                "id": project_id,
                 "name": name,
                 "description": description,
                 "start_at": start_at,
                 "end_at": end_at,
-                
                 "technologies": technologies,
-            }).eq("id", project_id).eq("user_id", session['user_id']).execute()
+                    }   
 
-            return redirect(url_for("dashboard"))
+            return render_template("project_edit.html", project=project, generated_summary=cleaned)
 
-        except Exception as e:
-            print("更新エラー:", e)
-            return render_template("project_edit.html", error="更新に失敗しました。")
+        elif action == "save":
 
-    # GETリクエストの場合、プロジェクトデータを取得
+            # フォームからの更新処理
+            try:
+                result = supabase.table("project").update({
+                    "name": name,
+                    "description": description,
+                    "start_at": start_at,
+                    "end_at": end_at,
+                    "technologies": technologies,
+                }).eq("id", project_id).eq("user_id", session['user_id']).execute()
+
+                return redirect(url_for("dashboard"))
+
+            except Exception as e:
+                print("更新エラー:", e)
+                return render_template("project_edit.html", error="更新に失敗しました。")
+
+    
     else:
         try:
             response = supabase.table("project").select("*").eq("id", project_id).eq("user_id", session['user_id']).maybe_single().execute()
             project = response.data
 
             if not project:
-                return redirect(url_for("project_edit"))
+                return redirect(url_for("dashboard"))
 
             return render_template("project_edit.html", project=project)
 
         except Exception as e:
             print("取得エラー:", e)
-            return redirect(url_for("project_edit"))
+            return redirect(url_for("dashboard"))
 
 
 
@@ -1078,75 +1130,7 @@ def view_pdf():
     )
 
 
-# AI生成ページ
-@app.route("/ai_create", methods=["GET", "POST"])
-def ai_create():
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
 
-    result = ""
-    if request.method == "POST":
-        summary = request.form.get("project_summary", "")
-        prompt = f"""
-                    # あなたは誰？
-                    あなたは日本の優秀なITプロジェクトマネージャーです。
-                    現在、自社のプロジェクトにふさわしいエンジニアを選定するため、職務経歴書のレビューを行っています。
-
-                    # 目的
-                    以下のプロ ジェクト概要は、パートナー企業のエンジニアが提出した過去の実績です。
-                    あなたはこの内容をもとに、社内の上席（意思決定者）に提出できるよう、内容を洗練された文章に整える必要があります。
-
-                    # 出力形式と条件
-                    以下の条件を満たす、**箇条書き形式の簡潔で具体的な正式の職務経歴文**を作成してください：
-
-                    - **職務内容が明確に伝わるように**整えてください
-                    - **セキュリティ対策や配慮**（例：脆弱性対応、認証・認可設計など）が含まれる場合は、補足してください  
-                    - **使用技術**（例：プログラミング言語、フレームワーク、ミドルウェア、ツール等）が判別できる場合は補足してください  
-                    - **担当工程や役割**（例：要件定義、設計、実装、テスト、運用保守など）を補足または明確にしてください  
-                    - **開発スタイル**（例：アジャイル、ウォーターフォール）や**チーム構成**（例：人数、ポジション）も補足できると望ましいです  
-                    - **成果・改善点・貢献内容**が読み取れる場合は、定量・定性的に表現してください  
-
-                    - **成果や役割**が推測できる場合は**具体的に補足**してください
-                    - 文体は**簡潔かつ読みやすい業務経歴書調**で、**箇条書き**にしてください
-                
-                # プロジェクト概要
-                {summary}
-                """
-        try:
-            model = genai.GenerativeModel(model_name="gemini-2.0-flash-lite")
-            # Gemini出力後の処理に追加
-            response = model.generate_content(prompt)  # 忘れずに呼び出す
-
-            # 出力取得
-            raw_text = response.text
-
-            # ##見出し削除
-            cleaned_result = re.sub(r'^##\s*', '', response.text, flags=re.MULTILINE)
-
-            # **太字マーク削除
-            cleaned_result = re.sub(r'\*\*(.*?)\*\*', r'\1', cleaned_result)
-
-            # 行頭の箇条書き記号 * または - または + 削除
-            cleaned_result = re.sub(r'^[\*\-\+]\s+', '', cleaned_result, flags=re.MULTILINE)
-
-            #文章中の すべてのアスタリスクの '* ' を削除（行頭の箇条書きマーク削除）
-            cleaned_result = cleaned_result.replace('*', '')
-
-            result = cleaned_result
-
-        
-            # ✅ セッション保存＆リダイレクト
-            session['generated_summary'] = result
-            return redirect(url_for("project_input"))
-
-        except Exception as e:
-            print("Gemini生成失敗:", e)
-            result = "<p style='color:red'>エラーが発生しました。</p>"
-            # エラー時もrender_templateで戻す
-            return render_template("ai_create.html", result=result)
-
-    # GETリクエストやPOST以外の処理時に空のresultで返す
-    return render_template("ai_create.html", result="")
     
 
 

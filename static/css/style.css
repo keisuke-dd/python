@@ -1,16 +1,37 @@
-/* モバイル対応 */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+}
+
+.container,
+.login-container,
+.reset-container {
+  max-width: 600px;
+  margin: auto;
+  padding: 20px;
+  width: 100%;
+}
+
+/* ロゴを常に収まるように */
+.header-logo {
+  max-width: 100%;
+  height: auto;
+}
+
+/* メディアクエリ */
 @media (max-width: 768px) {
   html {
     font-size: 15px;
   }
 
-  .container, .login-container, .reset-container {
-    width: 90%;
+  .container,
+  .login-container,
+  .reset-container {
+    width: 95%;
     padding: 15px;
-  }
-
-  .header-logo {
-    height: 60px;
   }
 }
 
@@ -20,10 +41,11 @@
   }
 
   .header {
-    height: 120px;
+    height: auto;
+    padding: 10px 0;
   }
 
   .header-logo {
-    height: 50px;
+    max-height: 50px;
   }
 }

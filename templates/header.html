@@ -17,8 +17,15 @@
             <a href="{{ url_for('skillsheet_input') }}">スキルシート</a>
             <a href="{{ url_for('project_input') }}">プロジェクト</a>
             <a href="{{ url_for('view_pdf') }}">PDFを生成</a>
-            <a href="{{ url_for('update_email') }}">emailを変更</a>
-            <a href="{{ url_for('ai_create') }}">AI文章生成</a>
+            <div class="dropdown">
+                <button class="dropdown-toggle">アカウント設定</button>
+                    <div class="dropdown-menu">
+                        <a href="/update_email">Emailを変更</a>
+                        <a href="/update_password_request">パスワードを変更</a>
+                    </div>
+            </div>
+            <a href="{{ url_for('logout') }}">ログアウト</a>
+        </nav>
             <a href="{{ url_for('logout') }}">ログアウト</a>
         </nav>
     </header>

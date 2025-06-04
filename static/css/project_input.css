@@ -35,7 +35,7 @@ body {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
   max-width: 800px;
   width: 100%;
-  text-align: left;
+  text-align: left; /* コンテナ内のテキスト配置を維持 */
 }
 
 
@@ -61,6 +61,7 @@ form {
 label {
   font-weight: 600;
   color: #2d3748;
+  text-align: left; /* ラベルを左寄せにする */
 }
 
 input,
@@ -71,10 +72,13 @@ textarea {
   font-size: 1rem;
   background-color: #fff;
   width: 100%;
+  text-align: left; /* 入力フィールドとテキストエリアのテキストを左寄せにする */
 }
 
+/* プロジェクト説明のテキストエリアの高さ調整用 */
 textarea {
-  resize: vertical;
+  transition: height 0.2s ease;
+  text-align: left;
 }
 
 /* ボタン */
@@ -92,6 +96,24 @@ button {
 button:hover {
   background-color: #3182ce;
 }
+
+/* AI生成結果の表示枠 */
+.ai-result-box {
+  white-space: pre-wrap;
+  background-color: #f3e8ff;
+  border: 2px solid #a855f7;
+  border-radius: 8px;
+  padding: 1rem;
+  font-size: 1rem;
+  color: #4a007d;
+  margin-bottom: 1rem;
+  min-height: 100px;
+  max-height: 600px;
+  overflow-y: auto;
+  transition: all 0.3s ease;
+  text-align: left; /* AI生成結果ボックスを左寄せにする */
+}
+
 
 /* エラーメッセージ */
 .error-message {

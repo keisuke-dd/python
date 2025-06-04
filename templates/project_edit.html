@@ -25,6 +25,12 @@
         <label>説明</label>
         <textarea name="description">{{ project.description }}</textarea>
 
+        <label>AI生成結果</label>
+        <div id="project_summary" style="white-space: pre-line;">
+        {{ generated_summary }}
+        </div>
+        <button type="submit" name="action" value="generate">AIで生成</button>
+
         <label>開始日</label>
         <input type="date" name="start_at" value="{{ project.start_at[:10] if project.start_at }}">
 
@@ -35,7 +41,7 @@
         <label>使用技術</label>
         <input type="text" name="technologies" value="{{ project.technologies }}">
 
-        <button type="submit">更新</button>
+        <button type="submit" name="action" value="save">更新</button>
     </form>
     {% else %}
         <p>プロジェクトデータが見つかりません。</p>
