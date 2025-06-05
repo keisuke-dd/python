@@ -18,11 +18,12 @@
             <a href="{{ url_for('project_input') }}">プロジェクト</a>
             <a href="{{ url_for('view_pdf') }}">PDFを生成</a>
             <div class="dropdown">
-                <button class="dropdown-toggle">アカウント設定</button>
-                    <div class="dropdown-menu">
-                        <a href="/update_email">Emailを変更</a>
-                        <a href="/update_password_request">パスワードを変更</a>
-                    </div>
+            <a class="dropdown-toggle" href="#">アカウント設定</a>
+            <div class="dropdown-menu">
+            <a href="/update_email">Emailを変更</a>
+            <a href="/update_password_request">パスワードを変更</a>
+            </div>
+        </div>
             </div>
             <a href="{{ url_for('logout') }}">ログアウト</a>
         </nav>

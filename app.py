@@ -155,10 +155,7 @@ def update_email():
             # メール変更とリダイレクトURLを指定
             supabase.auth.session = lambda: {"access_token": session["access_token"]}
             supabase.auth.update_user({
-                "email": new_email,
-                "options": {
-                    "redirectTo": "http://localhost:5000/login"
-                }
+                "email": new_email
             })
 
             return render_template("update_email.html", success=f"{new_email} に確認メールを送信しました。")
@@ -435,26 +432,70 @@ def skillsheet_input():
         "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes", "other_virtual_platforms"],
         "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai", "other_ai_services"],
         "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix", "other_server_software"],
-        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds", "other_databases", "other_tools"],
-        "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce"],
+        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds", "other_databases" ],
+        "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce","other_tools"],
         "言語": ["japanese", "english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian", "other_languages"],
         "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark", "other_research_tools"],
     }
 
+    
+
     skillsheet_data = get_supabase_data("skillsheet", session['user_id'])
+
+
+    
 
     # POSTリクエストの処理
     if request.method == "POST":
         data = {field: request.form.get(field) for fields in categories.values() for field in fields}
+
+        # ↓ 自由記述欄とマージする対象リスト（other_* のみ）
+        other_fields = [
+            "other_programming_languages",
+            "other_frameworks",
+            "other_development_enviroments",
+            "other_oss",
+            "other_cloud_services",
+            "other_security_products",
+            "other_network_devices",
+            "other_virtual_platforms",
+            "other_ai_services",
+            "other_server_software",
+            "other_databases",
+            "other_tools",
+            "other_languages",
+            "other_research_tools"
+        ]
+
+        for field in other_fields:
+            selected = request.form.get(field, "").strip()
+            free = request.form.get(f"{field}_free", "").strip()
+            if selected and free:
+                data[field] = f"{selected}, {free}"
+            elif free:
+                data[field] = free  # 自由記述のみ
+            else:
+                data[field] = selected  # 選択のみ or 空
+
+
+         # user_id と更新日時を追加
         data["user_id"] = session['user_id']
         data["updated_at"] = datetime.now(timezone.utc).isoformat()
 
+        
+
+       # Supabaseへ upsert
         result = supabase.table("skillsheet").upsert(data, on_conflict=["user_id"]).execute()
+
+        # ↓ここを追加
+        print("🪵 Supabase upsert結果:", result.model_dump())
+
         if result.model_dump().get("error"):
             return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, error="保存に失敗しました")
 
         return redirect(url_for("dashboard"))
 
+    # GET時の表示
     return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data)
 
 

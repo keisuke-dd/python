@@ -58,15 +58,17 @@
                 </thead>
                 <tbody>
                     {% for skill, level in skillsheet.items() %}
-                        {% if skill != 'user_id' and level and level != 'D' %}
-                        <tr>
-                            <td>{{ skill.replace('_', ' ').title() }}</td>
-                            <td>{{ level }}</td>
-                        </tr>
+                        {% if skill not in ['user_id', 'created_at', 'updated_at'] and level and level != 'D' %}
+                            <tr>
+                                <td>{{ skill.replace('_', ' ').title() }}</td>
+                                <td>{{ level }}</td>
+                            </tr>
                         {% endif %}
                     {% endfor %}
                 </tbody>
             </table>
+
+                
         {% else %}
         <p>スキルシートが見つかりません。</p>
         {% endif %}
