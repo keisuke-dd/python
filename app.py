@@ -410,8 +410,6 @@ def skillsheet_input():
     # Flaskセッションにユーザーがいる前提
     user_id = session.get("user_id")
 
-    if not user_id:
-        return redirect(url_for("login"))
 
     # データ送信
     data = {
