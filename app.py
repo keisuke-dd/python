@@ -1026,7 +1026,8 @@ def create_pdf():
             if not date_str or not isinstance(date_str, str):
                 return datetime.min
             try:
-                return datetime.strptime(date_str.strip(), "%Y-%m-%d")
+                # "YYYY-MM-DDTHH:MM:SS" の場合、日付部分だけ使う
+                return datetime.strptime(date_str[:10], "%Y-%m-%d")
             except Exception as e:
                 print(f"parse_date error with input '{date_str}': {e}")
                 return datetime.min
@@ -1037,48 +1038,28 @@ def create_pdf():
             reverse=True
         )
 
-        # タイムラインの中心線
-        timeline_x = 120
-        timeline_width = 0.3  # 線をさらに細く
-
-        # 前のプロジェクトの位置を記録
+        # 前のプロジェクトの位置を記録（使わない場合は省略可）
         prev_y = y
 
         for i, project in enumerate(sorted_projects):
+            # ── まず改ページが必要かどうかをチェック ──
             if y < 150:
-                # 現在のページの最後まで線を引く
-                p.setFillColor(navy)
-                p.rect(timeline_x - timeline_width/2, prev_y, timeline_width, y - prev_y, fill=True)
-                p.setFillColor(black)
-                
-                # 新しいページを開始
                 p.showPage()
                 y = height - 50
-                p.setFont("IPAexGothic", 12)
-                
-                # 新しいページの開始位置から線を引く
                 p.setFillColor(navy)
-                p.rect(timeline_x - timeline_width/2, y, timeline_width, 1, fill=True)
+                p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)
                 p.setFillColor(black)
+                p.setFont("IPAexGothic", 16)
+                p.drawString(60, y, "■ プロジェクト履歴（続き）")
+                y -= 50
 
-            # タイムラインの点（線の丸）
-            p.setFillColor(navy)
-            p.circle(timeline_x, y, 4, fill=False, stroke=True)  # 外側の円（線のみ）
-            p.setFillColor(black)
+            # ── ここからループ内の描画・デバッグプリント ──
 
-            # 前のプロジェクトとの間の線を引く（最後のプロジェクト以外）
-            if i > 0 and i < len(sorted_projects) - 1:
-                p.setFillColor(navy)
-                p.rect(timeline_x - timeline_width/2, prev_y, timeline_width, y - prev_y, fill=True)
-                p.setFillColor(black)
+            # デバッグ：何件目かと y の値を確認
+            print(f"{i+1}件目: {project.get('name')}, y={y}")
 
-            # 日付表示（タイムラインの左側）
-            if project.get('start_at'):
-                p.setFont("IPAexGothic", 9)
-                date_text = project.get('start_at', '')
-                # 日付の幅を計算
-                date_width = p.stringWidth(date_text, "IPAexGothic", 9)
-                p.drawString(timeline_x - date_width - 15, y + 3, date_text)
+            # タイムラインの基準位置（テキスト描画用）
+            timeline_x = 120
 
             # プロジェクト名（タイムラインの右側）
             p.setFont("IPAexGothic", 12)
@@ -1090,57 +1071,71 @@ def create_pdf():
             detail_x = timeline_x + 20
             detail_y = y - 15
 
-            # 詳細情報の装飾
+            # 詳細情報の装飾（横線）
             p.setFillColor(navy)
             p.rect(detail_x - 5, detail_y - 2, width - detail_x - 50, 1, fill=True, stroke=0)
             p.setFillColor(black)
 
+            # 期間
             if project.get('start_at') or project.get('end_at'):
                 p.setFont("IPAexGothic", 10)
-                p.drawString(detail_x, detail_y, f"期間: {project.get('start_at', '')} ～ {project.get('end_at', '')}")
+                p.drawString(
+                    detail_x,
+                    detail_y,
+                    f"期間: {project.get('start_at', '')} ～ {project.get('end_at', '')}"
+                )
                 detail_y -= 20
 
+            # 役割
             if project.get('role'):
                 p.setFont("IPAexGothic", 10)
                 p.drawString(detail_x, detail_y, f"役割: {project['role']}")
                 detail_y -= 20
 
+            # 説明
             if project.get('description'):
                 p.setFont("IPAexGothic", 10)
                 p.drawString(detail_x, detail_y, f"説明: {project['description']}")
                 detail_y -= 20
 
+            # 技術
             if project.get('technologies'):
                 p.setFont("IPAexGothic", 10)
-                techs = ", ".join(project['technologies']) if isinstance(project['technologies'], list) else str(project['technologies'])
+                techs = (
+                    ", ".join(project['technologies'])
+                    if isinstance(project['technologies'], list)
+                    else str(project['technologies'])
+                )
                 p.drawString(detail_x, detail_y, f"技術: {techs}")
                 detail_y -= 20
 
-            # 次のプロジェクトとの間隔
+            # 次のプロジェクトの描画開始位置を更新
             prev_y = y
-            y = detail_y - 40  # 間隔を広げる
+            y = detail_y - 40  # プロジェクト間の間隔を広げる
+
+
 
 
         # ========== フッター ==========
 
-            # フッター
-            p.setFillColor(navy)
-            p.rect(0, 30, width, 1, fill=True, stroke=0)
-            p.setFillColor(black)
-            p.setFont("IPAexGothic", 9)
-            p.drawString(50, 20, f"作成日: {datetime.now().strftime('%Y/%m/%d')}")
+        # フッター
+        p.setFillColor(navy)
+        p.rect(0, 30, width, 1, fill=True, stroke=0)
+        p.setFillColor(black)
+        p.setFont("IPAexGothic", 9)
+        p.drawString(50, 20, f"作成日: {datetime.now().strftime('%Y/%m/%d')}")
 
-            p.showPage()
-            p.save()
-            buffer.seek(0)
+        p.showPage()
+        p.save()
+        buffer.seek(0)
 
-            # PDFを一時ファイルとして保存
-            temp_pdf_path = f"static/temp/{user_id}_skillsheet.pdf"
-            os.makedirs("static/temp", exist_ok=True)
-            with open(temp_pdf_path, "wb") as f:
-                f.write(buffer.getvalue())
+        # PDFを一時ファイルとして保存
+        temp_pdf_path = f"static/temp/{user_id}_skillsheet.pdf"
+        os.makedirs("static/temp", exist_ok=True)
+        with open(temp_pdf_path, "wb") as f:
+            f.write(buffer.getvalue())
 
-            return redirect(url_for('view_pdf'))
+        return redirect(url_for('view_pdf'))
 
 # PDF作成処理
     except Exception as e:
