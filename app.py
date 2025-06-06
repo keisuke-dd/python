@@ -28,6 +28,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.lib.units import mm
 from reportlab.lib.pagesizes import A4
 import textwrap
+from reportlab.pdfbase import pdfmetrics
 
 
 # 環境変数の読み込み
@@ -1008,6 +1009,43 @@ def create_pdf():
 
         # --- プロジェクト履歴ページ ---
 
+        # ── 折り返し描画用ヘルパー関数 ──
+        def draw_wrapped_text(canvas, text, x, y, max_width,
+                            font_name="IPAexGothic", font_size=10, leading=14):
+            """
+            canvas: ReportLab のキャンバスオブジェクト
+            text: 折り返したい全文
+            x, y: 左下基準の描画開始座標
+            max_width: 1行あたりの最大幅（ポイント単位）
+            font_name, font_size: フォントとサイズ
+            leading: 行間（フォントサイズより少し大きめが推奨）
+            戻り値: 描画した行数
+            """
+            canvas.setFont(font_name, font_size)
+            words = text.split()  # 空白で分割して単語ごとに処理
+
+            lines = []
+            current_line = ""
+            for w in words:
+                # まず current_line + " " + w の幅を測定
+                test_line = current_line + (" " if current_line else "") + w
+                test_width = pdfmetrics.stringWidth(test_line, font_name, font_size)
+                if test_width <= max_width:
+                    current_line = test_line
+                else:
+                    if current_line:
+                        lines.append(current_line)
+                    current_line = w
+            if current_line:
+                lines.append(current_line)
+
+            # 描画：y から行間ごとに下方向へずらして一行ずつ描画
+            for i, line in enumerate(lines):
+                canvas.drawString(x, y - i * leading, line)
+
+            return len(lines)
+
+        
         # プロジェクト一覧は必ず新しいページに表示
         p.showPage()
         y = height - 50
@@ -1022,27 +1060,28 @@ def create_pdf():
         p.drawString(60, y, "■ プロジェクト履歴")
         y -= 50
 
+        # 日付パース用関数
         def parse_date(date_str):
             if not date_str or not isinstance(date_str, str):
                 return datetime.min
             try:
-                # "YYYY-MM-DDTHH:MM:SS" の場合、日付部分だけ使う
+                # "YYYY-MM-DDTHH:MM:SS" の場合、先頭10文字だけを読み込む
                 return datetime.strptime(date_str[:10], "%Y-%m-%d")
             except Exception as e:
                 print(f"parse_date error with input '{date_str}': {e}")
                 return datetime.min
 
+        # 開始日でソートして新しい順に並べる
         sorted_projects = sorted(
             projects,
-            key=lambda x: parse_date(x.get('start_at')),
+            key=lambda x: parse_date(x.get("start_at")),
             reverse=True
         )
 
-        # 前のプロジェクトの位置を記録（使わない場合は省略可）
         prev_y = y
 
         for i, project in enumerate(sorted_projects):
-            # ── まず改ページが必要かどうかをチェック ──
+            # ── 改ページ判定 ──
             if y < 150:
                 p.showPage()
                 y = height - 50
@@ -1053,9 +1092,7 @@ def create_pdf():
                 p.drawString(60, y, "■ プロジェクト履歴（続き）")
                 y -= 50
 
-            # ── ここからループ内の描画・デバッグプリント ──
-
-            # デバッグ：何件目かと y の値を確認
+            # ── デバッグプリント：何件目かと y の値を確認 ──
             print(f"{i+1}件目: {project.get('name')}, y={y}")
 
             # タイムラインの基準位置（テキスト描画用）
@@ -1077,7 +1114,7 @@ def create_pdf():
             p.setFillColor(black)
 
             # 期間
-            if project.get('start_at') or project.get('end_at'):
+            if project.get("start_at") or project.get("end_at"):
                 p.setFont("IPAexGothic", 10)
                 p.drawString(
                     detail_x,
@@ -1087,24 +1124,37 @@ def create_pdf():
                 detail_y -= 20
 
             # 役割
-            if project.get('role'):
+            if project.get("role"):
                 p.setFont("IPAexGothic", 10)
-                p.drawString(detail_x, detail_y, f"役割: {project['role']}")
+                p.drawString(detail_x, detail_y, f"役割: {project.get('role')}")
                 detail_y -= 20
 
-            # 説明
-            if project.get('description'):
+            # 説明（折り返し描画）
+            if project.get("description"):
                 p.setFont("IPAexGothic", 10)
-                p.drawString(detail_x, detail_y, f"説明: {project['description']}")
-                detail_y -= 20
+                description_text = f"説明: {project.get('description')}"
+                max_width = width - detail_x - 50
+                # 折り返し後に何行描画したかを取得
+                num_lines = draw_wrapped_text(
+                    p,
+                    description_text,
+                    detail_x,
+                    detail_y,
+                    max_width,
+                    font_name="IPAexGothic",
+                    font_size=10,
+                    leading=14
+                )
+                # 折り返し行数分だけ Y を下げる
+                detail_y -= (num_lines * 14)
 
             # 技術
-            if project.get('technologies'):
+            if project.get("technologies"):
                 p.setFont("IPAexGothic", 10)
                 techs = (
-                    ", ".join(project['technologies'])
-                    if isinstance(project['technologies'], list)
-                    else str(project['technologies'])
+                    ", ".join(project["technologies"])
+                    if isinstance(project["technologies"], list)
+                    else str(project["technologies"])
                 )
                 p.drawString(detail_x, detail_y, f"技術: {techs}")
                 detail_y -= 20
