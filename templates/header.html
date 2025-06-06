@@ -6,6 +6,7 @@
     <title>プロフィール作成</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
     <header class="header">
@@ -31,15 +32,6 @@
         </nav>
     </header>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const hamburger = document.querySelector(".hamburger");
-            const navLinks = document.querySelector(".nav-links");
-
-            hamburger.addEventListener("click", function () {
-                navLinks.classList.toggle("active");
-            });
-        });
-    </script>
+    
 </body>
 </html>

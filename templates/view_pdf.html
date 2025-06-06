@@ -24,9 +24,10 @@
             <div class="card-header d-flex justify-content-between align-items-center">
                 <h4 class="mb-0">スキルシートPDF</h4>
                 <div>
-                    <a href="/generate" class="sample_btn">PDFを再生成</a>
+                    <a href="{{ url_for('create_pdf') }}" class="btn btn-primary">PDFを再生成</a>
                     <span style="margin: 0 0.5rem; color: #cbd5e0;">|</span>
-                    <a href="/download" class="sample_btn" download>PDFをダウンロード</a>
+                    
+                    <a href="/{{ pdf_path }}" class="btn btn-success" download>PDFをダウンロード</a>
                 </div>
             </div>
             <div class="card-body">

@@ -30,16 +30,18 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+});
 
-    // ハンバーガーメニューの開閉
-    var hamburger = document.querySelector('.hamburger');
-    var navLinks = document.querySelector('.nav-links');
+// テキストエリア自動リサイズ（class="auto-expand" が対象）
+var textareas = document.querySelectorAll("textarea.auto-expand");
+textareas.forEach(function(textarea) {
+    // 初期高さを調整
+    textarea.style.height = textarea.scrollHeight + "px";
 
-    if (hamburger && navLinks) {
-        hamburger.addEventListener('click', function() {
-            navLinks.classList.toggle('active');
-        });
-    }
+    textarea.addEventListener("input", function() {
+        this.style.height = "auto";
+        this.style.height = this.scrollHeight + "px";
+    });
 });
 
 

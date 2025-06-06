@@ -79,11 +79,7 @@
         <!-- プロジェクト一覧 -->
         <h3>プロジェクト一覧</h3>
         <p>プロジェクト情報:</p>
-        <p>以下のボタンからプロジェクトを追加できます。</p>
 
-        <a href="{{ url_for('project_input') }}">
-            <button>新しいプロジェクトを作成</button>
-        </a>
 
         {% if projects %}
             <div class="table-responsive">
@@ -121,6 +117,8 @@
                         {% endfor %}
                     </tbody>
                 </table>
+                <a href="{{ url_for('project_input') }}">
+                <button>新しいプロジェクトを作成</button></a>
             </div>
         {% else %}
             <p>プロジェクトがありません。</p>

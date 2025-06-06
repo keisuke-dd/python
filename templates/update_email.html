@@ -1,17 +1,18 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>メールアドレス更新</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/update_email.css') }}" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>プロフィール作成</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/update_email.css') }}">
 </head>
-<body>
 
-  {% include "header.html" %}
+<body class="background-image">
+    {% include "header.html" %}
 
-  <div class="container mt-4">
+    <div class="container">
     <h1 class="text-center">メールアドレスの更新</h1>
     <p class="text-center">新しいメールアドレスを入力し、更新ボタンをクリックしてください。</p>
 

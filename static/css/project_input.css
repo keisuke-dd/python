@@ -107,11 +107,12 @@ button:hover {
   font-size: 1rem;
   color: #4a007d;
   margin-bottom: 1rem;
+  text-align: left;
+
+  /* 高さ調整のための変更点 */
   min-height: 100px;
-  max-height: 600px;
-  overflow-y: auto;
-  transition: all 0.3s ease;
-  text-align: left; /* AI生成結果ボックスを左寄せにする */
+  max-height: none;         /* ← 制限なし */
+  overflow-y: visible;      /* ← スクロールなしで自然に伸ばす */
 }
 
 

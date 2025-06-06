@@ -274,22 +274,30 @@ nav ul li a:hover {
                 justify-content: space-between;
                 margin: 20px 0;
             }
-            .nav-button {
-                padding: 10px 20px;
-                background-color: #3B0997;
-                color: white;
-                border: none;
-                border-radius: 4px;
-                cursor: pointer;
-                transition: background-color 0.3s;
+            
+           .nav-button {
+               padding: 10px 20px;
+               background-color: #3498db;
+               color: white; /* 文字は白 */
+               border: 2px solid #e4e9ec; /* 青い枠線 */
+               font-weight: bold; /* 太字 */
+               border-radius: 4px;
+               cursor: pointer;
+               transition: background-color 0.3s, color 0.3s;
             }
-            .nav-button:hover {
-                background-color: #2a0770;
-            }
+     
+           .nav-button:hover {
+               background-color: rgb(33, 128, 236); /* ホバー時少し濃く */
+            } 
+
+
             .nav-button:disabled {
-                background-color: #ccc;
+                background-color: rgba(204, 204, 204, 0.5);
+                color: #eee;
+                border-color: #aaa;
                 cursor: not-allowed;
-            }
+           }
+            
             .progress-bar {
                 width: 100%;
                 height: 4px;
@@ -299,7 +307,7 @@ nav ul li a:hover {
             }
             .progress {
                 height: 100%;
-                background-color: #3B0997;
+                background-color: #3498db;
                 border-radius: 2px;
                 transition: width 0.3s ease;
             }

@@ -1,5 +1,33 @@
 # 必要なライブラリのインポート
-from requirements import *
+# FlaskとSupabaseのインポート
+from flask import Flask, make_response, render_template, request, abort, flash, redirect, url_for, session
+from flask_session import Session
+from datetime import datetime, timezone, timedelta
+import os
+from supabase import create_client, Client
+from dotenv import load_dotenv
+import requests
+from pykakasi import kakasi
+
+# ログ出力
+import logging
+from logging.handlers import RotatingFileHandler
+
+# AI生成に必要なライブラリ
+import google.generativeai as genai
+import re
+
+# pdf作成に必要なライブラリ
+from io import BytesIO
+from reportlab.pdfgen import canvas
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
+from reportlab.lib.colors import purple, white, black, red, green, blue, yellow, navy
+from reportlab.lib.colors import Color, HexColor
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import mm
+from reportlab.lib.pagesizes import A4
+import textwrap
 
 
 # 環境変数の読み込み
@@ -210,14 +238,19 @@ def update_password_form():
     if not access_token or not refresh_token:
         return "無効なトークン", 400
 
-    # ✅ Supabaseセッションを明示的に設定
     supabase.auth.set_session(access_token=access_token, refresh_token=refresh_token)
 
     if request.method == "POST":
-        new_password = request.form["password"]
+        password = request.form["password"]
+        confirm_password = request.form["confirm_password"]
+
+        # ✅ パスワード一致チェック
+        if password != confirm_password:
+            return "パスワードが一致しません。もう一度入力してください。", 400
+
         try:
-            supabase.auth.update_user({"password": new_password})
-            return "パスワードが更新されました"
+            supabase.auth.update_user({"password": password})
+            return redirect(url_for("login"))
         except Exception as e:
             return f"パスワード更新に失敗しました: {e}", 400
 
@@ -422,20 +455,20 @@ def skillsheet_input():
 
     # スキルシートのカテゴリとスキルを定義
     categories = {
-        "プログラミング言語": ["python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba", "other_programming_languages"],
-        "フレームワーク": ["ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react", "other_frameworks"],
-        "開発環境": ["vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio", "other_development_enviroments"],
-        "OS": ["windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos", "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix", "other_oss"],
-        "クラウド": ["aws", "azure", "gcp", "oci", "other_cloud_services"],
-        "セキュリティ製品": ["splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam", "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti", "f5_big_ip", "paloalto_prisma", "tenable", "other_security_products"],
-        "ネットワーク環境": ["cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series", "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch", "media_converter", "wireless_network", "other_network_devices"],
-        "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes", "other_virtual_platforms"],
-        "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai", "other_ai_services"],
-        "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix", "other_server_software"],
-        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds", "other_databases" ],
-        "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce","other_tools"],
-        "言語": ["japanese", "english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian", "other_languages"],
-        "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark", "other_research_tools"],
+        "プログラミング言語": ["python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba"],
+        "フレームワーク": ["ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react"],
+        "開発環境": ["vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio"],
+        "OS": ["windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos", "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix"],
+        "クラウド": ["aws", "azure", "gcp", "oci"],
+        "セキュリティ製品": ["splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam", "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti", "f5_big_ip", "paloalto_prisma", "tenable"],
+        "ネットワーク環境": ["cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series", "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch", "media_converter", "wireless_network"],
+        "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes"],
+        "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai"],
+        "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix", ],
+        "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds"],
+        "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce"],
+        "言語": ["japanese", "english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian"],
+        "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark"],
     }
 
     
@@ -449,33 +482,7 @@ def skillsheet_input():
     if request.method == "POST":
         data = {field: request.form.get(field) for fields in categories.values() for field in fields}
 
-        # ↓ 自由記述欄とマージする対象リスト（other_* のみ）
-        other_fields = [
-            "other_programming_languages",
-            "other_frameworks",
-            "other_development_enviroments",
-            "other_oss",
-            "other_cloud_services",
-            "other_security_products",
-            "other_network_devices",
-            "other_virtual_platforms",
-            "other_ai_services",
-            "other_server_software",
-            "other_databases",
-            "other_tools",
-            "other_languages",
-            "other_research_tools"
-        ]
-
-        for field in other_fields:
-            selected = request.form.get(field, "").strip()
-            free = request.form.get(f"{field}_free", "").strip()
-            if selected and free:
-                data[field] = f"{selected}, {free}"
-            elif free:
-                data[field] = free  # 自由記述のみ
-            else:
-                data[field] = selected  # 選択のみ or 空
+       
 
 
          # user_id と更新日時を追加
@@ -997,6 +1004,10 @@ def create_pdf():
                 else:
                     col3_y -= 10  # カテゴリ間の余白を増加
 
+
+
+        # --- プロジェクト履歴ページ ---
+
         # プロジェクト一覧は必ず新しいページに表示
         p.showPage()
         y = height - 50
@@ -1011,10 +1022,20 @@ def create_pdf():
         p.drawString(60, y, "■ プロジェクト履歴")
         y -= 50
 
+        def parse_date(date_str):
+            if not date_str or not isinstance(date_str, str):
+                return datetime.min
+            try:
+                return datetime.strptime(date_str.strip(), "%Y-%m-%d")
+            except Exception as e:
+                print(f"parse_date error with input '{date_str}': {e}")
+                return datetime.min
 
-
-        # プロジェクトを時系列順にソート
-        sorted_projects = sorted(projects, key=lambda x: x.get('start_at', ''), reverse=True)
+        sorted_projects = sorted(
+            projects,
+            key=lambda x: parse_date(x.get('start_at')),
+            reverse=True
+        )
 
         # タイムラインの中心線
         timeline_x = 120
@@ -1079,7 +1100,10 @@ def create_pdf():
                 p.drawString(detail_x, detail_y, f"期間: {project.get('start_at', '')} ～ {project.get('end_at', '')}")
                 detail_y -= 20
 
-            
+            if project.get('role'):
+                p.setFont("IPAexGothic", 10)
+                p.drawString(detail_x, detail_y, f"役割: {project['role']}")
+                detail_y -= 20
 
             if project.get('description'):
                 p.setFont("IPAexGothic", 10)
@@ -1096,29 +1120,35 @@ def create_pdf():
             prev_y = y
             y = detail_y - 40  # 間隔を広げる
 
-        # フッター
-        p.setFillColor(navy)
-        p.rect(0, 30, width, 1, fill=True, stroke=0)
-        p.setFillColor(black)
-        p.setFont("IPAexGothic", 9)
-        p.drawString(50, 20, f"作成日: {datetime.now().strftime('%Y/%m/%d')}")
 
-        p.showPage()
-        p.save()
-        buffer.seek(0)
+        # ========== フッター ==========
 
-        # PDFを一時ファイルとして保存
-        temp_pdf_path = f"static/temp/{user_id}_skillsheet.pdf"
-        os.makedirs("static/temp", exist_ok=True)
-        with open(temp_pdf_path, "wb") as f:
-            f.write(buffer.getvalue())
+            # フッター
+            p.setFillColor(navy)
+            p.rect(0, 30, width, 1, fill=True, stroke=0)
+            p.setFillColor(black)
+            p.setFont("IPAexGothic", 9)
+            p.drawString(50, 20, f"作成日: {datetime.now().strftime('%Y/%m/%d')}")
 
-        return redirect(url_for('view_pdf'))
+            p.showPage()
+            p.save()
+            buffer.seek(0)
 
+            # PDFを一時ファイルとして保存
+            temp_pdf_path = f"static/temp/{user_id}_skillsheet.pdf"
+            os.makedirs("static/temp", exist_ok=True)
+            with open(temp_pdf_path, "wb") as f:
+                f.write(buffer.getvalue())
+
+            return redirect(url_for('view_pdf'))
+
+# PDF作成処理
     except Exception as e:
         print(f"PDF作成エラー: {e}")
         session['error'] = f"PDFの作成に失敗しました: {str(e)}"
         return redirect(url_for('dashboard'))
+
+
 
 # PDF表示ページ
 @app.route("/view_pdf")
@@ -1167,11 +1197,6 @@ def view_pdf():
         skillsheet=skillsheet,
         projects=projects
     )
-
-
-
-    
-
 
 #  ログアウト処理
 @app.route("/logout")

@@ -9,7 +9,6 @@
         <link rel="stylesheet" href="{{ url_for('static', filename='css/skillsheet_input.css') }}">
         <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
-        
 
     </head>
 
@@ -44,7 +43,7 @@
                             <select id="{{ field }}" name="{{ field }}">
                                 <option value="">-</option>
                                 {% for level in ['S', 'A', 'B', 'C', 'D'] %}
-                                    <option value="{{ level }}" {% if skillsheet and skillsheet.get(field) = level %}selected{% endif %}>
+                                    <option value="{{ level }}" {% if skillsheet and skillsheet.get(field) == level %}selected{% endif %}>
                                         {{ level }} ({% if level == 'S' %}上級、教育可能{% elif level == 'A' %}中級、1人称対応可能{% elif level == 'B' %}業務経験あり{% elif level == 'C' %}知識のみ、研修レベル{% elif level == 'D' %}経験なし{% endif %})
                                     </option>
                                 {% endfor %}
@@ -54,10 +53,6 @@
                     </div>
                 </section>
                 {% endfor %}
-
-                <!-- 例：other_programming_languages -->
-                <label for="other_programming_languages_free">その他のプログラミング言語（自由記述）</label>
-                <input type="text" name="other_programming_languages_free" value="">
 
                 <div class="navigation-buttons">
                     <button type="button" class="nav-button" id="prevButton" disabled>前へ</button>

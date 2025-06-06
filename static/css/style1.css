@@ -171,6 +171,36 @@ body {
   font-size: 14px;
 }
 
+/* 新しく追加するスタイル */
+/* パスワード入力欄とボタンを囲むコンテナのスタイル */
+.password-input-container {
+  position: relative;
+  width: 100%; /* 必要に応じて調整 */
+  margin-bottom: 10px; /* 下の要素との間隔 */
+}
+
+.password-input-container input[type="password"] {
+  width: calc(100% - 40px); /* ボタンの幅を考慮して調整 */
+  padding-right: 60px; /* ★ここを増やします。必要に応じて調整してください。 */
+}
+
+/* 表示/非表示ボタンのスタイル */
+.password-input-container .show-hide-button {
+  position: absolute;
+  right: -23px; /* 右端からの位置 */
+  top: 42%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9em;
+  color: #000000;
+  padding: 0;
+  /* ボタンの幅が小さい場合は以下も調整 */
+  width: 40px; /* ボタンの実際の幅に合わせて調整 */
+}
+
+
 /* モバイル対応の追加 */
 @media (max-width: 768px) {
   .header {

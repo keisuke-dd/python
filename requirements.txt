@@ -1,0 +1,8 @@
+Flask
+Flask-Session
+python-dotenv
+requests
+pykakasi
+google-generativeai
+reportlab
+supabase
