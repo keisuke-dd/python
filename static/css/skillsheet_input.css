@@ -161,32 +161,17 @@ button:hover {
     width: 100%;
 }
 
-@media (max-width: 640px) {
-    .container {
-        padding: 1.5rem;
-    }
+@media (max-width: 768px) {
+  .container {
+    padding: 1.5rem;
+    width: 90%;
+  }
 
-    form {
-        gap: 0.75rem;
-    }
-
-    input[type="text"],
-    input[type="date"],
-    input[type="number"],
-    textarea,
-    select {
-        max-width: 100%;
-    }
-
-    button[type="submit"] {
-        max-width: 100%;
-    }
-
-    .language-select-group {
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
+  body {
+    font-size: 14px;
+  }
 }
+
 /* skilsheat_input.css のナビゲーションスタイル部分 */
 
 nav ul {

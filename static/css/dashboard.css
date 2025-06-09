@@ -110,11 +110,14 @@ body {
 
 /* モバイル向けテーブルの調整 (プロジェクト一覧用) */
 @media (max-width: 768px) {
-    .project-table th,
-    .project-table td {
-        font-size: 0.85rem;
-        padding: 0.5rem;
-    }
+  .container {
+    padding: 1.5rem;
+    width: 90%;
+  }
+
+  body {
+    font-size: 14px;
+  }
 
     .project-table {
         display: block;

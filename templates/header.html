@@ -6,7 +6,6 @@
     <title>プロフィール作成</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/header.css') }}">
-    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
 </head>
 <body>
     <header class="header">
@@ -19,19 +18,16 @@
             <a href="{{ url_for('project_input') }}">プロジェクト</a>
             <a href="{{ url_for('view_pdf') }}">PDFを生成</a>
             <div class="dropdown">
-            <a class="dropdown-toggle" href="#">アカウント設定</a>
-            <div class="dropdown-menu">
-            <a href="/update_email">Emailを変更</a>
-            <a href="/update_password_request">パスワードを変更</a>
+                <a class="dropdown-toggle" href="#">アカウント設定</a>
+                <div class="dropdown-menu">
+                    <a href="/update_email">Emailを変更</a>
+                    <a href="/update_password_request">パスワードを変更</a>
+                </div>
             </div>
-        </div>
-            </div>
-            <a href="{{ url_for('logout') }}">ログアウト</a>
-        </nav>
             <a href="{{ url_for('logout') }}">ログアウト</a>
         </nav>
     </header>
 
-    
+    <script src="{{ url_for('static', filename='js/responsive.js') }}"></script>
 </body>
 </html>

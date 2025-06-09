@@ -118,7 +118,9 @@ body {
   margin-right: 20px; /* ハンバーガーアイコンを右端から少し左に寄せる */
 }
 
-@media (max-width: 768px) {
+/* header.css の修正部分 */
+
+@media (max-width: 1000px) { /* 1000px以下でハンバーガーメニューを表示 */
   /* ナビゲーションリンク（ハンバーガーメニュー展開時） */
   .nav-links {
     display: none; /* 小さい画面ではナビゲーションリンクをデフォルトで非表示 */
@@ -133,6 +135,7 @@ body {
     padding: 1rem 0;
     margin-left: 0; /* レスポンシブ時にはマージンをリセット */
     margin-right: 0; /* レスポンシブ時にはマージンをリセット */
+    align-items: center; /* 追加: 子要素を中央揃えにする */
   }
 
   .nav-links.active {
@@ -143,9 +146,42 @@ body {
     text-align: center;
     padding: 1rem;
     border-bottom: 1px solid #eee;
+    width: 100%; /* 追加: リンクの幅を親要素に合わせる */
+    box-sizing: border-box; /* 追加: paddingをwidthに含める */
   }
 
   .nav-links a:last-child {
+    border-bottom: none;
+  }
+
+  /* ドロップダウンメニューの調整 */
+  .dropdown {
+    width: 100%; /* 追加: ドロップダウンの幅を親要素に合わせる */
+    text-align: center; /* 追加: ドロップダウン内のテキストを中央寄せにする */
+  }
+
+  .dropdown-toggle {
+    display: block; /* 追加: ブロック要素にしてpaddingとwidthが効くようにする */
+    padding: 1rem; /* 追加: リンクと同様のパディング */
+    border-bottom: 1px solid #eee; /* 追加: リンクと同様のボーダー */
+  }
+
+  .dropdown-menu {
+    position: static; /* ハンバーガーメニュー内では相対配置ではなく静的に */
+    width: 100%; /* 親要素の幅いっぱいに広げる */
+    box-shadow: none; /* ドロップダウンメニューの影をなくす */
+    border-radius: 0; /* 角丸をなくす */
+    background-color: transparent; /* 背景色を透明にするか、親と同じにする */
+  }
+
+  .dropdown-menu a {
+    padding: 0.8rem 1rem; /* ドロップダウン内のリンクのパディングを調整 */
+    background-color: rgba(255, 255, 255, 0.9); /* 少し背景色を付けて見やすくする */
+    border-bottom: 1px solid #eee; /* 各項目にボーダー */
+    text-align: center; /* ドロップダウン内のリンクも中央寄せ */
+  }
+
+  .dropdown-menu a:last-child {
     border-bottom: none;
   }
 
@@ -155,13 +191,10 @@ body {
     margin-left: auto; /* ハンバーガーアイコンを右端に寄せる */
     margin-right: 1rem; /* 右端からの余白を調整。必要に応じて値を変更 */
     z-index: 1001; /* 他のどの要素よりも前面に表示 */
-    
-    /* ******** 修正・確認ポイントここから ******** */
-    color: #2d3748 !important; /* 文字色を濃い色に設定 (例: #2d3748 はデフォルトの色、または別の濃い色に) */
+    color: #2d3748 !important; /* 文字色を濃い色に設定 */
     font-size: 2.5rem !important; /* フォントサイズを少し大きくして確認 */
     line-height: 1; /* 行の高さを調整して中央に寄せる */
     padding: 0 0.5rem; /* パディングを追加してアイコンとボーダーの間にスペースを作る */
-  
   }
 
   /* ヘッダー全体の配置を再確認 */
@@ -171,9 +204,18 @@ body {
     gap: 0; /* 小さい画面ではgapをリセット */
   }
 
-  /* ロゴの位置調整（重要） */
+  /* ロゴの位置調整と自動サイズ調整 */
   .header img {
     margin-left: 1rem; /* ロゴを左端から少し離す */
     margin-right: auto; /* ロゴとハンバーガーアイコンの間にスペースを空ける */
+    height: 50px; /* 1000px以下でロゴの高さを調整 */
+  }
+}
+
+/* さらに小さい画面でのロゴサイズ調整（例: 768px以下） */
+@media (max-width: 768px) {
+  .header img {
+    height: 40px; /* 768px以下でさらにロゴを小さくする */
+    margin-left: 0.5rem;
   }
 }

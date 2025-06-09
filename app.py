@@ -232,28 +232,25 @@ def verify_otp():
 
 # 3. パスワード更新フォーム
 @app.route("/update_password_form", methods=["GET", "POST"])
+@log_action("パスワード変更フォーム")
 def update_password_form():
-    access_token = request.args.get("access_token")
-    refresh_token = request.args.get("refresh_token")
-
-    if not access_token or not refresh_token:
-        return "無効なトークン", 400
-
-    supabase.auth.set_session(access_token=access_token, refresh_token=refresh_token)
-
     if request.method == "POST":
         password = request.form["password"]
-        confirm_password = request.form["confirm_password"]
-
-        # ✅ パスワード一致チェック
-        if password != confirm_password:
-            return "パスワードが一致しません。もう一度入力してください。", 400
-
         try:
+            # Supabase にパスワード変更 API 呼び出し
             supabase.auth.update_user({"password": password})
-            return redirect(url_for("login"))
-        except Exception as e:
-            return f"パスワード更新に失敗しました: {e}", 400
+            success = "パスワードを変更しました。"
+            return render_template("update_password_form.html", success=success)
+
+        except AuthApiError as e:
+            if "Password should contain at least one character of each" in str(e):
+                error = (
+                    "パスワードは次のすべてを含める必要があります："
+                    "小文字・大文字・数字・記号（例: !@#$%^&*）"
+                )
+            else:
+                error = "パスワードの変更に失敗しました。もう一度お試しください。"
+            return render_template("update_password_form.html", error=error)
 
     return render_template("update_password_form.html")
 
