@@ -1,14 +1,14 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif; /* または 'Inter', sans-serif; など、好みに応じて調整 */
+    font-family: Arial, sans-serif; 
     background-color: #f7fafc;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.header { /* skillsheet_input.html で使用される .header クラス */
+.header { 
     width: 100%;
     background-color: #fff;
     border-bottom: 4px solid #4299e1;
@@ -25,13 +25,13 @@ body {
     display: block;
 }
 
-.container { /* skillsheet_input.html で使用される .container クラス */
+.container { 
     background-color: white;
     margin-top: 2rem;
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 800px;
+    max-width: 1500px;
     width: 100%;
     text-align: left;
 }
@@ -198,9 +198,9 @@ nav ul li a::before {
 
 /* 丸 (::after) のスタイル - 変更なし */
 nav ul li a::after {
-    right: 5px; /* aタグの右端から5pxの位置に丸を配置 */
-    width: 18px; /* 丸のサイズ */
-    height: 18px; /* 丸のサイズ */
+    right: 5px; 
+    width: 18px; 
+    height: 18px; 
     background-color: #ccc;
     border-radius: 100%;
     z-index: 1; 
@@ -211,12 +211,10 @@ nav ul li a:hover:after {
     background-color: #3498db;
 }
 
-/* 矢印 (::before) のスタイル - ここを修正します */
 nav ul li a::before {
-    z-index: 2; /* 丸よりも手前に表示 */
-    /* right の値を増やして、矢印を左に移動させます */
-    right: 11px; /* 10px から 11px に変更 (必要に応じてさらに調整) */
-    transform: translateY(-50%) rotate(-45deg); /* 垂直中央に揃え、回転 */
+    z-index: 2; 
+    right: 11px; 
+    transform: translateY(-50%) rotate(-45deg); 
     width: 6px;
     height: 6px;
     border-right: 2px solid #555;
@@ -227,9 +225,8 @@ nav ul li a {
     text-decoration: none;
     color: #aaa;
     display: inline-block;
-    position: relative; /* 擬似要素の基準にする */
-    /* 丸と矢印が重なるスペースのためのパディング */
-    padding: 5px 28px 5px 0; /* 上下5px, 右28px, 左0px */
+    position: relative; 
+    padding: 5px 28px 5px 0; 
     line-height: normal;
     box-sizing: border-box;
     white-space: nowrap; 
@@ -263,16 +260,16 @@ nav ul li a:hover {
            .nav-button {
                padding: 10px 20px;
                background-color: #3498db;
-               color: white; /* 文字は白 */
-               border: 2px solid #e4e9ec; /* 青い枠線 */
-               font-weight: bold; /* 太字 */
+               color: white; 
+               border: 2px solid #e4e9ec; 
+               font-weight: bold; 
                border-radius: 4px;
                cursor: pointer;
                transition: background-color 0.3s, color 0.3s;
             }
      
            .nav-button:hover {
-               background-color: rgb(33, 128, 236); /* ホバー時少し濃く */
+               background-color: rgb(33, 128, 236); 
             } 
 
 

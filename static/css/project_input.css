@@ -33,9 +33,9 @@ body {
   padding: 2rem;
   border-radius: 12px;                 
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
-  max-width: 800px;
+  max-width: 1500px;
   width: 100%;
-  text-align: left; /* コンテナ内のテキスト配置を維持 */
+  text-align: left; 
 }
 
 
@@ -61,7 +61,7 @@ form {
 label {
   font-weight: 600;
   color: #2d3748;
-  text-align: left; /* ラベルを左寄せにする */
+  text-align: left; 
 }
 
 input,
@@ -72,7 +72,7 @@ textarea {
   font-size: 1rem;
   background-color: #fff;
   width: 100%;
-  text-align: left; /* 入力フィールドとテキストエリアのテキストを左寄せにする */
+  text-align: left; 
 }
 
 /* プロジェクト説明のテキストエリアの高さ調整用 */
@@ -111,8 +111,8 @@ button:hover {
 
   /* 高さ調整のための変更点 */
   min-height: 100px;
-  max-height: none;         /* ← 制限なし */
-  overflow-y: visible;      /* ← スクロールなしで自然に伸ばす */
+  max-height: none;        
+  overflow-y: visible;      
 }
 
 

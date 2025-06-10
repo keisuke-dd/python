@@ -8,6 +8,7 @@ from supabase import create_client, Client
 from dotenv import load_dotenv
 import requests
 from pykakasi import kakasi
+from gotrue.errors import AuthApiError, AuthWeakPasswordError
 
 # ログ出力
 import logging
@@ -197,16 +198,29 @@ def update_email():
 
 # 1. OTP送信フォーム
 @app.route("/update_password_request", methods=["GET", "POST"])
+@log_action("パスワード更新リクエスト")
 def update_password_request():
     if request.method == "POST":
         email = request.form["email"]
-        supabase.auth.sign_in_with_otp({"email": email})  # OTPを送信
-        return redirect(url_for("verify_otp", email=email))
+        try:
+            supabase.auth.sign_in_with_otp({"email": email})  # OTPを送信
+            return redirect(url_for("verify_otp", email=email))
+        except AuthApiError as e:
+            if "only request this after" in str(e):
+                error = "しばらくしてから再試行してください。"
+            else:
+                error = "エラーが発生しました。もう一度お試しください。"
+            return render_template("update_password_request.html", error=error, email=email)
+        except Exception:
+            error = "予期しないエラーが発生しました。"
+            return render_template("update_password_request.html", error=error, email=email)
+
     return render_template("update_password_request.html")
 
 
 # 2. OTP検証フォーム
 @app.route("/verify_otp", methods=["GET", "POST"])
+@log_action("OTP検証")
 def verify_otp():
     email = request.args.get("email")
     if request.method == "POST":
@@ -215,18 +229,21 @@ def verify_otp():
             result = supabase.auth.verify_otp({
                 "email": email,
                 "token": otp,
-                "type": "email"  # OTPコードによる認証
+                "type": "email"
             })
             session = result.session
             if session and session.access_token and session.refresh_token:
-                # セッションをリダイレクトで渡す
+                # ✅ トークン付きでリダイレクト
                 return redirect(url_for("update_password_form",
                                         access_token=session.access_token,
                                         refresh_token=session.refresh_token))
             else:
-                return "セッション情報が取得できませんでした", 400
+                error = "セッション情報が取得できませんでした。"
+                return render_template("verify_otp.html", email=email, error=error)
         except Exception as e:
-            return f"OTP検証失敗: {e}", 400
+            error = f"OTP検証に失敗しました: {e}"
+            return render_template("verify_otp.html", email=email, error=error)
+
     return render_template("verify_otp.html", email=email)
 
 
@@ -234,22 +251,32 @@ def verify_otp():
 @app.route("/update_password_form", methods=["GET", "POST"])
 @log_action("パスワード変更フォーム")
 def update_password_form():
+    access_token = request.args.get("access_token")
+    refresh_token = request.args.get("refresh_token")
+
+    if access_token and refresh_token:
+        try:
+            supabase.auth.set_session(access_token, refresh_token)
+        except Exception as e:
+            error = "セッションの設定に失敗しました。もう一度ログインし直してください。"
+            return render_template("update_password_form.html", error=error)
+
     if request.method == "POST":
         password = request.form["password"]
         try:
-            # Supabase にパスワード変更 API 呼び出し
             supabase.auth.update_user({"password": password})
-            success = "パスワードを変更しました。"
-            return render_template("update_password_form.html", success=success)
+            flash("パスワードを変更しました。ログインしてください。", "success")
+            return redirect(url_for("login"))
 
-        except AuthApiError as e:
-            if "Password should contain at least one character of each" in str(e):
-                error = (
-                    "パスワードは次のすべてを含める必要があります："
-                    "小文字・大文字・数字・記号（例: !@#$%^&*）"
-                )
-            else:
-                error = "パスワードの変更に失敗しました。もう一度お試しください。"
+        except AuthWeakPasswordError:
+            error = (
+                "パスワードは次のすべてを含める必要があります："
+                "小文字・大文字・数字・記号（例: !@#$%^&*)"
+            )
+            return render_template("update_password_form.html", error=error)
+
+        except AuthApiError:
+            error = "パスワードの変更に失敗しました。もう一度お試しください。"
             return render_template("update_password_form.html", error=error)
 
     return render_template("update_password_form.html")

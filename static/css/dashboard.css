@@ -31,7 +31,7 @@ body {
       padding: 2rem;
       border-radius: 8px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-width: 800px;
+      max-width: 1500px;
       width: 100%;
       text-align: left;
     }
@@ -41,34 +41,42 @@ body {
     button { padding: 0.75rem; background-color: #4299e1; color: white; border: none; border-radius: 4px; cursor: pointer; }
     button:hover { background-color: #3182ce; }
 
+    h1 {
+    color: #2d3748; 
+    margin-bottom: 1.5rem;
+    text-align: center;
+    font-size: 2rem;
+    font-weight: 600;
+}
+
     /* スキルシートテーブルのスタイル */
 .skillsheet-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1.5rem;
-    margin-bottom: 1.5rem; /* テーブルの下に余白を追加 */
+    margin-bottom: 1.5rem; 
 }
 
 .skillsheet-table th,
 .skillsheet-table td {
-    border: 1px solid #e2e8f0; /* 薄いグレーのボーダー */
+    border: 1px solid #e2e8f0; 
     padding: 0.75rem;
     text-align: left;
-    vertical-align: top; /* セルの内容が上揃えになるように */
+    vertical-align: top;
 }
 
 .skillsheet-table th {
-    background-color: #edf2f7; /* ヘッダーの背景色 */
+    background-color: #edf2f7; 
     font-weight: 600;
     color: #2d3748;
 }
 
 .skillsheet-table tbody tr:nth-child(even) {
-    background-color: #f7fafc; /* 偶数行の背景色 */
+    background-color: #f7fafc; 
 }
 
 .skillsheet-table tbody tr:hover {
-    background-color: #ebf8ff; /* ホバー時の背景色 */
+    background-color: #ebf8ff; 
 }
 
 /* プロジェクト一覧のテーブルのスタイル */
@@ -156,21 +164,5 @@ body {
 
     .project-table tr th:first-child {
         text-align: left;
-    }
-
-    /* アコーディオンのモバイル調整 */
-    .accordion-header {
-        font-size: 0.9rem;
-        padding: 0.8rem 1rem;
-    }
-    .accordion-content {
-        padding: 0.8rem 1rem;
-        font-size: 0.85rem;
-    }
-
-    /* カテゴリアコーディオンのモバイル調整 */
-    .accordion-category-header {
-        font-size: 1rem;
-        padding: 0.9rem 1.1rem;
     }
 }

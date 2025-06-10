@@ -31,13 +31,13 @@ body {
     padding: 2rem;
     border-radius: 12px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 統一された影 */
-    max-width: 800px;
+    max-width: 1500px;
     width: 100%;
     text-align: left;
 }
 
 h1 {
-    color: #2d3748; /* skillsheet_input.css を維持 */
+    color: #2d3748; 
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 2rem;
@@ -53,35 +53,35 @@ form {
 
 label {
     font-weight: 600;
-    color: #4a5568; /* skillsheet_input.css を維持 */
+    color: #4a5568; 
     font-size: 1rem;
-    margin-bottom: 0.25rem; /* skillsheet_input.css を維持 */
+    margin-bottom: 0.25rem; 
     display: block;
 }
 
 input[type="text"],
 input[type="date"],
-input[type="number"], /* profile_input.css にあった input[type="number"] を追加 */
+input[type="number"], 
 textarea,
 select {
-    padding: 0.75rem; /* skillsheet_input.css を維持 */
-    border-radius: 0.5rem; /* skillsheet_input.css を維持 */
-    border: 1px solid #e2e8f0; /* skillsheet_input.css を維持 */
+    padding: 0.75rem; 
+    border-radius: 0.5rem; 
+    border: 1px solid #e2e8f0; 
     width: 100%;
     box-sizing: border-box;
-    font-size: 1rem; /* skillsheet_input.css を維持 */
-    background-color: white; /* 明示的に白背景を設定 */
-    transition: border-color 0.2s ease; /* skillsheet_input.css を維持 */
+    font-size: 1rem; 
+    background-color: white; 
+    transition: border-color 0.2s ease; 
     outline: none;
 }
 
 input[type="text"]:focus,
 input[type="date"]:focus,
-input[type="number"]:focus, /* input[type="number"] のフォーカススタイルを追加 */
+input[type="number"]:focus, 
 textarea:focus,
 select:focus {
-    border-color: #4299e1; /* skillsheet_input.css のフォーカス色を維持 */
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15); /* skillsheet_input.css のシャドウを維持 */
+    border-color: #4299e1; 
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15); 
 }
 
 textarea {
@@ -91,7 +91,7 @@ textarea {
 
 button[type="submit"] {
     padding: 0.8rem 1.6rem;
-    background-color: #4299e1; /* skillsheet_input.css の色を維持 */
+    background-color: #4299e1;
     color: #fff;
     border: none;
     border-radius: 0.5rem;
@@ -99,38 +99,33 @@ button[type="submit"] {
     font-size: 1rem;
     transition: background-color 0.2s ease;
     width: 100%;
-    max-width: 320px; /* skillsheet_input.css の中央配置を維持 */
-    margin: 0 auto; /* skillsheet_input.css の中央配置を維持 */
+    max-width: 320px; 
+    margin: 0 auto;
 }
 
 button[type="submit"]:hover {
-    background-color: #3182ce; /* skillsheet_input.css のホバー色を維持 */
+    background-color: #3182ce; 
 }
 
 /* その他のボタンのスタイル (skillsheet_input.html のログアウト/ダッシュボードボタン用) */
-button { /* profile_input.css の汎用 button スタイルを適用 */
+button {
     padding: 0.8rem 1.6rem;
-    background-color: #007bff; /* profile_input.css のデフォルトボタン色 */
+    background-color: #007bff;
     color: white;
     font-size: 1rem;
     border: none;
     border-radius: 0.5rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
-    /* width: 100%; */ /* 汎用ボタンには幅100%は適用しない */
-    /* max-width: 320px; */
-    /* margin: 0 auto; */
 }
 
 button:hover {
-    background-color: #0056b3; /* profile_input.css のデフォルトボタンホバー色 */
+    background-color: #0056b3;
 }
 
-/* skillsheet_input.html の特定のボタンクラスは別途調整 */
 .logout, .dashboard {
-    /* 必要であれば、これらのボタンに固有のスタイルを適用 */
-    display: inline-block; /* 横並びにする場合 */
-    margin: 0.5rem; /* 間隔を調整 */
+    display: inline-block; 
+    margin: 0.5rem; 
 }
 
 .section {
@@ -160,8 +155,6 @@ button:hover {
     margin-bottom: 1rem;
 }
 
-/* ラベルのスタイルは上部で統一済み */
-/* input, textarea, select のスタイルも上部で統一済み */
 
 .language-select-group {
     display: grid;
@@ -170,9 +163,7 @@ button:hover {
     margin-bottom: 1rem;
 }
 
-/* language-select-group 内の label, select のスタイルも上部で統一済み */
 
-/* 追記部分：選択肢の説明 */
 .select-description {
     font-size: 0.8rem;
     color: #718096;

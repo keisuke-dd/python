@@ -42,7 +42,7 @@ body {
 /* 枠付きフォーム */
 .container {
   background: white;
-  width: 400px;
+  width: 800px;
   margin: 40px auto;
   padding: 30px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -74,7 +74,7 @@ body {
 
 .container button {
   width: 100%;
-  background-color: #6c63ff; /* ここを青から紫 (#6c63ff) に変更 */
+  background-color: #6c63ff; 
   color: white;
   padding: 10px;
   border: none;
@@ -85,7 +85,7 @@ body {
 }
 
 .container button:hover {
-  background-color: #574eeb; /* ホバー時の色も少し濃い紫に変更（任意） */
+  background-color: #574eeb; 
 }
 
 .container a {
@@ -101,7 +101,7 @@ body {
   text-decoration: underline;
 }
 
-/* 下線が伸びる、背景が透明で紫の文字のボタンのスタイル */
+
 .button-link {
   display: block;
   width: 200px;
@@ -117,28 +117,28 @@ body {
   transition: background-color 0.3s, color 0.3s;
   position: relative;
   overflow: hidden;
-  border: none; /* ← 紫の枠を削除 */
+  border: none; 
 }
 
 .button-link:hover {
-  background-color: rgba(108, 99, 255, 0.1); /* ホバー時にわずかに背景を紫にする（任意） */
-  color: #6c63ff; /* ホバー時も文字色を紫に維持 */
-  border-color: #6c63ff; /* ホバー時も枠線を紫に維持 */
+  background-color: rgba(108, 99, 255, 0.1); 
+  color: #6c63ff; 
+  border-color: #6c63ff; 
 }
 
 .button-link:visited {
-  color: #6c63ff; /* 訪問済みリンクも文字色を紫に維持 */
+  color: #6c63ff; 
 }
 
-/* 薄いグレーの初期線 */
+
 .button-link::before {
   content: '';
   position: absolute;
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 2px; /* 線の太さ */
-  background-color: #ccc; /* 薄いグレーの色 */
+  height: 2px; 
+  background-color: #ccc; 
   z-index: 1;
 }
 
@@ -148,15 +148,15 @@ body {
   position: absolute;
   bottom: 0;
   left: 0;
-  width: 0; /* 幅が0から始まる */
-  height: 2px; /* 線の太さ */
-  background-color: #6c63ff; /* 伸びる線の色（紫） */
-  transition: width 0.3s ease-out; /* 幅の動きのアニメーション */
-  z-index: 2; /* グレーの線の上に表示されるようにする */
+  width: 0;
+  height: 2px; 
+  background-color: #6c63ff; 
+  transition: width 0.3s ease-out; 
+  z-index: 2; 
 }
 
 .button-link:hover::after {
-  width: 100%; /* ホバー時に全幅に広がる */
+  width: 100%; 
 }
 
 .error {
@@ -171,23 +171,22 @@ body {
   font-size: 14px;
 }
 
-/* 新しく追加するスタイル */
 /* パスワード入力欄とボタンを囲むコンテナのスタイル */
 .password-input-container {
   position: relative;
-  width: 100%; /* 必要に応じて調整 */
-  margin-bottom: 10px; /* 下の要素との間隔 */
+  width: 100%; 
+  margin-bottom: 10px; 
 }
 
 .password-input-container input[type="password"] {
-  width: calc(100% - 40px); /* ボタンの幅を考慮して調整 */
-  padding-right: 60px; /* ★ここを増やします。必要に応じて調整してください。 */
+  width: calc(100% - 40px); 
+  padding-right: 60px;
 }
 
 /* 表示/非表示ボタンのスタイル */
 .password-input-container .show-hide-button {
   position: absolute;
-  right: -23px; /* 右端からの位置 */
+  right: -23px; 
   top: 42%;
   transform: translateY(-50%);
   background: none;
@@ -196,62 +195,61 @@ body {
   font-size: 0.9em;
   color: #000000;
   padding: 0;
-  /* ボタンの幅が小さい場合は以下も調整 */
-  width: 40px; /* ボタンの実際の幅に合わせて調整 */
+  width: 40px; 
 }
 
 
 /* モバイル対応の追加 */
 @media (max-width: 768px) {
   .header {
-    height: 120px; /* ヘッダーの高さを調整 */
+    height: 120px; 
   }
 
   .header-logo {
-    height: 60px; /* ロゴのサイズを調整 */
-    top: 30px; /* ロゴの位置を調整 */
+    height: 60px; 
+    top: 30px; 
   }
 
   .container {
-    width: 90%; /* コンテナの幅を広げる */
+    width: 90%; 
     padding: 20px;
-    margin: 20px auto; /* 上下のマージンを調整 */
+    margin: 20px auto; 
   }
 
   .button-link {
-    width: 80%; /* ボタンの幅を広げる */
-    padding: 12px 15px; /* ボタンのパディングを調整 */
-    font-size: 14px; /* ボタンのフォントサイズを調整 */
+    width: 80%; 
+    padding: 12px 15px; 
+    font-size: 14px; 
   }
 
   body {
-    font-size: 15px; /* 全体のフォントサイズを調整 */
+    font-size: 15px; 
   }
 }
 
 @media (max-width: 480px) {
   .header {
-    height: 100px; /* さらに小さな画面でのヘッダーの高さ */
+    height: 100px; 
   }
 
   .header-logo {
-    height: 50px; /* さらに小さな画面でのロゴのサイズ */
+    height: 50px; 
     top: 25px;
   }
 
   .container {
-    width: 95%; /* ほぼ全幅に */
+    width: 95%; 
     padding: 15px;
     margin: 15px auto;
   }
 
   .button-link {
-    width: 90%; /* ボタンの幅をさらに広げる */
-    font-size: 13px; /* ボタンのフォントサイズをさらに調整 */
+    width: 90%; 
+    font-size: 13px; 
     padding: 10px 10px;
   }
 
   body {
-    font-size: 14px; /* さらに小さな画面での全体のフォントサイズ */
+    font-size: 14px; 
   }
 }

@@ -50,7 +50,7 @@ body {
   padding: 2rem;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  max-width: 800px;
+  max-width: 1500px;
   width: 100%;
   text-align: left;
   margin-left: auto;
@@ -146,10 +146,10 @@ body {
   font-size: 0.9rem;
   transition: color 0.3s ease;
   padding: 0.25rem 0;
-  letter-spacing: 0.1rem; /* 文字間隔を広げるためにこの行を追加 */
+  letter-spacing: 0.1rem;
 }
 
-/* ホバー時のテキスト色変更（必要なら） */
+
 .sample_btn:hover {
   color: #1B85FB;
 }
