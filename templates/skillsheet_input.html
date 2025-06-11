@@ -1,71 +1,82 @@
 <!DOCTYPE html>
 <html lang="ja">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>スキルシート入力</title>
-        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-        <link rel="stylesheet" href="{{ url_for('static', filename='css/skillsheet_input.css') }}">
-        <script src="{{ url_for('static', filename='js/skillsheet_input.js') }}"></script>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>スキルシート入力</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/skillsheet_input.css') }}">
+    <script src="{{ url_for('static', filename='js/skillsheet_input.js') }}"></script>
+</head>
 
+<body class="background-image">
+    {% include "header.html" %}
 
-    </head>
+    <div class="container">
+        <h1>スキルシート入力フォーム</h1>
 
-    <body class="background-image">
-        {% include "header.html" %}
-
-        <div class="container">
-            <h1>スキルシート入力フォーム</h1>
-
-            <div class="progress-bar">
-                <div class="progress" id="progressBar"></div>
-            </div>
-
-            <nav>
-                <ul>
-                    {% for category in categories.keys() %}
-                    <li><a href="#{{ category }}" class="nav-link" data-category="{{ category }}">{{ category }}</a></li>
-                    {% endfor %}
-                </ul>
-            </nav>
-
-            {% if error %}<p class="error-message">{{ error }}</p>{% endif %}
-
-            <form method="POST" action="/skillsheet_input">
-                {% for category_name, fields in categories.items() %}
-                <section class="section" id="{{ category_name }}" data-category="{{ category_name }}">
-                    <h2 class="section-title">{{ category_name }}</h2>
-                    <div class="language-select-group">
-                        {% for field in fields %}
-                        <div class="form-group">
-                            <label for="{{ field }}">{{ field.replace('_', ' ').title() }}</label>
-                            <select id="{{ field }}" name="{{ field }}">
-                                <option value="">-</option>
-                                {% for level in ['S', 'A', 'B', 'C', 'D'] %}
-                                    <option value="{{ level }}" {% if skillsheet and skillsheet.get(field) == level %}selected{% endif %}>
-                                        {{ level }} ({% if level == 'S' %}上級、教育可能{% elif level == 'A' %}中級、1人称対応可能{% elif level == 'B' %}業務経験あり{% elif level == 'C' %}知識のみ、研修レベル{% elif level == 'D' %}経験なし{% endif %})
-                                    </option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </section>
-                {% endfor %}
-
-                <div class="navigation-buttons">
-                    <button type="button" class="nav-button" id="prevButton" disabled>前へ</button>
-                    <button type="button" class="nav-button" id="nextButton">次へ</button>
-                </div>
-
-                <button type="submit">保存する</button>
-            </form>
-
-
-            
+        <div class="progress-bar">
+            <div class="progress" id="progressBar"></div>
         </div>
 
-        
-    </body>
+        <nav>
+            <ul>
+                {% for category in categories.keys() %}
+                <li><a href="#{{ category }}" class="nav-link" data-category="{{ category }}">{{ category }}</a></li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        {% if error %}<p class="error-message">{{ error }}</p>{% endif %}
+
+        <form method="POST" action="/skillsheet_input">
+            {% for category_name, fields in categories.items() %}
+            <section class="section" id="{{ category_name }}" data-category="{{ category_name }}">
+
+                <h2 class="section-title">{{ category_name }}</h2>
+
+                <div class="language-select-group">
+                    {% for field in fields %}
+
+                    <div class="form-group">
+                        <label for="{{ field }}">{{ field.replace('_', ' ').title() }}</label>
+
+                        {% set value = skillsheet.get(field) if skillsheet else None %}
+                        <select id="{{ field }}" name="{{ field }}">
+                            
+                            <option value="">-</option>
+                            {% for level in ['S', 'A', 'B', 'C', 'D'] %}
+
+                                <option value="{{ level }}"
+                                    {% if value == level or (not value and level == 'D') %}selected{% endif %}>
+                                    {{ level }} (
+                                    {% if level == 'S' %}上級、教育可能
+                                    {% elif level == 'A' %}中級、1人称対応可能
+                                    {% elif level == 'B' %}業務経験あり
+                                    {% elif level == 'C' %}知識のみ、研修レベル
+                                    {% elif level == 'D' %}経験なし
+                                    {% endif %})
+                                </option>
+
+                            {% endfor %}
+                        </select>
+
+                    </div>
+                    {% endfor %}
+
+                </div>
+
+            </section>
+            {% endfor %}
+
+            <div class="navigation-buttons">
+                <button type="button" class="nav-button" id="prevButton" disabled>前へ</button>
+                <button type="button" class="nav-button" id="nextButton">次へ</button>
+            </div>
+
+            <button type="submit">保存する</button>
+        </form>
+    </div>
+</body>
 </html>

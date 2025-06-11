@@ -1,8 +1,8 @@
-Flask
-Flask-Session
-python-dotenv
-requests
-pykakasi
-google-generativeai
-reportlab
-supabase
+Flask=>3.1.1
+Flask-Session=>0.8.0
+python-dotenv=>1.1.0
+requests=>2.32.3
+pykakasi=>2.3.0
+google-generativeai=>0.8.5
+reportlab=>4.4.1
+supabase=>2.15.2

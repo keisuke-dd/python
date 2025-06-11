@@ -13,6 +13,8 @@ from gotrue.errors import AuthApiError, AuthWeakPasswordError
 # ログ出力
 import logging
 from logging.handlers import RotatingFileHandler
+# --- アクション記録デコレータ（例外もログに出す） ---
+from functools import wraps
 
 # AI生成に必要なライブラリ
 import google.generativeai as genai
@@ -72,53 +74,62 @@ app.config['SESSION_COOKIE_HTTPONLY'] = True   # JavaScriptからのアクセス
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # クロスサイトのCSRF防止
 
 
-# --- ログディレクトリ設定 ---
+# --- ログ出力先ディレクトリを作成 ---
 LOG_DIR = os.path.abspath("logs")
 os.makedirs(LOG_DIR, exist_ok=True)
 
-# --- ログフォーマット ---
+# --- ログフォーマットを定義 ---
 formatter = logging.Formatter(
     '%(asctime)s [%(levelname)s] %(name)s [%(pathname)s:%(lineno)d - %(funcName)s()] %(message)s'
 )
 
-
-# --- Flaskロガーの初期化 ---
-app.logger.handlers.clear()
-app.logger.setLevel(logging.DEBUG)
-
-# --- INFOログ（INFOのみをinfo.txtに保存） ---
+# --- INFOレベルのみ info.txt に出力 ---
 info_handler = RotatingFileHandler(
-    os.path.join(LOG_DIR, 'info.txt'), maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
+    os.path.join(LOG_DIR, 'info.txt'),
+    maxBytes=10 * 1024 * 1024,
+    backupCount=5,
+    encoding='utf-8'
+)
 info_handler.setLevel(logging.INFO)
 info_handler.addFilter(lambda record: record.levelno == logging.INFO)
 info_handler.setFormatter(formatter)
 
-# --- WARNING以上ログ（WARNING, ERROR, CRITICALをerror.txtに保存） ---
-warning_handler = RotatingFileHandler(
-    os.path.join(LOG_DIR, 'error.txt'), maxBytes=10*1024*1024, backupCount=5, encoding='utf-8')
-warning_handler.setLevel(logging.WARNING)
-warning_handler.setFormatter(formatter)
+# --- WARNING以上 error.txt に出力 ---
+error_handler = RotatingFileHandler(
+    os.path.join(LOG_DIR, 'error.txt'),
+    maxBytes=10 * 1024 * 1024,
+    backupCount=5,
+    encoding='utf-8'
+)
+error_handler.setLevel(logging.WARNING)
+error_handler.setFormatter(formatter)
 
-# --- コンソールログ（DEBUG以上） ---
+# --- コンソール出力（DEBUG以上） ---
 console_handler = logging.StreamHandler()
 console_handler.setLevel(logging.DEBUG)
 console_handler.setFormatter(formatter)
 
-# --- ハンドラー登録 ---
+# --- ロガーにハンドラを設定 ---
+app.logger.handlers.clear()
+app.logger.setLevel(logging.DEBUG)
 app.logger.addHandler(info_handler)
-app.logger.addHandler(warning_handler)
+app.logger.addHandler(error_handler)
 app.logger.addHandler(console_handler)
+
+# --- アクセスログのみ出力するデコレーター ---
+def log_request_basic(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        app.logger.info(
+            f"アクセス: {request.method} {request.path} IP={request.remote_addr} UA={request.user_agent}"
+        )
+        return func(*args, **kwargs)
+    return wrapper
 
 
 #  ホームページ (ログインかサインアップを選ぶ画面)
 @app.route("/", methods=["GET"])
 def home():
-    # ログ出力
-    app.logger.debug("DEBUG ログ")
-    app.logger.info("INFO ログ")
-    app.logger.warning("WARNING ログ")
-    app.logger.error("ERROR ログ")
-    app.logger.critical("CRITICAL ログ")
     return render_template("home.html")
 
 
@@ -198,7 +209,6 @@ def update_email():
 
 # 1. OTP送信フォーム
 @app.route("/update_password_request", methods=["GET", "POST"])
-@log_action("パスワード更新リクエスト")
 def update_password_request():
     if request.method == "POST":
         email = request.form["email"]
@@ -220,7 +230,6 @@ def update_password_request():
 
 # 2. OTP検証フォーム
 @app.route("/verify_otp", methods=["GET", "POST"])
-@log_action("OTP検証")
 def verify_otp():
     email = request.args.get("email")
     if request.method == "POST":
@@ -249,7 +258,6 @@ def verify_otp():
 
 # 3. パスワード更新フォーム
 @app.route("/update_password_form", methods=["GET", "POST"])
-@log_action("パスワード変更フォーム")
 def update_password_form():
     access_token = request.args.get("access_token")
     refresh_token = request.args.get("refresh_token")
@@ -1033,44 +1041,52 @@ def create_pdf():
 
         # --- プロジェクト履歴ページ ---
 
-        # ── 折り返し描画用ヘルパー関数 ──
+        # --- 折り返し描画用ヘルパー関数 ---
         def draw_wrapped_text(canvas, text, x, y, max_width,
                             font_name="IPAexGothic", font_size=10, leading=14):
-            """
-            canvas: ReportLab のキャンバスオブジェクト
-            text: 折り返したい全文
-            x, y: 左下基準の描画開始座標
-            max_width: 1行あたりの最大幅（ポイント単位）
-            font_name, font_size: フォントとサイズ
-            leading: 行間（フォントサイズより少し大きめが推奨）
-            戻り値: 描画した行数
-            """
             canvas.setFont(font_name, font_size)
-            words = text.split()  # 空白で分割して単語ごとに処理
 
             lines = []
-            current_line = ""
-            for w in words:
-                # まず current_line + " " + w の幅を測定
-                test_line = current_line + (" " if current_line else "") + w
-                test_width = pdfmetrics.stringWidth(test_line, font_name, font_size)
-                if test_width <= max_width:
-                    current_line = test_line
-                else:
-                    if current_line:
-                        lines.append(current_line)
-                    current_line = w
-            if current_line:
-                lines.append(current_line)
+            for paragraph in text.split('\n'):
+                words = paragraph.split(" ")
+                current_line = ""
+                for w in words:
+                    if not w:
+                        continue
+                    test_line = current_line + (" " if current_line else "") + w
+                    test_width = pdfmetrics.stringWidth(test_line, font_name, font_size)
+                    if test_width <= max_width:
+                        current_line = test_line
+                    else:
+                        if current_line:
+                            lines.append(current_line)
+                        current_line = w
+                if current_line:
+                    lines.append(current_line)
 
-            # 描画：y から行間ごとに下方向へずらして一行ずつ描画
             for i, line in enumerate(lines):
                 canvas.drawString(x, y - i * leading, line)
 
             return len(lines)
 
-        
-        # プロジェクト一覧は必ず新しいページに表示
+        # --- 日付を安全にパースする関数 ---
+        def format_date(date_str):
+            if not date_str:
+                return ""
+            try:
+                # 例: ISO形式 '2002-05-07T00:00:00' をdatetimeに変換
+                dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+                # 好みの表示形式に変換（例: 2002年5月7日）
+                # Windows環境など%-mが使えない場合は%#mを試してください
+                return dt.strftime("%Y年%m月%d日").replace(" 0", " ")
+            except Exception as e:
+                print(f"format_date parse error: {e} with input: {date_str}")
+                return date_str
+
+        # --- プロジェクト履歴の描画開始 ---
+        sorted_projects = sorted(projects, key=lambda p: p.get("start_at") or "", reverse=True)
+
+        # 新しいページにプロジェクト履歴を描画
         p.showPage()
         y = height - 50
 
@@ -1079,33 +1095,13 @@ def create_pdf():
         p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)
         p.setFillColor(black)
 
-        # プロジェクト履歴のタイトル
+        # タイトル
         p.setFont("IPAexGothic", 16)
         p.drawString(60, y, "■ プロジェクト履歴")
         y -= 50
 
-        # 日付パース用関数
-        def parse_date(date_str):
-            if not date_str or not isinstance(date_str, str):
-                return datetime.min
-            try:
-                # "YYYY-MM-DDTHH:MM:SS" の場合、先頭10文字だけを読み込む
-                return datetime.strptime(date_str[:10], "%Y-%m-%d")
-            except Exception as e:
-                print(f"parse_date error with input '{date_str}': {e}")
-                return datetime.min
-
-        # 開始日でソートして新しい順に並べる
-        sorted_projects = sorted(
-            projects,
-            key=lambda x: parse_date(x.get("start_at")),
-            reverse=True
-        )
-
-        prev_y = y
-
         for i, project in enumerate(sorted_projects):
-            # ── 改ページ判定 ──
+            # 改ページ判定
             if y < 150:
                 p.showPage()
                 y = height - 50
@@ -1116,23 +1112,19 @@ def create_pdf():
                 p.drawString(60, y, "■ プロジェクト履歴（続き）")
                 y -= 50
 
-            # ── デバッグプリント：何件目かと y の値を確認 ──
             print(f"{i+1}件目: {project.get('name')}, y={y}")
 
-            # タイムラインの基準位置（テキスト描画用）
-            timeline_x = 120
-
-            # プロジェクト名（タイムラインの右側）
-            p.setFont("IPAexGothic", 12)
-            p.setFillColor(navy)
-            p.drawString(timeline_x + 20, y + 5, f"・{project.get('name', '')}")
-            p.setFillColor(black)
-
-            # プロジェクト詳細（タイムラインの右側）
+            timeline_x = 60
             detail_x = timeline_x + 20
             detail_y = y - 15
 
-            # 詳細情報の装飾（横線）
+            # プロジェクト名
+            p.setFont("IPAexGothic", 12)
+            p.setFillColor(navy)
+            p.drawString(detail_x, y + 5, f"・{project.get('name', '')}")
+            p.setFillColor(black)
+
+            # 横線装飾
             p.setFillColor(navy)
             p.rect(detail_x - 5, detail_y - 2, width - detail_x - 50, 1, fill=True, stroke=0)
             p.setFillColor(black)
@@ -1140,25 +1132,21 @@ def create_pdf():
             # 期間
             if project.get("start_at") or project.get("end_at"):
                 p.setFont("IPAexGothic", 10)
+                start_disp = format_date(project.get("start_at", ""))
+                end_disp = format_date(project.get("end_at", ""))
                 p.drawString(
                     detail_x,
                     detail_y,
-                    f"期間: {project.get('start_at', '')} ～ {project.get('end_at', '')}"
+                    f"期間: {start_disp} ～ {end_disp}"
                 )
                 detail_y -= 20
 
-            # 役割
-            if project.get("role"):
-                p.setFont("IPAexGothic", 10)
-                p.drawString(detail_x, detail_y, f"役割: {project.get('role')}")
-                detail_y -= 20
 
-            # 説明（折り返し描画）
+            # 説明（折り返し対応）
             if project.get("description"):
                 p.setFont("IPAexGothic", 10)
                 description_text = f"説明: {project.get('description')}"
                 max_width = width - detail_x - 50
-                # 折り返し後に何行描画したかを取得
                 num_lines = draw_wrapped_text(
                     p,
                     description_text,
@@ -1169,24 +1157,33 @@ def create_pdf():
                     font_size=10,
                     leading=14
                 )
-                # 折り返し行数分だけ Y を下げる
                 detail_y -= (num_lines * 14)
 
-            # 技術
+            # 技術（折り返し＋重複除去）
             if project.get("technologies"):
                 p.setFont("IPAexGothic", 10)
-                techs = (
-                    ", ".join(project["technologies"])
-                    if isinstance(project["technologies"], list)
-                    else str(project["technologies"])
+                tech_list = project["technologies"]
+                if isinstance(tech_list, list):
+                    techs = list(dict.fromkeys(tech_list))
+                    tech_text = f"技術: {', '.join(techs)}"
+                else:
+                    tech_text = f"技術: {str(tech_list)}"
+
+                max_width = width - detail_x - 50
+                num_lines = draw_wrapped_text(
+                    p,
+                    tech_text,
+                    detail_x,
+                    detail_y,
+                    max_width,
+                    font_name="IPAexGothic",
+                    font_size=10,
+                    leading=14
                 )
-                p.drawString(detail_x, detail_y, f"技術: {techs}")
-                detail_y -= 20
+                detail_y -= (num_lines * 14)
 
-            # 次のプロジェクトの描画開始位置を更新
-            prev_y = y
-            y = detail_y - 40  # プロジェクト間の間隔を広げる
-
+            # 次のプロジェクト描画位置を更新
+            y = detail_y - 40
 
 
 

@@ -70,3 +70,12 @@
 2025-06-09 13:02:41,858 [WARNING] app [C:\Users\keisu\python\app.py:118 - home()] WARNING ログ
 2025-06-09 13:02:41,859 [ERROR] app [C:\Users\keisu\python\app.py:119 - home()] ERROR ログ
 2025-06-09 13:02:41,859 [CRITICAL] app [C:\Users\keisu\python\app.py:120 - home()] CRITICAL ログ
+2025-06-11 15:52:48,658 [ERROR] app [C:\Users\keisu\python\app.py:128 - wrapper()] 【skillsheet_input中にエラー発生】GET /skillsheet_input: {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for table "skillsheet"'}
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 125, in wrapper
+    return func(*args, **kwargs)
+  File "C:\Users\keisu\python\app.py", line 513, in skillsheet_input
+    result = supabase.table("skillsheet").upsert(data).execute()
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\postgrest\_sync\request_builder.py", line 78, in execute
+    raise APIError(r.json())
+postgrest.exceptions.APIError: {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for table "skillsheet"'}
