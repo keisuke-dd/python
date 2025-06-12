@@ -22,8 +22,8 @@
         <label>プロジェクト名</label>
         <input type="text" name="name" value="{{ project.name }}" required>
 
-        <label>説明</label>
-        <textarea name="description">{{ project.description }}</textarea>
+        <label for="description">プロジェクト説明</label>
+        <textarea id="description" name="description" class="auto-expand" rows="5">{{ project.description }}</textarea>
 
         <label>AI生成結果</label>
         <div id="project_summary" style="white-space: pre-line;">
@@ -31,13 +31,16 @@
         </div>
         <button type="submit" name="action" value="generate">AIで生成</button>
 
-        <label>開始日</label>
-        <input type="date" name="start_at" value="{{ project.start_at[:10] if project.start_at }}">
-
-        <label>終了日</label>
-        <input type="date" name="end_at" value="{{ project.end_at[:10] if project.end_at }}">
-
-
+        <div class="two-column-group">
+            <div class="form-group">
+                <label>開始日</label>
+                <input type="date" name="start_at" value="{{ project.start_at[:10] if project.start_at }}">
+            </div>
+            <div class="form-group">
+                <label>終了日</label>
+                <input type="date" name="end_at" value="{{ project.end_at[:10] if project.end_at }}">
+            </div>
+        </div>
         <label>使用技術</label>
         <input type="text" name="technologies" value="{{ project.technologies }}">
 
@@ -47,6 +50,8 @@
         <p>プロジェクトデータが見つかりません。</p>
     {% endif %}
 </div>
+
+<script src="{{ url_for('static', filename='js/script.js') }}"></script>
 
     </body>
 </html>

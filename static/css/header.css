@@ -19,7 +19,7 @@ body {
   left: 0;
   z-index: 1000; 
   border-bottom: none;
-  height: 80px; 
+  height: 100px; 
   justify-content: flex-start; 
   gap: 20px; 
 }
@@ -64,6 +64,7 @@ body {
   padding: 0.5rem 1rem;
   font-weight: bold;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 0.9rem; 
 }
 
 /* ナビゲーションリンクのホバー効果 */

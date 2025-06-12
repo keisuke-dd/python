@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}OTP確認{% endblock %}
+{% block title %}確認{% endblock %}
 
 {% block extra_css %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
@@ -8,10 +8,10 @@
 
 {% block content %}
   <div class="container">
-    <h2>OTP確認</h2>
-    <p>{{ email }} に送信されたOTPコードを入力してください。</p>
+    <h2>ワンタイムパスワード確認</h2>
+    <p>{{ email }} に送信されたコードを入力してください。</p>
     <form method="post">
-      <input type="text" name="otp" placeholder="6桁のOTPコード" required>
+      <input type="text" name="otp" placeholder="6桁のコード" required>
       <button type="submit">認証</button>
     </form>
   </div>

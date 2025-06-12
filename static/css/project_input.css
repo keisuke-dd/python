@@ -124,6 +124,23 @@ button:hover {
   text-align: center;
 }
 
+/* project_input.css または style.css に追加 */
+.two-column-group {
+  display: flex;
+  gap: 1rem; /* フォーム要素間の間隔 */
+}
+
+.two-column-group .form-group {
+  flex: 1; /* 各フォームグループが利用可能なスペースを均等に占めるようにする */
+}
+
+/* 必要であれば、小さい画面での表示調整 */
+@media (max-width: 768px) {
+  .two-column-group {
+      flex-direction: column; /* 縦並びに戻す */
+  }
+}
+
 /* レスポンシブ対応 */
 @media (max-width: 768px) {
   .container {

@@ -1,17 +1,17 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif; /* または 'Inter', sans-serif; など、好みに応じて調整 */
-    background-color: #f7fafc; /* skillsheet_input.css を維持 */
+    font-family: Arial, sans-serif;
+    background-color: #f7fafc;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.header { /* skillsheet_input.html で使用される .header クラス */
+.header {
     width: 100%;
     background-color: #fff;
-    border-bottom: 4px solid #4299e1; /* skillsheet_input.css を維持 */
+    border-bottom: 4px solid #4299e1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -25,19 +25,19 @@ body {
     display: block;
 }
 
-.container { /* skillsheet_input.html で使用される .container クラス */
+.container {
     background-color: white;
     margin-top: 2rem;
     padding: 2rem;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 統一された影 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     max-width: 1500px;
     width: 100%;
     text-align: left;
 }
 
 h1 {
-    color: #2d3748; 
+    color: #2d3748;
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 2rem;
@@ -53,35 +53,35 @@ form {
 
 label {
     font-weight: 600;
-    color: #4a5568; 
+    color: #4a5568;
     font-size: 1rem;
-    margin-bottom: 0.25rem; 
+    margin-bottom: 0.25rem;
     display: block;
 }
 
 input[type="text"],
 input[type="date"],
-input[type="number"], 
+input[type="number"],
 textarea,
 select {
-    padding: 0.75rem; 
-    border-radius: 0.5rem; 
-    border: 1px solid #e2e8f0; 
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
     width: 100%;
     box-sizing: border-box;
-    font-size: 1rem; 
-    background-color: white; 
-    transition: border-color 0.2s ease; 
+    font-size: 1rem;
+    background-color: white;
+    transition: border-color 0.2s ease;
     outline: none;
 }
 
 input[type="text"]:focus,
 input[type="date"]:focus,
-input[type="number"]:focus, 
+input[type="number"]:focus,
 textarea:focus,
 select:focus {
-    border-color: #4299e1; 
-    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15); 
+    border-color: #4299e1;
+    box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.15);
 }
 
 textarea {
@@ -99,15 +99,25 @@ button[type="submit"] {
     font-size: 1rem;
     transition: background-color 0.2s ease;
     width: 100%;
-    max-width: 320px; 
+    max-width: 320px;
     margin: 0 auto;
 }
 
 button[type="submit"]:hover {
-    background-color: #3182ce; 
+    background-color: #3182ce;
 }
 
-/* その他のボタンのスタイル (skillsheet_input.html のログアウト/ダッシュボードボタン用) */
+.back-button {
+    color: #4299e1;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-button:hover {
+    color: #0d6efd;
+}
+
+/* その他のボタンのスタイル */
 button {
     padding: 0.8rem 1.6rem;
     background-color: #007bff;
@@ -123,9 +133,10 @@ button:hover {
     background-color: #0056b3;
 }
 
-.logout, .dashboard {
-    display: inline-block; 
-    margin: 0.5rem; 
+.logout,
+.dashboard {
+    display: inline-block;
+    margin: 0.5rem;
 }
 
 .section {
@@ -155,6 +166,13 @@ button:hover {
     margin-bottom: 1rem;
 }
 
+/* 新しい横並びグループのスタイル */
+.two-column-group { /* 新しいクラス名 */
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2列、均等幅 */
+    gap: 1rem; /* 列間のスペース */
+    margin-bottom: 1rem;
+}
 
 .language-select-group {
     display: grid;
@@ -162,7 +180,6 @@ button:hover {
     gap: 1rem;
     margin-bottom: 1rem;
 }
-
 
 .select-description {
     font-size: 0.8rem;
@@ -173,12 +190,17 @@ button:hover {
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 1.5rem;
-    width: 90%;
-  }
+    .container {
+        padding: 1.5rem;
+        width: 90%;
+    }
 
-  body {
-    font-size: 14px;
-  }
+    body {
+        font-size: 14px;
+    }
+
+    /* 小さい画面では横並びグループを縦に並べる */
+    .two-column-group { /* 変更 */
+        grid-template-columns: 1fr;
+    }
 }

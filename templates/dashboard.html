@@ -7,7 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/dashboard.css') }}">
-    <script src="{{ url_for('static', filename='js/responsive.js') }}"></script>
     
 </head>
 
@@ -78,54 +77,55 @@
         <p><a href="{{ url_for('skillsheet_input') }}">
             <button>スキルシートを編集する</button></a></p>
 
-        <!-- プロジェクト一覧 -->
-        <h3>プロジェクト一覧</h3>
-        <p>プロジェクト情報:</p>
 
 
-        {% if projects %}
-            <div class="table-responsive">
-                <table class="project-table">
-                    <thead>
-                        <tr>
-                            <th>プロジェクト名</th>
-                            <th>説明</th>
-                            <th>期間</th>
-                            
-                            <th>使用技術</th>
-                            <th>操作</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for project in projects %}
-                        <tr>
-                            <td>{{ project.name }}</td>
-                            <td>{{ project.description }}</td>
-                            <td>
-                                {{ project.start_at[:10] if project.start_at }} ～ {{ project.end_at[:10] if project.end_at }}
-                            </td>
-                            
-                            <td>{{ project.technologies }}</td>
-                            <td>
-                                <form action="{{ url_for('project_edit', project_id=project.id) }}" method="get" style="display:inline;">
-                                    <button type="submit">編集</button>
-                                </form>
-                                |
-                                <form action="{{ url_for('project_delete', project_id=project.id) }}" method="post" style="display:inline;">
-                                    <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-                <a href="{{ url_for('project_input') }}">
-                <button>新しいプロジェクトを作成</button></a>
-            </div>
-        {% else %}
-            <p>プロジェクトがありません。</p>
-        {% endif %}
-    </div>
+
+   <!-- プロジェクト一覧 -->
+<h3>プロジェクト一覧</h3>
+<p>プロジェクト情報:</p>
+
+{% if projects %}
+<div class="table-responsive">
+    <table class="project-table">
+        <thead>
+            <tr>
+                <th>プロジェクト名</th>
+                <th>説明</th>
+                <th>期間</th>
+                <th>使用技術</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for project in projects %}
+            <tr>
+                <td data-label="プロジェクト名">{{ project.name }}</td>
+                <td data-label="説明">{{ project.description }}</td>
+                <td data-label="期間">
+                    {{ project.start_at[:10] if project.start_at }} ～ {{ project.end_at[:10] if project.end_at }}
+                </td>
+                <td data-label="使用技術">{{ project.technologies }}</td>
+                <td data-label="操作">
+                    <form action="{{ url_for('project_edit', project_id=project.id) }}" method="get" style="display:inline;">
+                        <button type="submit">編集</button>
+                    </form>
+                    
+                    <form action="{{ url_for('project_delete', project_id=project.id) }}" method="post" style="display:inline;">
+                        <button type="submit" onclick="return confirm('本当に削除しますか？')">削除</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{{ url_for('project_input') }}">
+    <button>新しいプロジェクトを作成</button></a>
+</div>
+{% else %}
+    <p>プロジェクトがありません。</p>
+{% endif %}
+
+
 
 </body>
 </html>

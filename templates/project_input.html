@@ -26,9 +26,9 @@
             <input type="text" id="name" name="name" placeholder="スキル管理WEBアプリ" required
                     value="{{ project.name if project and project.name else '' }}">
                     
-                    <label for="description">プロジェクト説明</label>
-                    <textarea id="description" name="description" class="auto-expand" rows="5" placeholder="プロジェクト概要（新卒チームによる開発版）Python（Flask）とSupabaseを用いて、社内向けのスキル管理Webアプリケーションを新規開発しました。本アプリは、社員一人ひとりの保有スキルや職務経歴をカテゴリ別に入力・更新・閲覧できる機能を備え、データはSupabaseのデータベースで一元管理されます。UIはHTML/CSSおよびJinjaテンプレートを用いて構築し、直感的に操作できるフォーム設計を実現しました。ログイン認証、パスワードリセット、データの自動反映など基本的なユーザー管理機能に加え、SupabaseのRLS（Row Level Security）を用いたセキュアなアクセス制御も実装済みです。技術力と実行力の両面で成長が見られる成果となりました。"
-                       value="{{ project.description if project and project.description else '' }}"></textarea>
+            <label for="description">プロジェクト説明</label>
+            <textarea id="description" name="description" class="auto-expand" rows="5" placeholder="プロジェクト概要（新卒チームによる開発版）Python（Flask）とSupabaseを用いて、社内向けのスキル管理Webアプリケーションを新規開発しました。本アプリは、社員一人ひとりの保有スキルや職務経歴をカテゴリ別に入力・更新・閲覧できる機能を備え、データはSupabaseのデータベースで一元管理されます。UIはHTML/CSSおよびJinjaテンプレートを用いて構築し、直感的に操作できるフォーム設計を実現しました。ログイン認証、パスワードリセット、データの自動反映など基本的なユーザー管理機能に加え、SupabaseのRLS（Row Level Security）を用いたセキュアなアクセス制御も実装済みです。技術力と実行力の両面で成長が見られる成果となりました。">
+              {{ project.description if project and project.description else '' }}</textarea>
 
             <label>AI生成結果</label>
              {% if generated_summary %}
@@ -39,14 +39,19 @@
 
             <button type="submit" name="action" value="generate">AIで生成</button>
 
-            <label for="start_at">プロジェクト開始日</label>
-            <input type="date" id="start_at" name="start_at"
-                    value="{{ project.start_at if project and project.start_at else '' }}">
+            <div class="two-column-group">
+                <div class="form-group">
+                    <label for="start_at">プロジェクト開始日</label>
+                    <input type="date" id="start_at" name="start_at"
+                            value="{{ project.start_at if project and project.start_at else '' }}">
+                </div>
 
-            <label for="end_at">プロジェクト終了日</label>
-            <input type="date" id="end_at" name="end_at"
-                    value="{{ project.end_at if project and project.end_at else '' }}">
-
+                <div class="form-group">
+                    <label for="end_at">プロジェクト終了日</label>
+                    <input type="date" id="end_at" name="end_at"
+                            value="{{ project.end_at if project and project.end_at else '' }}">
+                </div>
+            </div>
             <label for="technologies">使用技術</label>
             <input type="text" id="technologies" name="technologies"
                     value="{{ project.technologies | join(', ') if project and project.technologies else '' }}"

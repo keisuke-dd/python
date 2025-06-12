@@ -1,90 +1,112 @@
 body {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      background-color: #f7fafc;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f7fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
 
-    .header {
-      width: 100%;
-      background-color: #fff;
-      border-bottom: 4px solid #4299e1;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 1rem 0;
-    }
+.header {
+    width: 100%;
+    background-color: #fff;
+    border-bottom: 4px solid #4299e1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1rem 0;
+}
 
-    .header img {
-      max-width: 100%;
-      max-height: 200px;
-      object-fit: contain;
-      display: block;
-    }
+.header img {
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+    display: block;
+}
 
-    .container {
-      background-color: white;
-      margin-top: 2rem;
-      padding: 2rem;
-      border-radius: 8px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      max-width: 1500px;
-      width: 100%;
-      text-align: left;
-    }
+.container {
+    background-color: white;
+    margin-top: 2rem;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1500px;
+    width: 100%;
+    text-align: left;
+}
 
-    form { display: flex; flex-direction: column; gap: 1rem; }
-    input, textarea { padding: 0.75rem; border: 1px solid #ccc; border-radius: 4px; }
-    button { padding: 0.75rem; background-color: #4299e1; color: white; border: none; border-radius: 4px; cursor: pointer; }
-    button:hover { background-color: #3182ce; }
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
 
-    h1 {
-    color: #2d3748; 
+input,
+textarea {
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+button {
+    padding: 0.75rem;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #3182ce;
+}
+
+h1 {
+    color: #2d3748;
     margin-bottom: 1.5rem;
     text-align: center;
     font-size: 2rem;
     font-weight: 600;
 }
 
-    /* スキルシートテーブルのスタイル */
+/* スキルシートテーブルのスタイル */
 .skillsheet-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1.5rem;
-    margin-bottom: 1.5rem; 
+    margin-bottom: 1.5rem;
 }
 
 .skillsheet-table th,
 .skillsheet-table td {
-    border: 1px solid #e2e8f0; 
+    border: 1px solid #e2e8f0;
     padding: 0.75rem;
     text-align: left;
     vertical-align: top;
 }
 
 .skillsheet-table th {
-    background-color: #edf2f7; 
+    background-color: #edf2f7;
     font-weight: 600;
     color: #2d3748;
 }
 
 .skillsheet-table tbody tr:nth-child(even) {
-    background-color: #f7fafc; 
+    background-color: #f7fafc;
 }
 
 .skillsheet-table tbody tr:hover {
-    background-color: #ebf8ff; 
+    background-color: #ebf8ff;
 }
 
-/* プロジェクト一覧のテーブルのスタイル */
+/* プロジェクト一覧テーブル */
 .project-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 1.5rem;
     margin-bottom: 1.5rem;
+    table-layout: fixed; /* 列の幅を固定するために追加 */
 }
 
 .project-table th,
@@ -93,6 +115,35 @@ body {
     padding: 0.75rem;
     text-align: left;
     vertical-align: top;
+    white-space: normal; /* テキストの折り返しを許可 */
+    word-break: break-word; /* 長い単語の途中で改行を許可 */
+}
+
+/* 各列の幅を調整 */
+.project-table th:nth-child(1),
+.project-table td:nth-child(1) {
+    width: 160px; /* プロジェクト名 */
+}
+
+.project-table th:nth-child(2),
+.project-table td:nth-child(2) {
+    width: auto; /* 説明: 親要素の残りの幅を全て使うように変更 */
+}
+
+.project-table th:nth-child(3),
+.project-table td:nth-child(3) {
+    width: 180px; /* 期間 */
+}
+
+.project-table th:nth-child(4),
+.project-table td:nth-child(4) {
+    width: 200px; /* 使用技術 */
+}
+
+.project-table th:nth-child(5),
+.project-table td:nth-child(5) {
+    width: 100px; /* 操作 */
+    text-align: center;
 }
 
 .project-table th {
@@ -109,60 +160,171 @@ body {
     background-color: #ebf8ff;
 }
 
-/* レスポンシブテーブルのコンテナ */
+/* レスポンシブテーブル用 */
 .table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  margin-bottom: 1rem;
+    overflow-x: auto; /* 必要に応じて横スクロールを有効にする */
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
 }
 
-/* モバイル向けテーブルの調整 (プロジェクト一覧用) */
-@media (max-width: 768px) {
-  .container {
-    padding: 1.5rem;
-    width: 90%;
-  }
+/* 「操作」列のボタンを常に横並びにするスタイル */
+.project-table td:nth-child(5) {
+    display: flex; /* flexboxを適用 */
+    flex-wrap: wrap; /* ボタンが多すぎる場合に折り返す */
+    gap: 0.5rem; /* ボタン間のスペース */
+    justify-content: center; /* 中央寄せにするか、left/right で調整 */
+    align-items: center; /* 垂直方向中央寄せ */
+}
 
-  body {
-    font-size: 14px;
-  }
+.project-table td:nth-child(5) form {
+    display: inline-flex; /* form要素もflexアイテムとして扱う */
+    margin: 0; /* formの余計なマージンを削除 */
+}
+
+.project-table td:nth-child(5) button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    width: auto; /* ボタンの幅を自動に */
+}
+
+/* デスクトップ表示での「操作」列のラベルを非表示にする (data-labelはモバイル用のため) */
+.project-table th:nth-child(5) {
+    text-align: center; /* ヘッダーのテキストを中央寄せ */
+}
+
+
+/* モバイル向けテーブルの調整 */
+@media (max-width: 1200px) {
+    .container {
+        padding: 1.5rem;
+        width: 90%;
+    }
+
+    body {
+        font-size: 14px;
+    }
 
     .project-table {
+        border: none; /* 全体の罫線を非表示にする */
         display: block;
-        width: auto;
+        width: 100%;
     }
 
     .project-table thead {
-        display: block;
-        float: left;
+        display: none; /* モバイルではヘッダーを非表示 */
     }
 
     .project-table tbody {
         display: block;
-        width: auto;
-        overflow-x: auto;
-        white-space: nowrap;
+        width: 100%;
     }
 
     .project-table tr {
-        display: inline-block;
-        vertical-align: top;
-    }
-
-    .project-table th,
-    .project-table td {
         display: block;
-        text-align: right;
-        border-bottom: 1px solid #e2e8f0;
-        border-right: none;
+        margin-bottom: 1rem; /* 各行の間にスペースを追加 */
+        border: 1px solid #e2e8f0; /* 各行に罫線を追加 */
+        border-radius: 8px; /* 角を丸くする */
+        padding: 0.5rem; /* パディングを追加 */
+        background-color: white;
     }
 
-    .project-table th:last-child,
-    .project-table td:last-child {
-        border-bottom: none;
+    .project-table td {
+        display: flex; /* セルの中身をflexboxで横並びにする */
+        justify-content: space-between; /* ラベルと値を両端に寄せる */
+        align-items: flex-start; /* 垂直方向は上揃え */
+        padding: 0.5rem 0.25rem; /* セルのパディングを調整 */
+        border: none; /* セルごとの罫線をなくす */
+        white-space: normal; /* テキストの折り返しを許可 */
+        word-break: break-word; /* 長い単語の途中で改行を許可 */
     }
 
-    .project-table tr th:first-child {
+    .project-table td::before {
+        content: attr(data-label); /* data-label属性からラベルを表示 */
+        font-weight: bold;
+        margin-right: 0.5rem;
+        color: #4a5568;
+        flex-shrink: 0; /* ラベルが縮まないようにする */
+        flex-basis: 80px; /* ラベルの基準幅を設定（必要に応じて調整） */
+        text-align: left; /* ラベルは左寄せ */
+    }
+
+    /* 値の部分が残りのスペースを使うように */
+    .project-table td:not(:nth-child(5)) { /* 操作列以外に適用 */
+        flex-wrap: wrap; /* コンテンツが長い場合に折り返す */
+    }
+
+    .project-table td:not(:nth-child(5)) > * { /* ラベル以外のコンテンツ（値） */
+        flex-grow: 1; /* 残りのスペースを全て使う */
+        flex-basis: auto; /* コンテンツの幅を自動調整 */
+        text-align: right; /* 値は右寄せ */
+    }
+
+    /* 特に説明（2列目）はテキストが多く、左寄せが良い場合もあるので個別に調整 */
+    .project-table td:nth-child(2) > * {
+        text-align: left; /* 説明は左寄せにする */
+    }
+
+    /* プロジェクト名（1列目）の表示調整 - ラベルと値を縦に並べる */
+    .project-table td:nth-child(1) {
+        /* 以前の「盾」のスタイルを削除し、縦並びのための設定に変更 */
+        flex-direction: column; /* 要素を縦方向に並べる */
+        align-items: flex-start; /* 左寄せ */
+        justify-content: flex-start; /* 上寄せ */
+        padding: 0.75rem 0.25rem 0.5rem; /* 上下のパディングを調整 */
+        background-color: transparent; /* 背景色を透明に戻す */
+        border-radius: 0; /* 角丸をなくす */
+        margin-bottom: 0; /* マージンをリセット */
+        font-size: inherit; /* フォントサイズを親から継承 */
+        font-weight: normal; /* フォントの太さをリセット */
+        color: inherit; /* 文字色を親から継承 */
+    }
+
+    .project-table td:nth-child(1)::before {
+        content: attr(data-label); /* ラベルを表示 */
+        font-weight: bold;
+        margin-right: 0; /* ラベルと値の間の横マージンをなくす */
+        margin-bottom: 0.25rem; /* ラベルの下にスペース */
+        color: #2d3748; /* デフォルトのラベル色に戻す */
+        flex-basis: auto;
         text-align: left;
+    }
+
+    .project-table td:nth-child(1) > * {
+        text-align: left; /* 値を左寄せ */
+        flex-grow: 0; /* 残りのスペースを使わない */
+        flex-basis: auto; /* 幅をコンテンツに合わせる */
+        font-size: 1.05rem; /* プロジェクト名自体は少し大きくても良い */
+        font-weight: 600; /* プロジェクト名自体を少し太字に */
+        color: #2d3748; /* デフォルトの文字色に戻す */
+    }
+
+
+    /* 各項目のラベル設定はそのまま */
+    .project-table td:nth-child(1)::before {
+        content: "プロジェクト名:";
+    }
+
+    .project-table td:nth-child(2)::before {
+        content: "説明:";
+    }
+
+    .project-table td:nth-child(3)::before {
+        content: "期間:";
+    }
+
+    .project-table td:nth-child(4)::before {
+        content: "使用技術:";
+    }
+
+    .project-table td:nth-child(5)::before {
+        content: "操作:";
+        flex-basis: auto;
+        text-align: left;
+    }
+
+    /* モバイルでの操作ボタンの配置調整（ラベルの横にボタンを並べる） */
+    .project-table td:nth-child(5) {
+        justify-content: flex-start; /* ラベルの直後にボタンが来るように左寄せ */
+        gap: 0.5rem;
     }
 }

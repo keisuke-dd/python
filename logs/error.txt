@@ -79,3 +79,6 @@ Traceback (most recent call last):
   File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\postgrest\_sync\request_builder.py", line 78, in execute
     raise APIError(r.json())
 postgrest.exceptions.APIError: {'code': '42501', 'details': None, 'hint': None, 'message': 'new row violates row-level security policy for table "skillsheet"'}
+2025-06-12 11:51:49,976 [WARNING] app [C:\Users\keisu\python\app.py:297 - update_password_form()] パスワード更新失敗: 弱いパスワード
+2025-06-12 11:52:22,369 [WARNING] app [C:\Users\keisu\python\app.py:297 - update_password_form()] パスワード更新失敗: 弱いパスワード
+2025-06-12 13:02:02,075 [WARNING] app [C:\Users\keisu\python\app.py:297 - update_password_form()] パスワード更新失敗: 弱いパスワード
