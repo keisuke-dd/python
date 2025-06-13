@@ -12,12 +12,12 @@
   <form action="/signup" method="POST">
     <div>
       <label for="email">メールアドレス:</label>
-      <input type="email" id="email" name="email" required />
+      <input type="email" id="email" name="email" required/>
     </div>
     <div>
       <label for="password">パスワード:</label>
-      <input type="password" id="password" name="password" required />
-      <p><strong>パスワードは最低６文字</strong></p>
+      <input type="password" id="passwordInput" name="password" required/>
+      <button type="button" id="showPasswordButton">表示</button>
     </div>
     <div>
       <button type="submit">サインアップ</button>
@@ -33,4 +33,8 @@
 
   <p><a href="/"><strong>ホームに戻る</strong></a></p>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script src="{{ url_for('static', filename='js/show_password.js') }}"></script>
 {% endblock %}

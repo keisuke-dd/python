@@ -1,14 +1,14 @@
 body {
     margin: 0;
     padding: 0;
-    font-family: Arial, sans-serif; 
+    font-family: Arial, sans-serif;
     background-color: #f7fafc;
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
-.header { 
+.header {
     width: 100%;
     background-color: #fff;
     border-bottom: 4px solid #4299e1;
@@ -25,7 +25,7 @@ body {
     display: block;
 }
 
-.container { 
+.container {
     background-color: white;
     margin-top: 2rem;
     padding: 2rem;
@@ -35,6 +35,16 @@ body {
     width: 100%;
     text-align: left;
 }
+
+.section-title {
+    text-transform: none !important; /* セクションタイトルはそのまま保持 */
+}
+
+
+h1, select, button, label {
+    text-transform: lowercase; /* これらの要素には小文字を適用 */
+}
+
 
 h1 {
     color: #2d3748;
@@ -140,10 +150,15 @@ button:hover {
     margin-bottom: 1rem;
     border-bottom: 2px solid #e2e8f0;
     padding-bottom: 0.25rem;
+    font-family: monospace;
+    text-transform: none;
 }
 
-.form-group {
-    margin-bottom: 1rem;
+.form-group label {
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+  white-space: normal;
+  word-break: break-word;
 }
 
 .language-select-group {
@@ -151,6 +166,7 @@ button:hover {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 1rem;
     margin-bottom: 1rem;
+    font-family: monospace;
 }
 
 .select-description {
@@ -196,14 +212,13 @@ nav ul li a::before {
     transform: translateY(-50%);
 }
 
-/* 丸 (::after) のスタイル - 変更なし */
 nav ul li a::after {
-    right: 5px; 
-    width: 18px; 
-    height: 18px; 
+    right: 5px;
+    width: 18px;
+    height: 18px;
     background-color: #ccc;
     border-radius: 100%;
-    z-index: 1; 
+    z-index: 1;
 }
 
 nav ul li a.current::after,
@@ -212,9 +227,9 @@ nav ul li a:hover:after {
 }
 
 nav ul li a::before {
-    z-index: 2; 
-    right: 11px; 
-    transform: translateY(-50%) rotate(-45deg); 
+    z-index: 2;
+    right: 11px;
+    transform: translateY(-50%) rotate(-45deg);
     width: 6px;
     height: 6px;
     border-right: 2px solid #555;
@@ -225,11 +240,11 @@ nav ul li a {
     text-decoration: none;
     color: #aaa;
     display: inline-block;
-    position: relative; 
-    padding: 5px 28px 5px 0; 
+    position: relative;
+    padding: 5px 28px 5px 0;
     line-height: normal;
     box-sizing: border-box;
-    white-space: nowrap; 
+    white-space: nowrap;
 }
 
 nav ul li a.current {
@@ -240,57 +255,52 @@ nav ul li a:hover {
     color: #555;
 }
 
-
-
-
 /* skillsheet_input.css の JavaScript で動的に生成されるセクションのスタイル */
-       
-            .section {
-                display: none;
-            }
-            .section.active {
-                display: block;
-            }
-            .navigation-buttons {
-                display: flex;
-                justify-content: space-between;
-                margin: 20px 0;
-            }
-            
-           .nav-button {
-               padding: 10px 20px;
-               background-color: #3498db;
-               color: white; 
-               border: 2px solid #e4e9ec; 
-               font-weight: bold; 
-               border-radius: 4px;
-               cursor: pointer;
-               transition: background-color 0.3s, color 0.3s;
-            }
-     
-           .nav-button:hover {
-               background-color: rgb(33, 128, 236); 
-            } 
+.section {
+    display: none;
+}
+.section.active {
+    display: block;
+}
+.navigation-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin: 20px 0;
+}
 
+.nav-button {
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    border: 2px solid #e4e9ec;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
 
-            .nav-button:disabled {
-                background-color: rgba(204, 204, 204, 0.5);
-                color: #eee;
-                border-color: #aaa;
-                cursor: not-allowed;
-           }
-            
-            .progress-bar {
-                width: 100%;
-                height: 4px;
-                background-color: #e2e8f0;
-                margin: 20px 0;
-                border-radius: 2px;
-            }
-            .progress {
-                height: 100%;
-                background-color: #3498db;
-                border-radius: 2px;
-                transition: width 0.3s ease;
-            }
-     
+.nav-button:hover {
+    background-color: rgb(33, 128, 236);
+}
+
+.nav-button:disabled {
+    background-color: rgba(204, 204, 204, 0.5);
+    color: #eee;
+    border-color: #aaa;
+    cursor: not-allowed;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 4px;
+    background-color: #e2e8f0;
+    margin: 20px 0;
+    border-radius: 2px;
+}
+
+.progress {
+    height: 100%;
+    background-color: #3498db;
+    border-radius: 2px;
+    transition: width 0.3s ease;
+}

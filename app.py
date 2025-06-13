@@ -21,6 +21,7 @@ import google.generativeai as genai
 import re
 
 # pdf作成に必要なライブラリ
+import unicodedata
 import io
 from io import BytesIO
 from reportlab.pdfgen import canvas
@@ -58,7 +59,7 @@ app.secret_key = "your_secret_key"  # セッション用のシークレットキ
 
 #  セッションの設定
 app.config['SESSION_TYPE'] = 'filesystem'
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # 15分操作なしで自動ログアウト
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=30)  # 30分操作なしで自動ログアウト
 
 
 # セッションの永続化を有効にする
@@ -560,20 +561,20 @@ def project_input():
             prompt = f"""
             # あなたはSES事業の営業担当者です。  
             自社のエンジニアをお客様先に推薦するため、  
-            以下のエンジニアの過去参画プロジェクト内容をもとに、  
+            以下のエンジニアの過去参画プロジェクト説明をもとに、  
             お客様向けに簡潔かつ具体的な箇条書き形式の職務経歴文を作成してください。  
 
             # 目的  
             - クライアントにエンジニアの実務能力や経験を的確に伝える  
-            - 採用担当者が「ぜひ採用したい」と感じる魅力的な表現にする  
+            - 採用担当者が「ぜひ採用したい」と感じる表現にする  
 
             # 出力条件  
-            - 箇条書きで5～8点程度にまとめる  
-            - 具体的な業務内容や使用技術を明記する  
+            - 箇条書き形式で7～10項目程度
+            - 業務内容、使用技術、貢献成果が分かる具体的な表現
             - 成果や貢献を必ず含める  
             - 専門用語は適度に使いながら、分かりやすさも重視する  
             - 敬体（です・ます調）で、正式かつ読みやすい文体にする  
-            - 全体で300～400字程度  
+            - 全体の文字数は400～500文字程度
 
             # 入力情報  
             プロジェクト名: {name}  
@@ -680,15 +681,15 @@ def project_edit(project_id):
             prompt = f"""
             # あなたはSES事業の営業担当者です。  
             自社のエンジニアをお客様先に推薦するため、  
-            以下のエンジニアの過去参画プロジェクト内容をもとに、  
+            以下のエンジニアの過去参画プロジェクト説明をもとに、  
             お客様向けに簡潔かつ具体的な箇条書き形式の職務経歴文を作成してください。  
 
             # 目的  
             - クライアントにエンジニアの実務能力や経験を的確に伝える  
-            - 採用担当者が「ぜひ採用したい」と感じる魅力的な表現にする  
+            - 採用担当者が「ぜひ採用したい」と感じる表現にする  
 
             # 出力条件  
-            - 箇条書きで5～8点程度にまとめる  
+            - 箇条書き形式で8点程度に整理   
             - 具体的な業務内容や使用技術を明記する  
             - 成果や貢献を必ず含める  
             - 専門用語は適度に使いながら、分かりやすさも重視する  
@@ -699,7 +700,7 @@ def project_edit(project_id):
             プロジェクト名: {name}  
             プロジェクト説明: {description}  
 
-            # 以上を踏まえて、職務経歴の箇条書き文を作成してください。
+            # 以上を踏まえて、職務経歴の箇条書き文を作成してください。  
             
             """
             try:
@@ -788,20 +789,418 @@ def create_pdf():
                 session['error'] = f"{name}のデータ取得に失敗しました。"
                 return redirect(url_for('dashboard'))
 
+        # ───  data 部分が None の場合は「レコードなし」として扱う ───
         profile = profile_res.data[0] if profile_res.data else {}
         skillsheet = skillsheet_res.data[0] if skillsheet_res.data else {}
         projects = projects_res.data or []
 
+        # プロフィールデータが空の場合は、ダッシュボードにリダイレクト
         if not profile:
             app.logger.warning(f"プロフィール未登録: user_id={user_id}")
             session['error'] = "プロフィールデータが登録されていません。"
             return redirect(url_for('dashboard'))
 
-        # PDF生成処理（元のコードそのまま）
-        buffer = io.BytesIO()
-        # --- 略（PDF描画処理）---
+        
+         # PDF初期化Add commentMore actions
+        buffer = BytesIO()
+        p = canvas.Canvas(buffer, pagesize=A4)
+        width, height = A4
+        y = height - 50
 
-        # 最後に保存
+        # ========== 紺色の背景ブロック ==========
+        block_width = 180
+        block_height = 250
+        p.setFillColor(navy)
+        p.rect(0, height - block_height, block_width, block_height, fill=True, stroke=0)
+
+        # ========== 画像挿入 ==========
+        try:
+            image_path = "./static/images/tom_3.png"
+            p.drawImage(image_path, 30, height - 120, width=120, height=60, mask='auto')
+        except Exception as e:
+            print("画像読み込みエラー:", e)
+
+        # ========== タイトル（ブロック内に） ==========
+        p.setFillColorRGB(1, 1, 1)  # 白文字
+        p.setFont("IPAexGothic", 12)
+        p.drawString(35, height - 160, "TECHNICAL SHEET")
+
+        # ========== テキストを黒に戻す ==========
+        p.setFillColor(black)
+
+        # プロフィール表示位置（ブロックの右端より右側）
+        profile_x = block_width + 30
+        profile_y = height - 50
+
+        # プロフィール情報の表示
+        p.setFont("IPAexGothic", 16)
+        p.drawString(profile_x, profile_y, f"氏名：{profile.get('initial', '')}")
+        p.setFont("IPAexGothic", 12)
+        p.drawString(profile_x, profile_y - 25, f"年齢: {profile.get('age', '')}")
+        if profile.get('location'):
+            p.drawString(profile_x, profile_y - 65, f"最寄り駅: {profile.get('location', '')}")
+        if profile.get('education'):
+            p.drawString(profile_x, profile_y - 85, f"学歴: {profile.get('education', '')}")
+        if profile.get('certifications'):
+            p.drawString(profile_x, profile_y - 105, f"資格: {profile.get('certifications', '')}")
+        if profile.get('bio'):
+            p.drawString(profile_x, profile_y - 125, f"自己紹介: {profile.get('bio', '')}")
+
+        # スキル一覧描画開始Y座標（紺色ブロックの下から開始）
+        y = height - block_height - 50
+
+        # ========== スキル ==========
+        p.setFillColor(navy)
+        p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)  # 下線のみ
+        p.setFillColor(black)
+        
+        p.setFont("IPAexGothic", 14)
+        p.drawString(60, y, "■ スキル一覧")
+        y -= 40
+
+         # スキルレベルの判断基準を追加
+        p.setFont("IPAexGothic", 12)
+        p.setFillColor(navy)
+        p.drawString(60, y, "【スキルレベルの判断基準】")
+        p.setFillColor(black)
+        y -= 25
+
+        # スキルレベルの判断基準をリストで表示
+        criteria = [
+            "S: 専門家レベル - その分野のエキスパートとして、複雑な問題解決や指導が可能",
+            "A: 上級レベル - 実務経験が豊富で、独力でプロジェクトを遂行可能",
+            "B: 中級レベル - 基本的な実務経験があり、チーム内で活躍可能",
+            "C: 初級レベル - 基礎知識があり、サポート業務が可能",
+            "D: 学習中 - 現在学習中のスキル"
+        ]
+
+        for criterion in criteria:
+            p.setFont("IPAexGothic", 10)
+            p.drawString(70, y, criterion)
+            y -= 20
+
+        y -= 20  # スキル一覧との間隔を確保
+
+        # スキルをカテゴリごとに分類
+        categories = {
+            "プログラミング言語": ["python", "ruby", "javascript", "shell", "c", "c++", "c#", "java", "html", "go", "css", "swift", "kotlin", "vba"],
+            "フレームワーク": ["ruby_on_rails", "django", "flask", "laravel", "symfony", "cakephp", "php", "next_js", "nuxt_js", "vue_js", "spring_boot", "bottle", "react"],
+            "開発環境": ["vscode", "eclipse", "pycharm", "jupyter_notebook", "android_studio", "atom", "xcode", "webstorm", "netbeans", "visual_studio"],
+            "OS": ["windows", "windows_server", "macos", "linux", "unix", "solaris", "android", "ios", "chromeos", "centos", "ubuntu", "ms_dos", "watchos", "wear_os", "raspberrypi_os", "oracle_solaris", "z/os", "firefox_os", "blackberryos", "rhel", "kali_linux", "parrot_os", "whonix"],
+            "クラウド": ["aws", "azure", "gcp", "oci"],
+            "セキュリティ製品": ["splunk", "microsoft_sentinel", "microsoft_defender_for_endpoint", "cybereason", "crowdstrike_falcon", "vectra", "exabeam", "sep(symantecendpointprotection)", "tanium", "logstorage", "trellix", "fireeye_nx", "fireeye_hy", "fireeye_cm", "ivanti", "f5_big_ip", "paloalto_prisma", "tenable"],
+            "ネットワーク環境": ["cisco_catalyst", "cisco_meraki", "cisco_nexus", "cisco_others", "allied_switch", "allied_others", "nec_ip8800_series", "nec_ix_series", "yamaha_rtx/nvr", "hpe_aruba_switch", "fortinet_fortiswitch", "fortinet_fortogate", "paloalto_pa_series", "panasonic_switch", "media_converter", "wireless_network", "other_network_devices"],
+            "仮想化基盤": ["vmware_vsphere", "vmware_workstaion", "oracle_virtualbox", "vmware_fusion", "microsoft_hyper_v", "kvm(kernel_based_virtual_machine)", "docker", "kubernetes"],
+            "AI": ["gemini", "chatgpt", "copilot", "perplexity", "grok", "azure_openai"],
+            "サーバソフトウェア": ["apache_http_server", "nginx", "iis", "apache_tomcat", "oracle_weblogic", "adobe_coldfusion", "wildfly", "websphere", "jetty", "glassfish", "squid", "varnish", "sendmail", "postfix"],
+            "データベース": ["mysql", "oracle", "postgresql", "sqlite", "mongodb", "casandra", "microsoft_sql_server", "amazon_aurora", "mariadb", "redis", "dynamodb", "elasticsearch", "amazon_rds"],
+            "ツール類": ["wireshark", "owasp_zap", "burp_suite", "nessus", "openvas", "tera_term", "powershell", "cmd", "winscp", "tor", "kintone", "jira", "confluence", "servicenow", "sakura_editor", "power_automate", "automation_anywhere", "active_directory", "sap_erp", "salesforce"],
+            "言語": ["english", "chinese", "korean", "tagalog", "german", "spanish", "italian", "russian", "portugese", "french", "lithuanian", "malay", "romanian"],
+            "セキュリティ調査ツール": ["shodan", "censys", "greynoise", "ibm_x_force", "urlsan.io", "abuselpdb", "virustotal", "cyberchef", "any.run", "hybrid_analysis", "wappalyzer", "wireshark"]
+        }
+
+        # スキルを3列に分けて表示
+        col1_x = 50  # 左端の余白を60から50に調整
+        col2_x = width / 3 + 10  # 列間の余白を調整
+        col3_x = (width / 3) * 2 + 10  # 列間の余白を調整
+        col1_y = y
+        col2_y = y
+        col3_y = y
+        current_col = 1
+
+        def draw_level_bar(x, y, level):
+            # バーの基本設定
+            bar_height = 1.2  # バーの高さを0.8から1.2に増加
+            bar_width = 70  # バーの幅を50から70に増加
+            bar_y = y - 1
+            
+            # レベルに応じたバーの長さを計算
+            if level == 'S':
+                fill_width = bar_width
+            elif level == 'A':
+                fill_width = bar_width * 0.8
+            elif level == 'B':
+                fill_width = bar_width * 0.6
+            elif level == 'C':
+                fill_width = bar_width * 0.4
+            elif level == 'D':
+                fill_width = 0
+            else:
+                fill_width = 0
+
+            # レベル表示（バーの下）
+            p.setFont("IPAexGothic", 8)
+            # 各レベルの位置を計算
+            level_positions = {
+                'S': x + bar_width,
+                'A': x + bar_width * 0.8,
+                'B': x + bar_width * 0.6,
+                'C': x + bar_width * 0.4,
+                'D': x + bar_width * 0.2
+            }
+            
+            # 背景のバー（薄いグレー）
+            p.setFillColorRGB(0.9, 0.9, 0.9)
+            p.rect(x, bar_y, bar_width, bar_height, fill=True, stroke=0)
+            
+            # 塗りつぶしバー（紺色）
+            p.setFillColor(navy)
+            p.rect(x, bar_y, fill_width, bar_height, fill=True, stroke=0)
+            
+            # 現在のレベル位置に●を表示
+            current_pos = level_positions.get(level, 0)
+            p.setFillColor(navy)
+            p.circle(current_pos, bar_y + bar_height/2, 2.5, fill=True)  # 円のサイズを2から2.5に増加
+            
+            # レベル表示（バーの下）
+            for lvl, pos in level_positions.items():
+                p.setFillColor(black)
+                p.drawString(pos - 3, y - 10, lvl)
+            
+            # テキストを黒に戻す
+            p.setFillColor(black)
+            p.setFont("IPAexGothic", 4)
+
+        # カテゴリごとにスキルを表示
+        for category, skills in categories.items():
+            # カテゴリ内のスキルをフィルタリング（Dレベルのスキルを除外）
+            category_skills = {skill: skillsheet.get(skill) for skill in skills if skillsheet.get(skill) and skillsheet.get(skill) != 'D'}
+            
+            if category_skills:  # カテゴリにスキルがある場合のみ表示
+                # カテゴリタイトルを表示
+                if current_col == 1:
+                    p.setFont("IPAexGothic", 12)
+                    p.setFillColor(navy)
+                    p.drawString(col1_x, col1_y, f"【{category}】")
+                    p.setFillColor(black)
+                    col1_y -= 30
+                elif current_col == 2:
+                    p.setFont("IPAexGothic", 12)
+                    p.setFillColor(navy)
+                    p.drawString(col2_x, col2_y, f"【{category}】")
+                    p.setFillColor(black)
+                    col2_y -= 30
+                else:
+                    p.setFont("IPAexGothic", 12)
+                    p.setFillColor(navy)
+                    p.drawString(col3_x, col3_y, f"【{category}】")
+                    p.setFillColor(black)
+                    col3_y -= 30
+
+                # カテゴリ内のスキルを表示
+                for skill, level in category_skills.items():
+                    if current_col == 1:
+                        # スキル名を表示（線の上に小さく）
+                        p.setFont("IPAexGothic", 7)
+                        p.drawString(col1_x, col1_y + 8, f"・{skill.replace('_', ' ').title()}")
+                        # レベルバーを描画
+                        draw_level_bar(col1_x + 60, col1_y, level)  # 左に移動（90から60に）
+                        col1_y -= 25
+                        if col1_y < 100:
+                            current_col = 2
+                            col1_y = y
+                    elif current_col == 2:
+                        # スキル名を表示（線の上に小さく）
+                        p.setFont("IPAexGothic", 7)
+                        p.drawString(col2_x, col2_y + 8, f"・{skill.replace('_', ' ').title()}")
+                        # レベルバーを描画
+                        draw_level_bar(col2_x + 60, col2_y, level)  # 左に移動（90から60に）
+                        col2_y -= 25
+                        if col2_y < 100:
+                            current_col = 3
+                            col2_y = y
+                    else:
+                        # スキル名を表示（線の上に小さく）
+                        p.setFont("IPAexGothic", 7)
+                        p.drawString(col3_x, col3_y + 8, f"・{skill.replace('_', ' ').title()}")
+                        # レベルバーを描画
+                        draw_level_bar(col3_x + 60, col3_y, level)  # 左に移動（90から60に）
+                        col3_y -= 25
+                        if col3_y < 100:
+                            p.showPage()
+                            y = height - 50
+                            col1_y = y
+                            col2_y = y
+                            col3_y = y
+                            current_col = 1
+                            p.setFont("IPAexGothic", 4)
+
+                # カテゴリ間の余白
+                if current_col == 1:
+                    col1_y -= 10  # カテゴリ間の余白を増加
+                elif current_col == 2:
+                    col2_y -= 10  # カテゴリ間の余白を増加
+                else:
+                    col3_y -= 10  # カテゴリ間の余白を増加
+
+
+
+        # --- プロジェクト履歴ページ ---
+
+        def sanitize_text(text):
+            # 不可視文字や制御文字を除去
+            text = unicodedata.normalize('NFKC', text)  # 全角→半角などの正規化
+            text = re.sub(r"[\u200B-\u200D\uFEFF]", "", text)  # ゼロ幅スペースなど削除
+            text = text.replace("\r\n", "\n").replace("\r", "\n")  # 改行統一
+            return text
+
+        # --- 折り返し描画用ヘルパー関数 ---
+        def draw_wrapped_text(canvas, text, x, y, max_width,
+                      font_name="IPAexGothic", font_size=10, leading=14):
+            canvas.setFont(font_name, font_size)
+            lines = []
+            for paragraph in text.split('\n'):
+                current_line = ""
+                for char in paragraph:
+                    test_line = current_line + char
+                    test_width = pdfmetrics.stringWidth(test_line, font_name, font_size)
+                    if test_width <= max_width:
+                        current_line = test_line
+                    else:
+                        lines.append(current_line)
+                        current_line = char
+                if current_line:
+                    lines.append(current_line)
+            for i, line in enumerate(lines):
+                canvas.drawString(x, y - i * leading, line)
+            return len(lines)
+
+
+        # --- 日付を安全にパースする関数 ---
+        def format_date(date_str):
+            if not date_str:
+                return ""
+            try:
+                # 例: ISO形式 '2002-05-07T00:00:00' をdatetimeに変換
+                dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+                # 好みの表示形式に変換（例: 2002年5月7日）
+                # Windows環境など%-mが使えない場合は%#mを試してください
+                return dt.strftime("%Y年%m月%d日").replace(" 0", " ")
+            except Exception as e:
+                print(f"format_date parse error: {e} with input: {date_str}")
+                return date_str
+
+        # --- プロジェクト履歴の描画開始 ---
+        sorted_projects = sorted(projects, key=lambda p: p.get("start_at") or "", reverse=True)
+
+        # 新しいページにプロジェクト履歴を描画
+        p.showPage()
+        y = height - 50
+
+        # ヘッダーの装飾
+        p.setFillColor(navy)
+        p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)
+        p.setFillColor(black)
+
+        # タイトル
+        p.setFont("IPAexGothic", 16)
+        p.drawString(60, y, "■ プロジェクト履歴")
+        y -= 50
+
+        for i, project in enumerate(sorted_projects):
+            # 改ページ判定
+            if y < 150:
+                p.showPage()
+                y = height - 50
+                p.setFillColor(navy)
+                p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)
+                p.setFillColor(black)
+                p.setFont("IPAexGothic", 16)
+                p.drawString(60, y, "■ プロジェクト履歴（続き）")
+                y -= 50
+
+            print(f"{i+1}件目: {project.get('name')}, y={y}")
+
+            timeline_x = 60
+            detail_x = timeline_x + 20
+            detail_y = y - 15
+            max_width = width - detail_x - 50
+
+            # プロジェクト名
+            p.setFont("IPAexGothic", 12)
+            p.setFillColor(navy)
+            p.drawString(detail_x, y + 5, f"・{project.get('name', '')}")
+            p.setFillColor(black)
+
+            # 横線装飾
+            p.setFillColor(navy)
+            p.rect(detail_x - 5, detail_y - 2, width - detail_x - 50, 1, fill=True, stroke=0)
+            p.setFillColor(black)
+
+            # 期間
+            if project.get("start_at") or project.get("end_at"):
+                p.setFont("IPAexGothic", 10)
+                start_disp = format_date(project.get("start_at", ""))
+                end_disp = format_date(project.get("end_at", ""))
+                p.drawString(
+                    detail_x,
+                    detail_y,
+                    f"期間: {start_disp} ～ {end_disp}"
+                )
+                detail_y -= 20
+
+
+            # 説明（折り返し対応）
+            if project.get("description"):
+                p.setFont("IPAexGothic", 10)
+                description_text = sanitize_text(f"説明: {project.get('description')}")
+                num_lines = draw_wrapped_text(
+                    p,
+                    description_text,
+                    detail_x,
+                    detail_y,
+                    max_width,
+                    font_name="IPAexGothic",
+                    font_size=10,
+                    leading=14
+                )
+
+                
+                detail_y -= (num_lines * 14)
+
+            # 技術（折り返し＋重複除去）
+            if project.get("technologies"):
+                p.setFont("IPAexGothic", 10)
+                tech_list = project["technologies"]
+                if isinstance(tech_list, list):
+                    techs = list(dict.fromkeys(tech_list))
+                    tech_text = f"技術: {', '.join(techs)}"
+                else:
+                    tech_text = f"技術: {str(tech_list)}"
+
+                max_width = width - detail_x - 50
+                num_lines = draw_wrapped_text(
+                    p,
+                    tech_text,
+                    detail_x,
+                    detail_y,
+                    max_width,
+                    font_name="IPAexGothic",
+                    font_size=10,
+                    leading=14
+                )
+                detail_y -= (num_lines * 14)
+
+            # 次のプロジェクト描画位置を更新
+            y = detail_y - 40
+
+
+
+        # ========== フッター ==========
+
+        # フッター
+        p.setFillColor(navy)
+        p.rect(0, 30, width, 1, fill=True, stroke=0)
+        p.setFillColor(black)
+        p.setFont("IPAexGothic", 9)
+        p.drawString(50, 20, f"作成日: {datetime.now().strftime('%Y/%m/%d')}")
+
+        p.showPage()
+        p.save()
+        buffer.seek(0)
+        
+        # PDFを一時ファイルとして保存
+
         temp_pdf_path = f"static/temp/{user_id}_skillsheet.pdf"
         os.makedirs("static/temp", exist_ok=True)
         with open(temp_pdf_path, "wb") as f:

@@ -82,3 +82,61 @@ postgrest.exceptions.APIError: {'code': '42501', 'details': None, 'hint': None, 
 2025-06-12 11:51:49,976 [WARNING] app [C:\Users\keisu\python\app.py:297 - update_password_form()] パスワード更新失敗: 弱いパスワード
 2025-06-12 11:52:22,369 [WARNING] app [C:\Users\keisu\python\app.py:297 - update_password_form()] パスワード更新失敗: 弱いパスワード
 2025-06-12 13:02:02,075 [WARNING] app [C:\Users\keisu\python\app.py:297 - update_password_form()] パスワード更新失敗: 弱いパスワード
+2025-06-13 10:34:21,390 [WARNING] app [C:\Users\keisu\python\app.py:197 - login()] ログイン失敗: email=keisuke.tezuka.dd@gmail.com エラー: Invalid login credentials
+2025-06-13 10:56:51,908 [WARNING] app [C:\Users\keisu\python\app.py:802 - create_pdf()] プロフィール未登録: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748
+2025-06-13 11:07:39,309 [WARNING] app [C:\Users\keisu\python\app.py:802 - create_pdf()] プロフィール未登録: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748
+2025-06-13 14:13:33,004 [WARNING] app [C:\Users\keisu\python\app.py:798 - create_pdf()] プロフィール未登録: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748
+2025-06-13 14:15:58,301 [WARNING] app [C:\Users\keisu\python\app.py:798 - create_pdf()] プロフィール未登録: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748
+2025-06-13 14:16:02,011 [WARNING] app [C:\Users\keisu\python\app.py:798 - create_pdf()] プロフィール未登録: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748
+2025-06-13 14:35:40,319 [ERROR] app [C:\Users\keisu\python\app.py:1209 - create_pdf()] PDF作成中にエラー発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー='UTF-8'
+Traceback (most recent call last):
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 698, in getFont
+    return _fonts[fontName]
+           ~~~~~~^^^^^^^^^^
+KeyError: 'UTF-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 835, in create_pdf
+    p.setFont("UTF-8", 16)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfgen\canvas.py", line 1737, in setFont
+    font = pdfmetrics.getFont(self._fontname)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 700, in getFont
+    return findFontAndRegister(fontName)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 682, in findFontAndRegister
+    face = getTypeFace(fontName)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 639, in getTypeFace
+    return _typefaces[faceName]
+           ~~~~~~~~~~^^^^^^^^^^
+KeyError: 'UTF-8'
+2025-06-13 14:39:19,380 [ERROR] app [C:\Users\keisu\python\app.py:1209 - create_pdf()] PDF作成中にエラー発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー='UTF-8'
+Traceback (most recent call last):
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 698, in getFont
+    return _fonts[fontName]
+           ~~~~~~^^^^^^^^^^
+KeyError: 'UTF-8'
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 835, in create_pdf
+    p.setFont("UTF-8", 16)
+    ~~~~~~~~~^^^^^^^^^^^^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfgen\canvas.py", line 1737, in setFont
+    font = pdfmetrics.getFont(self._fontname)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 700, in getFont
+    return findFontAndRegister(fontName)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 682, in findFontAndRegister
+    face = getTypeFace(fontName)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\reportlab\pdfbase\pdfmetrics.py", line 639, in getTypeFace
+    return _typefaces[faceName]
+           ~~~~~~~~~~^^^^^^^^^^
+KeyError: 'UTF-8'
+2025-06-13 15:35:12,198 [ERROR] app [C:\Users\keisu\python\app.py:1212 - create_pdf()] PDF作成中にエラー発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=cannot access local variable 'max_width' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1151, in create_pdf
+    max_width,
+    ^^^^^^^^^
+UnboundLocalError: cannot access local variable 'max_width' where it is not associated with a value
