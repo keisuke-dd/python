@@ -19,11 +19,12 @@
 
     {% if project %}
     <form method="POST">
-        <label>プロジェクト名</label>
-        <input type="text" name="name" value="{{ project.name }}" required>
+        <label for="name">プロジェクト名 <span class="required-mark">※必須</span></label>
+        <input type="text" id="name" name="name" value="{{ project.name }}" required>
 
-        <label for="description">プロジェクト説明</label>
-        <textarea id="description" name="description" class="auto-expand" rows="5">{{ project.description }}</textarea>
+        <label for="description">プロジェクト説明 <span class="required-mark">※必須</span></label>
+        <textarea id="description" name="description" class="auto-expand" rows="5" required>{{ project.description }}</textarea>
+
 
         <label>AI生成結果</label>
         <div id="project_summary" style="white-space: pre-line;">

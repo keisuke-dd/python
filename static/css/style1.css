@@ -178,24 +178,29 @@ body {
   margin-bottom: 10px; 
 }
 
-.password-input-container input[type="password"] {
-  width: calc(100% - 40px); 
-  padding-right: 60px;
-}
 
 /* 表示/非表示ボタンのスタイル */
 .password-input-container .show-hide-button {
   position: absolute;
-  right: -23px; 
-  top: 42%;
+  right: 25px; 
+  top: 50%;
   transform: translateY(-50%);
-  background: none;
+  background: none; 
   border: none;
   cursor: pointer;
-  font-size: 0.9em;
-  color: #000000;
+  font-size: 1em; 
+  color: #000000; 
   padding: 0;
-  width: 40px; 
+  width: auto; 
+}
+
+.password-input-container .show-hide-button:hover {
+  background-color: transparent; 
+  color: #888; 
+}
+
+.password-input-container .show-hide-button i {
+    pointer-events: none; 
 }
 
 
@@ -225,6 +230,9 @@ body {
   body {
     font-size: 15px; 
   }
+  .password-input-container .show-hide-button {
+    right: 5px; /* 小さい画面向けに調整 */
+  }
 }
 
 @media (max-width: 480px) {
@@ -251,5 +259,8 @@ body {
 
   body {
     font-size: 14px; 
+  }
+  .password-input-container .show-hide-button {
+    right: 3px; /* さらに小さい画面向けに調整 */
   }
 }

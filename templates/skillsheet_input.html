@@ -59,60 +59,23 @@
                                     {% endif %})
                                 </option>
 
-                            {% endfor %}
+                              {% endfor %}Add commentMore actions
                         </select>
 
-                    {% endfor %}
-            
-                        {# カスタムスキルの事前表示 #}
-                        {% set cat_customs = custom_fields.get(category_name, {}) %}
-                        {% for label, level in cat_customs.items() %}
-                        <div class="form-group custom-entry">
-                            <input type="text" name="custom_label_{{ category_name }}_{{ loop.index }}" value="{{ label }}" placeholder="カスタムスキル名">
-                            <select name="custom_value_{{ category_name }}_{{ loop.index }}">
-                                <option value="">-</option>
-                                {% for opt in ['S', 'A', 'B', 'C', 'D'] %}
-                                    <option value="{{ opt }}" {% if level == opt %}selected{% endif %}>{{ opt }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        {% endfor %}
                     </div>
-            
-                    <button type="button" class="add-custom-btn" data-category="{{ category_name }}" data-index="{{ loop.index }}">＋ カスタム項目を追加</button>
-                </section>
-                {% endfor %}
+                    {% endfor %}
+
+                </div>
+
+            </section>
+            {% endfor %}
 
             <div class="navigation-buttons">
                 <button type="button" class="nav-button" id="prevButton" disabled>前へ</button>
                 <button type="button" class="nav-button" id="nextButton">次へ</button>
             </div>
 
-            <script>
-            document.querySelectorAll(".add-custom-btn").forEach(button => {
-                button.addEventListener("click", () => {
-                    const category = button.dataset.category;
-                    const index = button.dataset.index;
-                    const container = document.getElementById(`fields-${index}`);
             
-                    const count = container.querySelectorAll(".custom-entry").length + 1;
-                    const div = document.createElement("div");
-                    div.className = "form-group custom-entry";
-                    div.innerHTML = `
-                        <input type="text" name="custom_label_${category}_${count}" placeholder="カスタムスキル名">
-                        <select name="custom_value_${category}_${count}">
-                            <option value="">-</option>
-                            <option value="S">S</option>
-                            <option value="A">A</option>
-                            <option value="B">B</option>
-                            <option value="C">C</option>
-                            <option value="D">D</option>
-                        </select>
-                    `;
-                    container.appendChild(div);
-                });
-            });
-            </script>
 
 
             <button type="submit">保存する</button>

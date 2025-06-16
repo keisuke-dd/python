@@ -76,7 +76,7 @@ def before_request():
             return
 
         # ログイン不要なページを除外
-        allowed_routes = ['home', 'login', 'signup', 'static']
+        allowed_routes = ['home', 'login', 'signup', 'update_password_request', 'verify_otp', 'update_password_redirect','update_password_form', 'static']
         if request.endpoint in allowed_routes or request.endpoint.startswith('static'):
             return
 
@@ -1106,7 +1106,7 @@ def create_pdf():
                 p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)
                 p.setFillColor(black)
                 p.setFont("IPAexGothic", 16)
-                p.drawString(60, y, "■ プロジェクト履歴（続き）")
+                p.drawString(60, y, "■ プロジェクト履歴")
                 y -= 50
 
             print(f"{i+1}件目: {project.get('name')}, y={y}")

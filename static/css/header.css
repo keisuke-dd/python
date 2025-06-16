@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  margin-top: 80px; 
+  margin-top: 80px;
 }
 
 /* ヘッダー全体の設定 */
@@ -14,14 +14,14 @@ body {
   align-items: center;
   padding: 0.5rem 1rem;
   width: 100%;
-  position: fixed; 
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000; 
+  z-index: 1000;
   border-bottom: none;
-  height: 100px; 
-  justify-content: flex-start; 
-  gap: 20px; 
+  height: 100px;
+  justify-content: flex-start;
+  gap: 20px;
 }
 
 /* 白の半透明オーバーレイ */
@@ -38,116 +38,124 @@ body {
 
 /* ヘッダー内画像（ロゴ） */
 .header img {
-  height: 60px; 
+  height: 60px;
   width: auto;
   object-fit: contain;
   display: block;
   position: relative;
-  z-index: 1; 
-  margin-left: 50px; 
+  z-index: 1;
+  margin-left: 50px;
 }
 
 /* ナビゲーションリンク */
 .nav-links {
   display: flex;
-  justify-content: center; 
+  justify-content: center;
   gap: 2rem;
   position: relative;
   z-index: 1;
-  margin-left: auto; 
-  margin-right: 50px; 
+  margin-left: auto;
+  margin-right: 50px;
+  flex-wrap: nowrap; /* リンク全体が折り返さないように */
 }
 
 .nav-links a {
+  color: #000000;
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+  font-size: 1rem;
+  transition: color 0.3s ease; 
+  white-space: nowrap;
+}
+
+.nav-links a:hover {
+  color: #221a1aa4; /* ホバー時の新しい色 */
+}
+
+/* ナビゲーションリンクのホバー効果 */
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-toggle {
   color: #2d3748;
   text-decoration: none;
   padding: 0.5rem 1rem;
   font-weight: bold;
   font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-  font-size: 0.9rem; 
+  cursor: pointer;
+  display: inline-block;
 }
 
-/* ナビゲーションリンクのホバー効果 */
-.dropdown {
-      position: relative;
-      display: inline-block;
-    }
-    
-    .dropdown-toggle {
-    color: #2d3748;
-    text-decoration: none;
-    padding: 0.5rem 1rem;
-    font-weight: bold;
-    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
-    cursor: pointer;
-    display: inline-block;
-   }
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: white;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-radius: 5px;
+}
 
-    .dropdown-menu {
-      display: none;
-      position: absolute;
-      background-color: white;
-      min-width: 160px;
-      box-shadow: 0px 8px 16px rgba(0,0,0,0.2);
-      z-index: 1;
-      border-radius: 5px;
-    }
+.dropdown-menu a {
+  color: black;
+  padding: 10px 15px;
+  text-decoration: none;
+  display: block;
+}
 
-    .dropdown-menu a {
-      color: black;
-      padding: 10px 15px;
-      text-decoration: none;
-      display: block;
-    }
+.dropdown-menu a:hover {
+  background-color: #f1f1f1;
+}
 
-    .dropdown-menu a:hover {
-      background-color: #f1f1f1;
-    }
-
-    .dropdown:hover .dropdown-menu {
-      display: block;
-    }
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
 
 /* ハンバーガーメニューアイコン */
 .hamburger {
-  display: none; 
+  display: none;
   font-size: 2rem;
   cursor: pointer;
-  z-index: 1001; 
+  z-index: 1001;
   color: #2d3748;
-  margin-left: auto; 
-  margin-right: 20px; 
+  margin-left: auto;
+  margin-right: 20px;
 }
 
 
-@media (max-width: 1200px) { 
+@media (max-width: 1430px) {
   /* ナビゲーションリンク（ハンバーガーメニュー展開時） */
   .nav-links {
-    display: none; 
+    display: none; /* 1200px以下で非表示にする設定は維持 */
     flex-direction: column;
     position: absolute;
-    top: 80px; 
+    top: 80px;
     left: 0;
     width: 100%;
     background-color: rgba(255, 255, 255, 0.95);
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    z-index: 999; 
+    z-index: 999;
     padding: 1rem 0;
-    margin-left: 0; 
-    margin-right: 0; 
-    align-items: center; 
+    margin-left: 0;
+    margin-right: 0;
+    align-items: center;
+    /* flex-wrap: nowrap; はここでは効果なし（display: none; のため） */
   }
 
   .nav-links.active {
-    display: flex; 
+    display: flex;
   }
 
   .nav-links a {
     text-align: center;
     padding: 1rem;
     border-bottom: 1px solid #eee;
-    width: 100%; 
-    box-sizing: border-box; 
+    width: 100%;
+    box-sizing: border-box;
   }
 
   .nav-links a:last-child {
@@ -156,29 +164,29 @@ body {
 
   /* ドロップダウンメニューの調整 */
   .dropdown {
-    width: 100%; 
-    text-align: center; 
+    width: 100%;
+    text-align: center;
   }
 
   .dropdown-toggle {
-    display: block; 
-    padding: 1rem; 
-    border-bottom: 1px solid #eee; 
+    display: block;
+    padding: 1rem;
+    border-bottom: 1px solid #eee;
   }
 
   .dropdown-menu {
-    position: static; 
-    width: 100%; 
-    box-shadow: none; 
-    border-radius: 0; 
-    background-color: transparent; 
+    position: static;
+    width: 100%;
+    box-shadow: none;
+    border-radius: 0;
+    background-color: transparent;
   }
 
   .dropdown-menu a {
-    padding: 0.8rem 1rem; 
-    background-color: rgba(255, 255, 255, 0.9); 
-    border-bottom: 1px solid #eee; 
-    text-align: center; 
+    padding: 0.8rem 1rem;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-bottom: 1px solid #eee;
+    text-align: center;
   }
 
   .dropdown-menu a:last-child {
@@ -187,27 +195,27 @@ body {
 
   /* ハンバーガーメニューアイコン */
   .hamburger {
-    display: block; 
-    margin-left: auto; 
-    margin-right: 1rem; 
-    z-index: 1001; 
-    color: #2d3748 !important; 
-    font-size: 2.5rem !important; 
-    line-height: 1; 
-    padding: 0 0.5rem; 
+    display: block;
+    margin-left: auto;
+    margin-right: 1rem;
+    z-index: 1001;
+    color: #2d3748 !important;
+    font-size: 2.5rem !important;
+    line-height: 1;
+    padding: 0 0.5rem;
   }
 
   /* ヘッダー全体の配置を再確認 */
   .header {
-    justify-content: space-between; 
-    padding: 0.5rem 1rem; 
-    gap: 0; 
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    gap: 0;
   }
 
   /* ロゴの位置調整と自動サイズ調整 */
   .header img {
-    margin-left: 1rem; 
-    margin-right: auto; 
+    margin-left: 1rem;
+    margin-right: auto;
     height: 50px;
   }
 }
@@ -215,7 +223,7 @@ body {
 /* さらに小さい画面でのロゴサイズ調整（例: 768px以下） */
 @media (max-width: 768px) {
   .header img {
-    height: 40px; 
+    height: 40px;
     margin-left: 0.5rem;
   }
 }
