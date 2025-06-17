@@ -33,40 +33,37 @@
         <form method="POST" action="/skillsheet_input">
             {% for category_name, fields in categories.items() %}
             <section class="section" id="{{ category_name }}" data-category="{{ category_name }}">
-
                 <h2 class="section-title">{{ category_name }}</h2>
 
                 <div class="language-select-group">
                     {% for field in fields %}
-
                     <div class="form-group">
                         <label for="{{ field }}">{{ field.replace('_', ' ').title() }}</label>
-
                         {% set value = skillsheet.get(field) if skillsheet else None %}
                         <select id="{{ field }}" name="{{ field }}">
-                            
                             <option value="">-</option>
                             {% for level in ['S', 'A', 'B', 'C', 'D'] %}
-
-                                <option value="{{ level }}"
-                                    {% if value == level or (not value and level == 'D') %}selected{% endif %}>
-                                    {{ level }} (
-                                    {% if level == 'S' %}上級、教育可能
-                                    {% elif level == 'A' %}中級、1人称対応可能
-                                    {% elif level == 'B' %}業務経験あり
-                                    {% elif level == 'C' %}知識のみ、研修レベル
-                                    {% elif level == 'D' %}経験なし
-                                    {% endif %})
-                                </option>
-
-                              {% endfor %}Add commentMore actions
+                            <option value="{{ level }}"
+                                {% if value == level or (not value and level == 'D') %}selected{% endif %}>
+                                {{ level }} (
+                                {% if level == 'S' %}上級、教育可能
+                                {% elif level == 'A' %}中級、1人称対応可能
+                                {% elif level == 'B' %}業務経験あり
+                                {% elif level == 'C' %}知識のみ、研修レベル
+                                {% elif level == 'D' %}経験なし
+                                {% endif %})
+                            </option>
+                            {% endfor %}
                         </select>
-
                     </div>
                     {% endfor %}
-
                 </div>
 
+                <!-- カスタムスキル追加エリア -->
+                <div class="custom-skills-container" data-category="{{ category_name }}"></div>
+
+                <!-- カスタムスキル追加ボタン -->
+                <button type="button" onclick="addCustomSkill(this, '{{ category_name }}')">＋ カスタムスキルを追加</button>
             </section>
             {% endfor %}
 
@@ -75,11 +72,10 @@
                 <button type="button" class="nav-button" id="nextButton">次へ</button>
             </div>
 
-            
-
-
             <button type="submit">保存する</button>
         </form>
     </div>
+
+   
 </body>
 </html>

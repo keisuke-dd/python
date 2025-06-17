@@ -61,3 +61,29 @@
                     progressBar.style.width = `${progress}%`;
                 }
             });
+
+
+
+        // スキルシートのカスタムスキル追加機能
+        function addCustomSkill(button, category) {
+            const container = button.previousElementSibling;
+
+            const wrapper = document.createElement("div");
+            wrapper.className = "form-group";
+
+            wrapper.innerHTML = `
+                <input type="hidden" name="custom_category[]" value="${category}">
+                <input type="text" name="custom_skill_name[]" placeholder="スキル名 (例: PHP)" required>
+                <select name="custom_skill_level[]" required>
+                    <option value="">レベルを選択</option>
+                    <option value="S">S (上級、教育可能)</option>
+                    <option value="A">A (中級、1人称対応可能)</option>
+                    <option value="B">B (業務経験あり)</option>
+                    <option value="C">C (知識のみ、研修レベル)</option>
+                    <option value="D">D (経験なし)</option>
+                </select>
+                <button type="button" onclick="this.parentNode.remove()">削除</button>
+            `;
+
+            container.appendChild(wrapper);
+        }

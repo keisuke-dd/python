@@ -42,6 +42,10 @@ load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
+# 管理者メールアドレスリストを取得
+ADMIN_EMAILS = os.getenv("ADMIN_EMAILS", "")
+ADMIN_EMAIL_LIST = [email.strip() for email in ADMIN_EMAILS.split(",") if email.strip()]
+
 # カスタムカラーの定義
 navy = HexColor("#3B0997")  # 紺色を16進数カラーコードで定義
 
@@ -199,6 +203,92 @@ def login():
             return render_template("login.html", error="ログインに失敗しました。")
 
     return render_template("login.html")
+
+
+# 管理者アクセスページ & 処理
+@app.route("/admin_login", methods=["GET", "POST"])
+def admin_login():
+    if request.method == "GET":
+        return render_template("admin_login.html")
+
+    email = request.form["email"]
+    password = request.form["password"]
+
+    # ① 一般ログイン済みかをチェック
+    if "user_email" not in session:
+        return "先に一般ユーザーとしてログインしてください", 403
+
+    # ② 一致チェック
+    if email != session["user_email"]:
+        return render_template("admin_login.html", error="一般ログイン時と異なるメールアドレスです")
+
+    try:
+        result = supabase.auth.sign_in_with_password({
+            "email": email,
+            "password": password
+        })
+
+        if result.user.email in ADMIN_EMAIL_LIST:
+            session["admin"] = True
+            session["admin_email"] = email
+            return redirect(url_for("admin_dashboard"))
+        else:
+            return "アクセス拒否：管理者ではありません", 403
+    except Exception as e:
+        return render_template("admin_login.html", error=f"ログイン失敗：{str(e)}"), 401
+
+
+# 管理者用ダッシュボードページ
+@app.route("/admin_dashboard", methods=["GET"])
+def admin_dashboard():
+    # 認証チェック
+    if not session.get("admin"):
+        return redirect(url_for("admin_login"))
+
+    query = request.args.get("q", "").strip().lower()
+
+    # プロフィール取得
+    profile_data = supabase.table("profile").select("*").order("created_at", desc=True).execute()
+    profile = {}
+    for p in profile_data.data:
+        user_id = p["user_id"]
+        if user_id not in profile:
+            profile[user_id] = p
+
+    # スキルシート取得
+    skillsheet_data = supabase.table("skillsheet").select("*").order("created_at", desc=True).execute()
+    skillsheet = {}
+    for s in skillsheet_data.data:
+        user_id = s["user_id"]
+        if user_id not in skillsheet:
+            skillsheet[user_id] = s
+
+    # プロジェクト取得（複数件OK）
+    project_data = supabase.table("project").select("*").order("created_at", desc=True).execute()
+    projects_by_user = {}
+    for proj in project_data.data:
+        user_id = proj["user_id"]
+        if user_id not in projects_by_user:
+            projects_by_user[user_id] = []
+        projects_by_user[user_id].append(proj)
+
+    # 統合：ユーザーごとにまとめる
+    users = []
+    for user_id, profile in profile.items():
+        name = profile.get("name", "")
+
+        # 検索クエリに一致するか（名前かメール）
+        if query and query not in name.lower():
+            continue
+
+        users.append({
+            "user_id": user_id,
+            "profile": profile,
+            "skillsheet": skillsheet.get(user_id),
+            "projects": projects_by_user.get(user_id, [])
+        })
+
+    return render_template("admin_dashboard.html", users=users, search_query=query)
 
 
 # emailアドレス更新ページ & 処理
@@ -430,7 +520,7 @@ def profile_input():
             }
             last_initial = kana_to_romaji.get(last_name_kana[0], last_name_kana[0]) if last_name_kana else ''
             first_initial = kana_to_romaji.get(first_name_kana[0], first_name_kana[0]) if first_name_kana else ''
-            return f"{last_initial}{first_initial}"
+            return f"{last_initial}.{first_initial}"
 
         initial = generate_initial(last_name_kana, first_name_kana)
         full_name = f"{last_name} {first_name}"
@@ -528,6 +618,22 @@ def skillsheet_input():
             if result.model_dump().get("error"):
                 app.logger.warning(f"スキルシート保存失敗: user_id={user_id} エラー={result.error}")
                 return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, error="保存に失敗しました")
+            
+            # ✅ カスタムスキルの取得と保存
+            custom_categories = request.form.getlist("custom_category")
+            custom_names = request.form.getlist("custom_skill_name")
+            custom_levels = request.form.getlist("custom_skill_level")
+
+            for cat, name, level in zip(custom_categories, custom_names, custom_levels):
+                if name.strip() == "" or level.strip() == "":
+                    continue  # 空白はスキップ
+
+                supabase.table("custom_skills").upsert({
+                    "user_id": user_id,
+                    "category": cat,
+                    "skill_name": name.strip(),
+                    "level": level
+                }, on_conflict=["user_id", "category", "skill_name"]).execute()
 
             app.logger.info(f"スキルシート保存成功: user_id={user_id}")
             return redirect(url_for("dashboard"))
@@ -555,7 +661,8 @@ def project_input():
         description = request.form.get("description")
         start_at = request.form.get("start_at") or None
         end_at = request.form.get("end_at") or None
-        technologies = request.form.getlist("technologies")
+        technologies = request.form.get("technologies", "")
+
 
         if action == "generate":
             prompt = f"""
@@ -675,7 +782,8 @@ def project_edit(project_id):
         description = request.form.get("description")
         start_at = request.form.get("start_at") or None
         end_at = request.form.get("end_at") or None
-        technologies = request.form.getlist("technologies")
+        technologies = request.form.get("technologies", "")
+
 
         if action == "generate":
             prompt = f"""
@@ -766,7 +874,7 @@ def project_edit(project_id):
 
 
 
-
+# PDF作成ページ
 @app.route("/create_pdf", methods=["GET"])
 @log_request_basic
 def create_pdf():

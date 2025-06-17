@@ -42,8 +42,8 @@
                 <input type="date" name="end_at" value="{{ project.end_at[:10] if project.end_at }}">
             </div>
         </div>
-        <label>使用技術</label>
-        <input type="text" name="technologies" value="{{ project.technologies }}">
+        <label>使用技術（カンマ区切り）</label>
+        <input type="text" name="technologies" value="{{ project.technologies or '' }}">
 
         <button type="submit" name="action" value="save">更新</button>
     </form>

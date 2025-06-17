@@ -50,7 +50,7 @@
                             value="{{ project.end_at if project and project.end_at else '' }}">
                 </div>
             </div>
-            <label for="technologies">使用技術</label>
+            <label>使用技術（カンマ区切り）</label>
             <input type="text" id="technologies" name="technologies"
                     value="{{ project.technologies | join(', ') if project and project.technologies else '' }}"
                     placeholder="Python, Flask, Supabase">
