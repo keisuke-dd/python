@@ -6,12 +6,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <h1>管理者ダッシュボード</h1>
+    <h1>管理者用ダッシュボード</h1>
     <form method="get" action="{{ url_for('admin_dashboard') }}">
         <input type="text" name="q" placeholder="ユーザー名で検索" value="{{ search_query }}">
         <button type="submit">検索</button>
     </form>
-    <a href="{{ url_for('dashboard') }}">一般ダッシュボードに戻る</a></p>
+    <a href="{{ url_for('dashboard') }}">一般ユーザー用ダッシュボードに戻る</a></p>
 
     {% if users %}
         {% for user in users %}

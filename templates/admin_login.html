@@ -1,24 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>管理者ログイン</title>
-</head>
-<body>
-    <h2>管理者ログイン</h2>
-        <form method="post">
-            <label for="email">メールアドレス:</label>
-            <input type="email" name="email" required><br>
+{% extends "base.html" %}
 
-            <label for="password">パスワード:</label>
-            <input type="password" name="password" required><br>
+{% block title %}ホームページ{% endblock %}
 
-            <button type="submit">ログイン</button>
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+{% endblock %}
 
-            {% if error %}
-                <p style="color: red;">{{ error }}</p>
-            {% endif %}
-        </form>
-</body>
-</html>
+{% block content %}
+  <div class="container">
+  <h2>管理者ログイン</h2>
+  <form method="post">
+    <label for="email">メールアドレス:</label>
+    <input type="email" name="email" required><br>
+
+    <label for="password">パスワード:</label>
+    <input type="password" name="password" required><br>
+
+    <button type="submit">ログイン</button>
+
+    {% if error %}
+      <p style="color: red;">{{ error }}</p>
+    {% endif %}
+  </form>
+{% endblock %}

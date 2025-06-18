@@ -205,7 +205,63 @@ def login():
     return render_template("login.html")
 
 
-# 管理者アクセスページ & 処理
+# 最高管理者ログイン
+@app.route("/super_admin_login", methods=["GET", "POST"])
+def super_admin_login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        try:
+            result = supabase.auth.sign_in_with_password({"email": email, "password": password})
+            user = result.user
+            user_id = user.id
+
+            # プロフィールからroleを確認
+            profile = supabase.table("profile").select("role").eq("user_id", user_id).single().execute().data
+            if profile and profile["role"] == "superadmin":
+                session["super_admin"] = True
+                session["user_id"] = user_id
+                return redirect(url_for("super_admin_dashboard"))
+            else:
+                return "アクセス拒否：superadminではありません", 403
+        except Exception as e:
+            return f"ログイン失敗: {str(e)}", 401
+
+    return render_template("super_admin_login.html")
+
+
+# 最高管理者用ダッシュボードページ
+@app.route("/super_admin_dashboard", methods=["GET", "POST"])
+def super_admin_dashboard():
+    if not session.get("super_admin"):
+        return redirect(url_for("super_admin_login"))
+
+    if request.method == "POST":
+        user_id = request.form["user_id"]
+        action = request.form["action"]
+
+        if action == "promote":
+            supabase.table("profile").update({"role": "admin"}).eq("user_id", user_id).execute()
+        elif action == "demote":
+            supabase.table("profile").update({"role": "user"}).eq("user_id", user_id).execute()
+
+        return redirect(url_for("super_admin_dashboard"))
+
+    # すべてのプロフィール取得
+    profiles = supabase.table("profile").select("*").order("created_at", desc=True).execute().data
+
+    return render_template("super_admin_dashboard.html", profiles=profiles)
+
+
+@app.route("/super_admin_logout")
+def super_admin_logout():
+    session.pop("super_admin", None)
+    session.pop("super_admin_email", None)
+    return redirect(url_for("super_admin_login"))
+
+
+# 管理者ログイン
 @app.route("/admin_login", methods=["GET", "POST"])
 def admin_login():
     if request.method == "GET":
@@ -214,23 +270,16 @@ def admin_login():
     email = request.form["email"]
     password = request.form["password"]
 
-    # ① 一般ログイン済みかをチェック
-    if "user_email" not in session:
-        return "先に一般ユーザーとしてログインしてください", 403
-
-    # ② 一致チェック
-    if email != session["user_email"]:
-        return render_template("admin_login.html", error="一般ログイン時と異なるメールアドレスです")
-
     try:
-        result = supabase.auth.sign_in_with_password({
-            "email": email,
-            "password": password
-        })
+        result = supabase.auth.sign_in_with_password({"email": email, "password": password})
+        user = result.user
+        user_id = user.id
 
-        if result.user.email in ADMIN_EMAIL_LIST:
+        # profile.role をチェック
+        profile = supabase.table("profile").select("role").eq("user_id", user_id).single().execute().data
+        if profile and profile["role"] in ["admin", "superadmin"]:
             session["admin"] = True
-            session["admin_email"] = email
+            session["user_id"] = user_id
             return redirect(url_for("admin_dashboard"))
         else:
             return "アクセス拒否：管理者ではありません", 403
@@ -459,6 +508,15 @@ def dashboard():
         projects = []
         app.logger.warning(f"プロジェクト取得失敗: user_id={user_id} エラー: {e}")
 
+    #  custom_skillsの取得
+    try:
+        custom_res = supabase.table("custom_skills").select("*").eq("user_id", user_id).execute()
+        custom_skills = custom_res.data if custom_res.data else []
+        app.logger.info(f"カスタムスキル取得成功: user_id={user_id} 件数={len(custom_skills)}")
+    except Exception as e:
+        custom_skills = []
+        app.logger.warning(f"カスタムスキル取得失敗: user_id={user_id} エラー: {e}")
+
     return render_template(
         "dashboard.html",
         user_id=user_id,
@@ -466,6 +524,7 @@ def dashboard():
         profile=data["profile"],
         skillsheet=data["skillsheet"],
         projects=projects,
+        custom_skills=custom_skills,
         error=error
     )
 
@@ -607,33 +666,51 @@ def skillsheet_input():
 
     if request.method == "POST":
         try:
-            # フォームからすべての値を取得
+            # フォームからの標準スキル入力を収集
             data = {field: request.form.get(field) for fields in categories.values() for field in fields}
             data["user_id"] = user_id
             data["updated_at"] = datetime.now(timezone.utc).isoformat()
 
-            # アップサート実行
+            # skillsheet テーブルにアップサート
             result = supabase.table("skillsheet").upsert(data, on_conflict=["user_id"]).execute()
 
             if result.model_dump().get("error"):
                 app.logger.warning(f"スキルシート保存失敗: user_id={user_id} エラー={result.error}")
                 return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, error="保存に失敗しました")
-            
-            # ✅ カスタムスキルの取得と保存
-            custom_categories = request.form.getlist("custom_category")
-            custom_names = request.form.getlist("custom_skill_name")
-            custom_levels = request.form.getlist("custom_skill_level")
 
+            # ---  カスタムスキル保存処理（insertのみ） ---
+
+            # 1. 既存のカスタムスキル削除（必要な場合のみ）
+            del_res = supabase.table("custom_skills").delete().eq("user_id", user_id).execute()
+            app.logger.info(f"custom_skills delete result: {del_res.model_dump()}") 
+
+            # 2. フォームから値を取得
+            custom_categories = request.form.getlist("custom_category[]")
+            custom_names = request.form.getlist("custom_skill_name[]")
+            custom_levels = request.form.getlist("custom_skill_level[]")
+
+
+             # 2-1. ログ出力で中身を確認
+            app.logger.info(f"custom_category: {custom_categories}")  # 【追加】
+            app.logger.info(f"custom_skill_name: {custom_names}")    # 【追加】
+            app.logger.info(f"custom_skill_level: {custom_levels}")  # 【追加】
+
+            # 3. 複数件のカスタムスキルを一括insert
+            custom_records = []
             for cat, name, level in zip(custom_categories, custom_names, custom_levels):
                 if name.strip() == "" or level.strip() == "":
-                    continue  # 空白はスキップ
+                    continue  # 空欄スキップ
 
-                supabase.table("custom_skills").upsert({
+                custom_records.append({
                     "user_id": user_id,
-                    "category": cat,
-                    "skill_name": name.strip(),
-                    "level": level
-                }, on_conflict=["user_id", "category", "skill_name"]).execute()
+                    "custom_category": cat,
+                    "custom_skill_name": name.strip(),
+                    "custom_skill_level": level
+                })
+
+
+            if custom_records:
+                supabase.table("custom_skills").insert(custom_records).execute()
 
             app.logger.info(f"スキルシート保存成功: user_id={user_id}")
             return redirect(url_for("dashboard"))
@@ -644,7 +721,6 @@ def skillsheet_input():
 
     # GETリクエスト時はフォームを表示
     return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data)
-
 
 
 # プロジェクト入力ページ & 処理

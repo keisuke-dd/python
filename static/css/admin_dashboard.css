@@ -1,0 +1,493 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Inter', Arial, sans-serif; /* Interフォントを優先 */
+    background-color: #f7fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh; /* 画面全体を占めるように */
+}
+
+.container {
+    background-color: white;
+    margin-top: 2rem;
+    margin-bottom: 2rem; /* 下にも余白を追加 */
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    max-width: 1500px;
+    width: 95%; /* より柔軟な幅 */
+    text-align: left;
+    box-sizing: border-box; /* パディングを幅に含める */
+}
+
+.dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0; /* 区切り線 */
+}
+
+.dashboard-header h1 {
+    color: #2d3748;
+    margin: 0; /* デフォルトマージンをリセット */
+    font-size: 2.2rem; /* わずかに大きく */
+    font-weight: 700; /* より強調 */
+}
+
+.dashboard-header nav a {
+    color: #4299e1;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border: 1px solid #4299e1;
+    border-radius: 4px;
+    transition: background-color 0.2s, color 0.2s;
+}
+
+.dashboard-header nav a:hover {
+    background-color: #4299e1;
+    color: white;
+}
+
+.search-section {
+    margin-bottom: 2rem;
+}
+
+.search-form {
+    display: flex;
+    gap: 0.75rem; /* 入力とボタンの間隔 */
+    max-width: 500px; /* 検索フォームの最大幅 */
+}
+
+input[type="text"] {
+    flex-grow: 1; /* 検索入力が利用可能なスペースを埋める */
+    padding: 0.75rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+}
+
+button {
+    padding: 0.75rem 1.25rem;
+    background-color: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+    white-space: nowrap; /* ボタンのテキストが折り返さないように */
+}
+
+button:hover {
+    background-color: #3182ce;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 2.5rem 0; /* ユーザーセクション間の間隔 */
+}
+
+h2 {
+    color: #2d3748;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+    border-bottom: 2px solid #edf2f7;
+    padding-bottom: 0.5rem;
+}
+
+h3 {
+    color: #4a5568;
+    font-size: 1.4rem;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+.profile-list {
+    list-style: none; /* デフォルトの箇条書きを削除 */
+    padding: 0;
+    margin: 0;
+}
+
+.profile-list li {
+    margin-bottom: 0.5rem;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.profile-list li strong {
+    color: #2d3748;
+    margin-right: 0.5rem;
+}
+
+.skillsheet-table,
+.project-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.skillsheet-table th,
+.skillsheet-table td,
+.project-table th,
+.project-table td {
+    border: 1px solid #e2e8f0;
+    padding: 0.75rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+.skillsheet-table th,
+.project-table th {
+    background-color: #edf2f7;
+    font-weight: 600;
+    color: #2d3748;
+    white-space: nowrap; /* ヘッダーが折り返さないように */
+}
+
+.skillsheet-table tbody tr:nth-child(even),
+.project-table tbody tr:nth-child(even) {
+    background-color: #f7fafc;
+}
+
+.skillsheet-table tbody tr:hover,
+.project-table tbody tr:hover {
+    background-color: #ebf8ff;
+}
+
+/* Project Table specific width adjustments */
+.project-table {
+    table-layout: fixed; /* 固定レイアウトで幅を制御 */
+}
+
+.project-table th:nth-child(1),
+.project-table td:nth-child(1) {
+    width: 160px; /* プロジェクト名 */
+}
+
+.project-table th:nth-child(2),
+.project-table td:nth-child(2) {
+    width: auto; /* 説明は可変 */
+}
+
+.project-table th:nth-child(3),
+.project-table td:nth-child(3) {
+    width: 180px; /* 期間 */
+}
+
+.project-table th:nth-child(4),
+.project-table td:nth-child(4) {
+    width: 200px; /* 使用技術 */
+}
+
+.project-table th:nth-child(5),
+.project-table td:nth-child(5) {
+    width: 120px; /* 操作 */
+    text-align: center;
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+}
+
+.project-table td:nth-child(5) {
+    display: flex;
+    flex-wrap: wrap; /* ボタンが折り返せるように */
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.project-table td:nth-child(5) form {
+    display: inline-flex;
+    margin: 0;
+}
+
+.project-table td:nth-child(5) button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.85rem;
+    width: auto; /* ボタンの幅はコンテンツに合わせる */
+}
+
+.edit-button {
+    background-color: #4CAF50; /* 緑 */
+}
+
+.edit-button:hover {
+    background-color: #45a049;
+}
+
+.delete-button {
+    background-color: #f44336; /* 赤 */
+}
+
+.delete-button:hover {
+    background-color: #da190b;
+}
+
+.no-data {
+    color: #718096;
+    margin-top: 1rem;
+    font-style: italic;
+    text-align: center;
+    padding: 1rem;
+    border: 1px dashed #e2e8f0;
+    border-radius: 4px;
+}
+
+/* レスポンシブデザイン */
+@media (max-width: 1200px) {
+    .container {
+        padding: 1.5rem;
+        width: 90%;
+    }
+
+    body {
+        font-size: 14px;
+    }
+
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .dashboard-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .dashboard-header nav a {
+        font-size: 0.9rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .search-form {
+        flex-direction: column; /* 検索フォームを縦に積み重ねる */
+        gap: 0.5rem;
+        max-width: 100%; /* 幅を最大にする */
+    }
+
+    input[type="text"] {
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    button {
+        width: 100%; /* ボタンも幅を最大に */
+        box-sizing: border-box;
+        padding: 0.6rem 1rem;
+        font-size: 0.95rem;
+    }
+
+    h2 {
+        font-size: 1.6rem;
+    }
+
+    h3 {
+        font-size: 1.2rem;
+    }
+
+    /* プロフィールリストのレスポンシブ調整 */
+    .profile-list li {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        border-bottom: 1px solid #edf2f7;
+        padding-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .profile-list li:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+    }
+
+    .profile-list li strong {
+        margin-bottom: 0.25rem;
+        font-size: 1.05rem; /* ラベルを少し大きく */
+    }
+
+    /* スキルシートテーブルのレスポンシブ */
+    .skillsheet-table {
+        border: none;
+        display: block;
+        width: 100%;
+    }
+
+    .skillsheet-table thead {
+        display: none;
+    }
+
+    .skillsheet-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .skillsheet-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.5rem;
+        background-color: white;
+    }
+
+    .skillsheet-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 0.5rem 0.25rem;
+        border: none;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .skillsheet-table td::before {
+        content: attr(data-label); /* data-label属性を使用 */
+        font-weight: bold;
+        margin-right: 0.5rem;
+        color: #4a5568;
+        flex-shrink: 0;
+        flex-basis: 80px;
+        text-align: left;
+    }
+
+    /* スキルシートのdata-label設定例 */
+    .skillsheet-table td:nth-child(1)::before { content: "スキル:"; }
+    .skillsheet-table td:nth-child(2)::before { content: "レベル:"; }
+
+
+    /* プロジェクトテーブルのレスポンシブ */
+    .project-table {
+        border: none;
+        display: block;
+        width: 100%;
+    }
+
+    .project-table thead {
+        display: none;
+    }
+
+    .project-table tbody {
+        display: block;
+        width: 100%;
+    }
+
+    .project-table tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 0.5rem;
+        background-color: white;
+    }
+
+    .project-table td {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 0.5rem 0.25rem;
+        border: none;
+        white-space: normal;
+        word-break: break-word;
+    }
+
+    .project-table td::before {
+        content: attr(data-label);
+        font-weight: bold;
+        margin-right: 0.5rem;
+        color: #4a5568;
+        flex-shrink: 0;
+        flex-basis: 80px;
+        text-align: left;
+    }
+
+    .project-table td:not(:nth-child(5)) {
+        flex-wrap: wrap;
+    }
+
+    .project-table td:not(:nth-child(5)) > * {
+        flex-grow: 1;
+        flex-basis: auto;
+        text-align: right;
+    }
+
+    .project-table td:nth-child(2) > * {
+        text-align: left;
+    }
+
+    .project-table td:nth-child(1) {
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: flex-start;
+        padding: 0.75rem 0.25rem 0.5rem;
+        background-color: transparent;
+        border-radius: 0;
+        margin-bottom: 0;
+        font-size: inherit;
+        font-weight: normal;
+        color: inherit;
+    }
+
+    .project-table td:nth-child(1)::before {
+        content: attr(data-label);
+        font-weight: bold;
+        margin-right: 0;
+        margin-bottom: 0.25rem;
+        color: #2d3748;
+        flex-basis: auto;
+        text-align: left;
+    }
+
+    .project-table td:nth-child(1) > * {
+        text-align: left;
+        flex-grow: 0;
+        flex-basis: auto;
+        font-size: 1.05rem;
+        font-weight: 600;
+        color: #2d3748;
+    }
+
+    .project-table td:nth-child(1)::before {
+        content: "プロジェクト名:";
+    }
+
+    .project-table td:nth-child(2)::before {
+        content: "説明:";
+    }
+
+    .project-table td:nth-child(3)::before {
+        content: "期間:";
+    }
+
+    .project-table td:nth-child(4)::before {
+        content: "使用技術:";
+    }
+
+    .project-table td:nth-child(5)::before {
+        content: "操作:";
+        flex-basis: auto;
+        text-align: left;
+    }
+
+    .project-table td:nth-child(5) {
+        justify-content: flex-start;
+        gap: 0.5rem;
+        flex-wrap: wrap; /* 操作ボタンも折り返す */
+    }
+
+    .project-table td:nth-child(5) button {
+        width: auto; /* ボタンの幅はコンテンツに合わせる */
+        flex-grow: 1; /* ボタンが利用可能なスペースを埋める */
+        min-width: 80px; /* 最小幅を設定 */
+    }
+}

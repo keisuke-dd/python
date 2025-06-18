@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>管理者ダッシュボード</title>
+</head>
+<body>
+    <h1>管理者ダッシュボード</h1>
+    <p><a href="{{ url_for('super_admin_logout') }}">ログアウト</a></p>
+
+    <table border="1">
+        <tr>
+            <th>名前</th>
+            <th>メール</th>
+            <th>現在の役割</th>
+            <th>操作</th>
+        </tr>
+        {% for user in profiles %}
+        <tr>
+            <td>{{ user.name or "未登録" }}</td>
+            <td>{{ user.email }}</td>
+            <td>{{ user.role or "user" }}</td>
+            <td>
+                <form method="post" style="display:inline;">
+                    <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                    {% if user.role == "admin" %}
+                        <button type="submit" name="action" value="demote">降格</button>
+                    {% else %}
+                        <button type="submit" name="action" value="promote">昇格</button>
+                    {% endif %}
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

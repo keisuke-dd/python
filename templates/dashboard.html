@@ -78,6 +78,35 @@
             <button>スキルシートを編集する</button></a></p>
 
 
+        
+        <h3>カスタムスキル一覧</h3>
+
+        <p>カスタムスキル情報:</p>
+        {% if custom_skills %}
+            <table class="custom-skills-table">
+                <thead>
+                    <tr>
+                        <th>カテゴリ</th>
+                        <th>スキル名</th>
+                        <th>レベル</th>
+                        <th>登録日</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for skill in custom_skills %}
+                    <tr>
+                        <td>{{ skill.custom_category }}</td>
+                        <td>{{ skill.custom_skill_name }}</td>
+                        <td>{{ skill.custom_skill_level }}</td>
+                        <td>{{ skill.created_at[:10] }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>カスタムスキルは登録されていません。</p>
+        {% endif %}
+
 
 
    <!-- プロジェクト一覧 -->
