@@ -231,6 +231,9 @@ def super_admin_login():
     return render_template("super_admin_login.html")
 
 
+def get_current_user_id():
+    return session.get("user_id")
+
 # 最高管理者用ダッシュボードページ
 @app.route("/super_admin_dashboard", methods=["GET", "POST"])
 def super_admin_dashboard():
@@ -241,24 +244,27 @@ def super_admin_dashboard():
         user_id = request.form["user_id"]
         action = request.form["action"]
 
+        # 昇格・降格処理
         if action == "promote":
             supabase.table("profile").update({"role": "admin"}).eq("user_id", user_id).execute()
         elif action == "demote":
             supabase.table("profile").update({"role": "user"}).eq("user_id", user_id).execute()
+        elif action == "transfer_superadmin":
+            # 1. 対象ユーザーをsuperadminに昇格
+            supabase.table("profile").update({"role": "superadmin"}).eq("user_id", user_id).execute()
+            # 2. 現在のsuperadmin（自分）をuserに降格
+            current_user_id = get_current_user_id()  # トークンなどで取得
+            supabase.table("profile").update({"role": "user"}).eq("user_id", current_user_id).execute()
+            # 3. セッションからsuperadmin権限を削除し再ログインを促す
+            session.pop("super_admin", None)
+            session.pop("super_admin_email", None)
+            return redirect(url_for("super_admin_login"))
 
         return redirect(url_for("super_admin_dashboard"))
 
-    # すべてのプロフィール取得
+    # プロフィール一覧取得
     profiles = supabase.table("profile").select("*").order("created_at", desc=True).execute().data
-
     return render_template("super_admin_dashboard.html", profiles=profiles)
-
-
-@app.route("/super_admin_logout")
-def super_admin_logout():
-    session.pop("super_admin", None)
-    session.pop("super_admin_email", None)
-    return redirect(url_for("super_admin_login"))
 
 
 # 管理者ログイン
@@ -664,6 +670,14 @@ def skillsheet_input():
     # GET時：現在のデータを取得
     skillsheet_data = get_supabase_data("skillsheet", user_id)
 
+    #  カスタムスキルを取得しておく（POST後にも使うため） カスタムスキルの編集時の表示のため
+    try:
+        response = supabase.table("custom_skills").select("*").eq("user_id", user_id).execute()
+        custom_skills = response.data or []
+    except Exception as e:
+        custom_skills = []
+        app.logger.warning(f"カスタムスキル取得失敗: {e}")
+
     if request.method == "POST":
         try:
             # フォームからの標準スキル入力を収集
@@ -676,7 +690,7 @@ def skillsheet_input():
 
             if result.model_dump().get("error"):
                 app.logger.warning(f"スキルシート保存失敗: user_id={user_id} エラー={result.error}")
-                return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, error="保存に失敗しました")
+                return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, custom_skills=custom_skills, error="保存に失敗しました")  
 
             # ---  カスタムスキル保存処理（insertのみ） ---
 
@@ -712,15 +726,22 @@ def skillsheet_input():
             if custom_records:
                 supabase.table("custom_skills").insert(custom_records).execute()
 
+                #  保存完了後に再取得して再表示用データ更新
+                skillsheet_data = get_supabase_data("skillsheet", user_id)
+                response = supabase.table("custom_skills").select("*").eq("user_id", user_id).execute()
+                custom_skills = response.data or []
+
+
+
             app.logger.info(f"スキルシート保存成功: user_id={user_id}")
-            return redirect(url_for("dashboard"))
+            return redirect(url_for("dashboard")) 
 
         except Exception as e:
             app.logger.warning(f"スキルシート保存時に例外発生: user_id={user_id} エラー={e}")
-            return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, error="エラーが発生しました")
+            return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, custom_skills=custom_skills, error="エラーが発生しました")  
 
-    # GETリクエスト時はフォームを表示
-    return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data)
+    # GET時
+    return render_template("skillsheet_input.html", categories=categories, skillsheet=skillsheet_data, custom_skills=custom_skills) 
 
 
 # プロジェクト入力ページ & 処理

@@ -2,11 +2,18 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>管理者ダッシュボード</title>
+    <title>最高管理者ダッシュボード</title>
+    <script>
+        function confirmTransfer(userName) {
+            return confirm(`${userName} に最高管理者権限を譲渡しますか？ これは元に戻せません。`);
+        }
+    </script>
 </head>
 <body>
-    <h1>管理者ダッシュボード</h1>
-    <p><a href="{{ url_for('super_admin_logout') }}">ログアウト</a></p>
+    <h1>最高管理者ダッシュボード</h1>
+
+    <p><a href="{{ url_for('logout') }}">ログアウト</a></p>
+    <p><a href="{{ url_for('dashboard') }}">一般ダッシュボードに戻る</a></p>
 
     <table border="1">
         <tr>
@@ -23,12 +30,19 @@
             <td>
                 <form method="post" style="display:inline;">
                     <input type="hidden" name="user_id" value="{{ user.user_id }}">
-                    {% if user.role == "admin" %}
-                        <button type="submit" name="action" value="demote">降格</button>
-                    {% else %}
-                        <button type="submit" name="action" value="promote">昇格</button>
+                    {% if user.role == "user" %}
+                        <button type="submit" name="action" value="promote">管理者に昇格</button>
+                    {% elif user.role == "admin" %}
+                        <button type="submit" name="action" value="demote">一般に降格</button>
                     {% endif %}
                 </form>
+
+                {% if user.role != "superadmin" %}
+                <form method="post" style="display:inline;" onsubmit="return confirmTransfer('{{ user.name or user.email }}');">
+                    <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                    <button type="submit" name="action" value="transfer_superadmin">最高管理者を譲渡</button>
+                </form>
+                {% endif %}
             </td>
         </tr>
         {% endfor %}

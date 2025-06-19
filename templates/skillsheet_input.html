@@ -59,8 +59,31 @@
                     {% endfor %}
                 </div>
 
-                <!-- カスタムスキル追加エリア -->
-                <div class="custom-skills-container" data-category="{{ category_name }}"></div>
+                 <!--  カスタムスキル表示 + 追加ボタン -->
+                <div class="custom-skills-container" data-category="{{ category_name }}">
+                    {% for skill in custom_skills %}
+                        {% if skill.custom_category == category_name %}
+                        <div class="custom-skill-entry">
+                            <!-- スキル名（配列） -->
+                            <input type="text" name="custom_skill_name[]" value="{{ skill.custom_skill_name }}" required>
+
+                            <!-- レベル選択（配列 + 日本語ラベル付き） -->
+                            <select name="custom_skill_level[]" required>
+                                <option value="S" {% if skill.custom_skill_level == 'S' %}selected{% endif %}>S（上級、教育可能）</option>
+                                <option value="A" {% if skill.custom_skill_level == 'A' %}selected{% endif %}>A（中級、1人称対応可能）</option>
+                                <option value="B" {% if skill.custom_skill_level == 'B' %}selected{% endif %}>B（業務経験あり）</option>
+                                <option value="C" {% if skill.custom_skill_level == 'C' %}selected{% endif %}>C（知識のみ、研修レベル）</option>
+                                <option value="D" {% if skill.custom_skill_level == 'D' %}selected{% endif %}>D（経験なし）</option>
+                            </select>
+
+                            <!-- カテゴリ（配列） -->
+                            <input type="hidden" name="custom_category[]" value="{{ skill.custom_category }}">
+                        </div>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+
+
 
                 <!-- カスタムスキル追加ボタン -->
                 <button type="button" onclick="addCustomSkill(this, '{{ category_name }}')">＋ カスタムスキルを追加</button>
