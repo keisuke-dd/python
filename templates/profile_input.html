@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/profile_input.css') }}">
+    <script src="{{ url_for('static', filename='js/profile_input.js') }}"></script>
 </head>
 
   <body>
@@ -65,11 +66,23 @@
           </div>
 
           <div class="form-group">
-            <label for="certifications">資格</label>
-            <input type="text" id="certifications" name="certifications" value="{{ profile.certifications or '' }}" placeholder="基本情報技術者、応用情報技術者">
-            
+            <label>資格</label>
+            <div id="certifications-container">
+              {% if profile.certifications %}
+                {% for cert in profile.certifications.split('、') %}
+                <div class="certification-item">
+                  <input type="text" name="certifications[]" value="{{ cert }}" placeholder="例：基本情報技術者">
+                  <button type="button" onclick="removeField(this)">削除</button>
+                </div>
+                {% endfor %}
+              {% else %}
+                <div class="certification-item">
+                  <input type="text" name="certifications[]" placeholder="例：基本情報技術者">
+                </div>
+              {% endif %}
+            </div>
+            <button type="button" onclick="addCertification()">＋ 資格を追加</button>
           </div>
-        </div>
 
         <div class="form-group">
           <label for="bio">自己PR</label>

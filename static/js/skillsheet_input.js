@@ -66,24 +66,31 @@
 
         // スキルシートのカスタムスキル追加機能
         function addCustomSkill(button, category) {
-            const container = button.previousElementSibling;
+        const container = button.previousElementSibling;
 
-            const wrapper = document.createElement("div");
-            wrapper.className = "form-group";
+        const wrapper = document.createElement("div");
+        wrapper.className = "custom-skill-entry";  // ← 変更ポイント①
 
-            wrapper.innerHTML = `
-                <input type="hidden" name="custom_category[]" value="${category}">
-                <input type="text" name="custom_skill_name[]" placeholder="スキル名 (例: PHP)" required>
-                <select name="custom_skill_level[]" required>
-                    <option value="">レベルを選択</option>
-                    <option value="S">S (上級、教育可能)</option>
-                    <option value="A">A (中級、1人称対応可能)</option>
-                    <option value="B">B (業務経験あり)</option>
-                    <option value="C">C (知識のみ、研修レベル)</option>
-                    <option value="D">D (経験なし)</option>
-                </select>
-                <button type="button" onclick="this.parentNode.remove()">削除</button>
-            `;
+        wrapper.innerHTML = `
+            <input type="hidden" name="custom_category[]" value="${category}">
+            <input type="text" name="custom_skill_name[]" placeholder="スキル名 (例: PHP)" required>
+            <select name="custom_skill_level[]" required>
+                <option value="">レベルを選択</option>
+                <option value="S">S (上級、教育可能)</option>
+                <option value="A">A (中級、1人称対応可能)</option>
+                <option value="B">B (業務経験あり)</option>
+                <option value="C">C (知識のみ、研修レベル)</option>
+                <option value="D">D (経験なし)</option>
+            </select>
+            <button type="button" class="remove-custom-skill">×</button>  <!-- ← 変更ポイント② -->
+        `;
 
-            container.appendChild(wrapper);
+        container.appendChild(wrapper);
+    }
+
+        // カスタムスキルの削除機能
+        document.addEventListener("click", function(e) {
+        if (e.target.classList.contains("remove-custom-skill")) {
+            e.target.closest(".custom-skill-entry").remove();
         }
+    });

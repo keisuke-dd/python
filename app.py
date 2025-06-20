@@ -550,9 +550,13 @@ def profile_input():
         first_name_kana = request.form.get("first_name_kana")
         birth_date = request.form.get("birth_date")
         location = request.form.get("location")
-        occupation = request.form.get("occupation")
+        
         education = request.form.get("education")
-        certifications = request.form.get("certifications")
+        # certificationsは複数選択可能なチェックボックス、リスト化
+        certifications = request.form.getlist("certifications[]")
+        certifications = [c.strip() for c in certifications if c.strip()]
+        certifications_str = "、".join(certifications)
+
         bio = request.form.get("bio")
 
         # 年齢計算
@@ -601,9 +605,9 @@ def profile_input():
                 "birth_date": birth_date.strftime('%Y-%m-%d') if birth_date else None,
                 "age": age,
                 "location": location,
-                "occupation": occupation,
+                
                 "education": education,
-                "certifications": certifications,
+                "certifications": certifications_str,
                 "bio": bio,
                 "initial": initial,
             }, on_conflict=["user_id"]).execute()
@@ -617,9 +621,9 @@ def profile_input():
                     "first_name_kana": first_name_kana,
                     "birth_date": birth_date.strftime('%Y-%m-%d') if birth_date else None,
                     "location": location,
-                    "occupation": occupation,
+                    
                     "education": education,
-                    "certifications": certifications,
+                    "certifications": certifications_str,
                     "bio": bio,
                     "initial": initial,
                 }

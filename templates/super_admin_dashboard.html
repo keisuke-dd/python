@@ -2,7 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>最高管理者ダッシュボード</title>
+    <title>管理者ダッシュボード</title>    
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/super_admin_login.css') }}">
     <script>
         function confirmTransfer(userName) {
             return confirm(`${userName} に最高管理者権限を譲渡しますか？ これは元に戻せません。`);
@@ -10,6 +11,7 @@
     </script>
 </head>
 <body>
+    <div class="container">
     <h1>最高管理者ダッシュボード</h1>
 
     <p><a href="{{ url_for('logout') }}">ログアウト</a></p>
@@ -35,6 +37,7 @@
                     {% elif user.role == "admin" %}
                         <button type="submit" name="action" value="demote">一般に降格</button>
                     {% endif %}
+                    </div>
                 </form>
 
                 {% if user.role != "superadmin" %}

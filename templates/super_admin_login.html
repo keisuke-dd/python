@@ -1,16 +1,24 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-    <meta charset="UTF-8">
-    <title>最上位管理者ログイン</title>
-</head>
-<body>
-    <h1>最高管理者ログイン</h1>
+{% extends "base.html" %}
+
+{% block title %}ホームページ{% endblock %}
+
+{% block extra_css %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style1.css') }}">
+{% endblock %}
+
+{% block content %}
+  <div class="container">
+    <h1>最上位管理者ログイン</h1>
     <form method="post">
-        <label>メールアドレス: <input type="email" name="email" required></label><br>
-        <label>パスワード: <input type="password" name="password" required></label><br>
-        <button type="submit">ログイン</button>
+      <label>メールアドレス: <input type="email" name="email" required></label><br>
+      <label>パスワード: <input type="password" name="password" required></label><br>
+      <button type="submit">ログイン</button>
     </form>
-    <p><a href="{{ url_for('dashboard') }}">一般ダッシュボードに戻る</a></p>
-</body>
-</html>
+  </div>
+{% endblock %}
+
+{% block footer %}
+  <footer class="footer">
+    {# Your footer content goes here #}
+  </footer>
+{% endblock %}
