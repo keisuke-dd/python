@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 import requests
 from pykakasi import kakasi
 from gotrue.errors import AuthApiError, AuthWeakPasswordError
+from dateutil.parser import isoparse
 
 # ログ出力
 import logging
@@ -41,6 +42,7 @@ from reportlab.pdfbase import pdfmetrics
 load_dotenv()
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
 # 管理者メールアドレスリストを取得
 ADMIN_EMAILS = os.getenv("ADMIN_EMAILS", "")
@@ -73,7 +75,6 @@ def before_request():
     if 'user_id' in session:
         # セッションが存在している場合のみ更新
         session.modified = True
-        
     else:
         # None チェックを先に
         if request.endpoint is None:
@@ -241,6 +242,7 @@ def super_admin_dashboard():
         return redirect(url_for("super_admin_login"))
 
     if request.method == "POST":
+        # 操作対象のユーザーIDを取得する
         user_id = request.form["user_id"]
         action = request.form["action"]
 
@@ -265,6 +267,101 @@ def super_admin_dashboard():
     # プロフィール一覧取得
     profiles = supabase.table("profile").select("*").order("created_at", desc=True).execute().data
     return render_template("super_admin_dashboard.html", profiles=profiles)
+
+
+# ユーザーのソフトデリート処理
+@app.route("/soft_delete_user", methods=["POST"])
+def soft_delete_user():
+    if not session.get("super_admin"):
+        return "許可されていません（最高管理者のみ実行可能）", 403
+
+    user_id = request.form.get("user_id")
+    app.logger.info(f"ソフトデリート処理開始 user_id={user_id}")
+
+    if not user_id:
+        app.logger.warning("user_idが指定されていません")
+        return "ユーザーIDが必要です", 400
+
+    now = datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    app.logger.info(f"deleted_atに設定する日時: {now}")
+
+    try:
+        result = supabase.table("profile").update({"deleted_at": now}).eq("user_id", user_id).execute()
+        if not result:
+            app.logger.error("ソフトデリート失敗: 更新されたデータが空です")
+            return "削除失敗", 500
+
+        app.logger.info(f"ソフトデリート成功: user_id={user_id}")
+        return redirect(url_for("super_admin_dashboard"))
+
+    except Exception as e:
+        app.logger.exception(f"ソフトデリート中に例外発生: {e}")
+        return "内部エラー", 500
+
+
+# ユーザーのハードデリート処理
+@app.route("/hard_delete_user", methods=["POST"])
+def hard_delete_user():
+    if not session.get("super_admin"):
+        return "アクセス拒否：最高管理者のみ実行可能", 403
+
+    threshold = datetime.now(timezone.utc) - timedelta(seconds=5)
+    app.logger.info(f"[閾値] {threshold.isoformat()}")
+
+    try:
+        response = supabase.table("profile").select("user_id, deleted_at").not_("deleted_at", "is", None).execute()
+
+        if response.error:
+            app.logger.error(f"[Supabaseエラー] 削除対象ユーザー取得失敗: {response.error}")
+            return "削除対象ユーザー取得失敗", 500
+
+        users = response.data or []
+        app.logger.info(f"[取得件数] {len(users)} 件")
+
+        for user in users:
+            user_id = user.get("user_id")
+            deleted_at_raw = user.get("deleted_at")
+
+            if not deleted_at_raw:
+                app.logger.info(f"[スキップ] user_id={user_id} は deleted_at 未設定")
+                continue
+
+            try:
+                deleted_at = isoparse(deleted_at_raw)
+            except Exception as e:
+                app.logger.warning(f"[パース失敗] user_id={user_id} deleted_at={deleted_at_raw} → {e}")
+                continue
+
+            app.logger.info(f"[比較] user_id={user_id} deleted_at={deleted_at.isoformat()} vs threshold={threshold.isoformat()}")
+
+            if deleted_at < threshold:
+                app.logger.info(f"[削除対象] user_id={user_id}")
+
+                # 関連データ削除
+                supabase.table("project").delete().eq("user_id", user_id).execute()
+                supabase.table("skillsheet").delete().eq("user_id", user_id).execute()
+                supabase.table("profile").delete().eq("user_id", user_id).execute()
+
+                # Supabase Auth ユーザー削除
+                delete_url = f"{SUPABASE_URL}/auth/v1/admin/users/{user_id}"
+                headers = {
+                    "apikey": SERVICE_ROLE_KEY,
+                    "Authorization": f"Bearer {SERVICE_ROLE_KEY}",
+                    "Content-Type": "application/json"
+                }
+                res = requests.delete(delete_url, headers=headers)
+                if res.status_code != 204:
+                    app.logger.warning(f"[auth.users削除失敗] user_id={user_id} status={res.status_code} body={res.text}")
+                else:
+                    app.logger.info(f"[auth.users削除成功] user_id={user_id}")
+            else:
+                app.logger.info(f"[削除対象外] user_id={user_id}（まだ5秒経っていない）")
+
+        return redirect(url_for("super_admin_dashboard"))
+
+    except Exception as e:
+        app.logger.exception(f"[例外発生] ハードデリート中にエラー: {e}")
+        return "ハードデリート中にエラーが発生しました", 500
 
 
 # 管理者ログイン
@@ -553,9 +650,26 @@ def profile_input():
         
         education = request.form.get("education")
         # certificationsは複数選択可能なチェックボックス、リスト化
+        # 資格名と取得年月をペアで取得
         certifications = request.form.getlist("certifications[]")
-        certifications = [c.strip() for c in certifications if c.strip()]
-        certifications_str = "、".join(certifications)
+        certification_dates = request.form.getlist("certification_dates[]")
+
+
+        certifications_list = []
+        for name, date in zip(certifications, certification_dates):
+            if name.strip():
+                if date:
+                    # date は "YYYY-MM" 形式なので分割して日本語表記に変換
+                    year, month = date.split('-')
+                    formatted_date = f"{year}年{month}月"
+                    certifications_list.append(f"{name.strip()}（{formatted_date}）")
+                else:
+                    certifications_list.append(f"{name.strip()}")
+
+
+        certifications_str = "、".join(certifications_list)
+
+        
 
         bio = request.form.get("bio")
 
@@ -976,6 +1090,51 @@ def project_edit(project_id):
 
 
 # PDF作成ページ
+# PDF関数定義
+def sanitize_text(text):
+    # 不可視文字や制御文字を除去
+    text = unicodedata.normalize('NFKC', text)  # 全角→半角などの正規化
+    text = re.sub(r"[\u200B-\u200D\uFEFF]", "", text)  # ゼロ幅スペースなど削除
+    text = text.replace("\r\n", "\n").replace("\r", "\n")  # 改行統一
+    return text
+
+# --- 折り返し描画用ヘルパー関数 ---
+def draw_wrapped_text(canvas, text, x, y, max_width,
+                    font_name="IPAexGothic", font_size=10, leading=14):
+    canvas.setFont(font_name, font_size)
+    lines = []
+    for paragraph in text.split('\n'):
+        current_line = ""
+        for char in paragraph:
+            test_line = current_line + char
+            test_width = pdfmetrics.stringWidth(test_line, font_name, font_size)
+            if test_width <= max_width:
+                current_line = test_line
+            else:
+                lines.append(current_line)
+                current_line = char
+        if current_line:
+            lines.append(current_line)
+    for i, line in enumerate(lines):
+        canvas.drawString(x, y - i * leading, line)
+    return len(lines)
+
+
+ # --- 日付を安全にパースする関数 ---
+def format_date(date_str):
+    if not date_str:
+        return ""
+    try:
+        # 例: ISO形式 '2002-05-07T00:00:00' をdatetimeに変換
+        dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
+        # 好みの表示形式に変換（例: 2002年5月7日）
+        # Windows環境など%-mが使えない場合は%#mを試してください
+        return dt.strftime("%Y年%m月%d日").replace(" 0", " ")
+    except Exception as e:
+        print(f"format_date parse error: {e} with input: {date_str}")
+        return date_str
+            
+            
 @app.route("/create_pdf", methods=["GET"])
 @log_request_basic
 def create_pdf():
@@ -990,9 +1149,10 @@ def create_pdf():
         # データ取得
         profile_res = supabase.from_("profile").select("*").eq("user_id", user_id).execute()
         skillsheet_res = supabase.from_("skillsheet").select("*").eq("user_id", user_id).execute()
+        custom_res = supabase.from_("custom_skills").select("*").eq("user_id", user_id).execute()
         projects_res = supabase.from_("project").select("*").eq("user_id", user_id).execute()
 
-        for name, res in [("profile", profile_res), ("skillsheet", skillsheet_res), ("projects", projects_res)]:
+        for name, res in [("profile", profile_res), ("skillsheet", skillsheet_res),("custom_skills", custom_res), ("projects", projects_res)]:
             if res is None or (hasattr(res, "error") and res.error):
                 app.logger.error(f"{name}取得失敗: user_id={user_id} エラー={getattr(res, 'error', 'None')}")
                 session['error'] = f"{name}のデータ取得に失敗しました。"
@@ -1001,6 +1161,7 @@ def create_pdf():
         # ───  data 部分が None の場合は「レコードなし」として扱う ───
         profile = profile_res.data[0] if profile_res.data else {}
         skillsheet = skillsheet_res.data[0] if skillsheet_res.data else {}
+        custom_skills = custom_res.data or []
         projects = projects_res.data or []
 
         # プロフィールデータが空の場合は、ダッシュボードにリダイレクト
@@ -1041,24 +1202,97 @@ def create_pdf():
         profile_x = block_width + 30
         profile_y = height - 50
 
-        # プロフィール情報の表示
+        # ========== プロフィール情報の描画 ==========
         p.setFont("IPAexGothic", 16)
         p.drawString(profile_x, profile_y, f"氏名：{profile.get('initial', '')}")
+
         p.setFont("IPAexGothic", 12)
         p.drawString(profile_x, profile_y - 25, f"年齢: {profile.get('age', '')}")
+
+        next_y = profile_y - 25  # 年齢の下
+
         if profile.get('location'):
-            p.drawString(profile_x, profile_y - 65, f"最寄り駅: {profile.get('location', '')}")
+            p.drawString(profile_x, next_y - 20, f"最寄り駅: {profile.get('location', '')}")
+            next_y -= 20
+
         if profile.get('education'):
-            p.drawString(profile_x, profile_y - 85, f"学歴: {profile.get('education', '')}")
+            p.drawString(profile_x, next_y - 20, f"学歴: {profile.get('education', '')}")
+            next_y -= 20
+
+        # y_cursorは最後に描画した位置からスタート
+        y_cursor = next_y - 30
+
+        # ========== 資格（カンマ区切りで縦並び表示） ==========
         if profile.get('certifications'):
-            p.drawString(profile_x, profile_y - 105, f"資格: {profile.get('certifications', '')}")
-        if profile.get('bio'):
-            p.drawString(profile_x, profile_y - 125, f"自己紹介: {profile.get('bio', '')}")
 
-        # スキル一覧描画開始Y座標（紺色ブロックの下から開始）
-        y = height - block_height - 50
+             # 先に「資格:」ラベルを描画（ラベルのフォントサイズは少し大きめ）
+            label_font_size = 12
+            p.setFont("IPAexGothic", label_font_size)
+            p.drawString(profile_x, y_cursor, "資格:")
+            y_cursor -= label_font_size + 6  # ラベルの高さ＋少し余白を下げる
+            
+            certs = profile.get('certifications')
 
-        # ========== スキル ==========
+            # 文字列ならカンマで分割
+            if isinstance(certs, str):
+                # 半角カンマ・全角カンマ両方対応
+                certs_list = [c.strip() for c in re.split(r'[、,]', certs) if c.strip()]
+            # リスト型ならそのまま
+            elif isinstance(certs, list):
+                certs_list = [str(c).strip() for c in certs if str(c).strip()]
+            else:
+                certs_list = [str(certs)]
+
+            # テキスト整形
+            certs_list = [sanitize_text(c) for c in certs_list]
+
+            # フォント設定
+            font_size = 10
+            line_height = 14
+            p.setFont("IPAexGothic", font_size)
+
+            # デバッグ用：中身確認
+            print("資格リスト：", certs_list)
+
+            # 1行ずつ描画
+            for cert in certs_list:
+                p.drawString(profile_x, y_cursor, cert)
+                y_cursor -= line_height
+
+            y_cursor -= 10  # 余白
+
+
+            # ========== 自己紹介（折り返し） ==========
+            
+            if profile.get('bio'):
+                bio_label = "自己紹介:"
+                bio_body = profile.get('bio', '')
+                
+                # ラベルを12ptで描画（目立たせる）
+                p.setFont("IPAexGothic", 12)
+                p.drawString(profile_x, y_cursor, bio_label)
+                
+                label_width = p.stringWidth(bio_label, "IPAexGothic", 12)
+                bio_x_start = profile_x + label_width + 5  # ラベルのすぐ右に本文開始位置
+                
+                bio_text = sanitize_text(bio_body)
+                bio_max_width = width - bio_x_start - 50  # 右余白考慮
+
+                # 本文を10ptで折り返し描画
+                p.setFont("IPAexGothic", 10)
+                lines_drawn = draw_wrapped_text(p, bio_text, bio_x_start, y_cursor, bio_max_width,
+                                                font_name="IPAexGothic", font_size=10, leading=14)
+                y_cursor -= lines_drawn * 14 + 10
+
+
+
+        # ========== スキルシートの描画 ==========
+
+        # --- ここで新しいページ ---
+        p.showPage()
+        y = height - 50  # 新しいページの上から再スタート
+
+        # ========== スキル一覧 ==========
         p.setFillColor(navy)
         p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)  # 下線のみ
         p.setFillColor(black)
@@ -1244,50 +1478,43 @@ def create_pdf():
 
 
 
+
+        
+       # ========== カスタムスキル一覧 ==========
+
+        # 新しいページに移動
+        p.showPage()
+        y = height - 50  # ページ上部から開始
+
+
+        # ヘッダーの装飾
+        p.setFillColor(navy)
+        p.rect(50, y - 5, width - 100, 1, fill=True, stroke=0)
+        p.setFillColor(black)   
+
+        # タイトル
+        p.setFont("IPAexGothic", 14)
+        p.setFillColor(black)
+        p.drawString(50, y, "■ カスタムスキル一覧")
+        y -= 30
+
+        # カスタムスキル描画ループ
+        p.setFont("IPAexGothic", 10)
+        p.setFillColor(black)
+
+        for skill in custom_skills:
+            text = f"【{skill.get('custom_category', '')}】{skill.get('custom_skill_name', '')} - レベル: {skill.get('custom_skill_level', '')}"
+            p.drawString(60, y, text)
+            y -= 20
+            if y < 100:
+                p.showPage()
+                y = height - 50
+
+
+
         # --- プロジェクト履歴ページ ---
 
-        def sanitize_text(text):
-            # 不可視文字や制御文字を除去
-            text = unicodedata.normalize('NFKC', text)  # 全角→半角などの正規化
-            text = re.sub(r"[\u200B-\u200D\uFEFF]", "", text)  # ゼロ幅スペースなど削除
-            text = text.replace("\r\n", "\n").replace("\r", "\n")  # 改行統一
-            return text
-
-        # --- 折り返し描画用ヘルパー関数 ---
-        def draw_wrapped_text(canvas, text, x, y, max_width,
-                      font_name="IPAexGothic", font_size=10, leading=14):
-            canvas.setFont(font_name, font_size)
-            lines = []
-            for paragraph in text.split('\n'):
-                current_line = ""
-                for char in paragraph:
-                    test_line = current_line + char
-                    test_width = pdfmetrics.stringWidth(test_line, font_name, font_size)
-                    if test_width <= max_width:
-                        current_line = test_line
-                    else:
-                        lines.append(current_line)
-                        current_line = char
-                if current_line:
-                    lines.append(current_line)
-            for i, line in enumerate(lines):
-                canvas.drawString(x, y - i * leading, line)
-            return len(lines)
-
-
-        # --- 日付を安全にパースする関数 ---
-        def format_date(date_str):
-            if not date_str:
-                return ""
-            try:
-                # 例: ISO形式 '2002-05-07T00:00:00' をdatetimeに変換
-                dt = datetime.strptime(date_str, "%Y-%m-%dT%H:%M:%S")
-                # 好みの表示形式に変換（例: 2002年5月7日）
-                # Windows環境など%-mが使えない場合は%#mを試してください
-                return dt.strftime("%Y年%m月%d日").replace(" 0", " ")
-            except Exception as e:
-                print(f"format_date parse error: {e} with input: {date_str}")
-                return date_str
+        
 
         # --- プロジェクト履歴の描画開始 ---
         sorted_projects = sorted(projects, key=lambda p: p.get("start_at") or "", reverse=True)

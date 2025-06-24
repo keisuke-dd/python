@@ -89,6 +89,14 @@ textarea {
     min-height: 100px;
 }
 
+/* 🔽 保存ボタン中央配置 */
+.button-container {
+  width: 100%;
+  display: flex;
+  justify-content: center; /* ← これが最重要！ */
+  margin-top: 2rem;
+}
+
 button[type="submit"] {
     padding: 0.8rem 1.6rem;
     background-color: #4299e1;
@@ -100,11 +108,19 @@ button[type="submit"] {
     transition: background-color 0.2s ease;
     width: 100%;
     max-width: 320px;
+    display: block;
     margin: 0 auto;
 }
 
 button[type="submit"]:hover {
     background-color: #3182ce;
+}
+
+/* 🔽 ダッシュボードリンク右寄せ */
+.back-link-container {
+    text-align: right;
+    padding-right: 1rem;
+    margin-top: 0.5rem;
 }
 
 .back-button {
@@ -117,7 +133,7 @@ button[type="submit"]:hover {
     color: #0d6efd;
 }
 
-/* その他のボタンのスタイル */
+/* 資格追加ボタンなど共通ボタン */
 button {
     padding: 0.8rem 1.6rem;
     background-color: #007bff;
@@ -139,6 +155,7 @@ button:hover {
     margin: 0.5rem;
 }
 
+/* グループスタイル */
 .section {
     margin-top: 2rem;
     padding-top: 1.5rem;
@@ -158,7 +175,7 @@ button:hover {
     margin-bottom: 1rem;
 }
 
-/* 姓と名の横並び用スタイル */
+/* 姓・名 横並び */
 .name-group {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -166,14 +183,15 @@ button:hover {
     margin-bottom: 1rem;
 }
 
-/* 新しい横並びグループのスタイル */
-.two-column-group { /* 新しいクラス名 */
+/* 2列グループ */
+.two-column-group {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 2列、均等幅 */
-    gap: 1rem; /* 列間のスペース */
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
     margin-bottom: 1rem;
 }
 
+/* 言語選択グループ */
 .language-select-group {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -189,7 +207,6 @@ button:hover {
     width: 100%;
 }
 
-/* 必須マークのスタイル */
 .required-mark {
     color: red;
     font-weight: normal;
@@ -198,7 +215,7 @@ button:hover {
     vertical-align: middle;
 }
 
-
+/* レスポンシブ対応 */
 @media (max-width: 768px) {
     .container {
         padding: 1.5rem;
@@ -209,8 +226,8 @@ button:hover {
         font-size: 14px;
     }
 
-    /* 小さい画面では横並びグループを縦に並べる */
-    .two-column-group { /* 変更 */
+    .two-column-group,
+    .name-group {
         grid-template-columns: 1fr;
     }
 }

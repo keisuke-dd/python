@@ -157,3 +157,129 @@ UnboundLocalError: cannot access local variable 'max_width' where it is not asso
 2025-06-18 15:47:28,787 [WARNING] app [C:\Users\keisu\python\app.py:659 - skillsheet_input()] スキルシート保存時に例外発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー={'code': 'PGRST204', 'details': None, 'hint': None, 'message': "Could not find the 'category' column of 'custom_skills' in the schema cache"}
 2025-06-18 16:27:23,044 [WARNING] app [C:\Users\keisu\python\app.py:567 - profile_input()] プロフィール保存中に例外発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー={'code': 'PGRST204', 'details': None, 'hint': None, 'message': "Could not find the 'certifications' column of 'profile' in the schema cache"}
 2025-06-20 13:26:34,539 [WARNING] app [C:\Users\keisu\python\app.py:636 - profile_input()] プロフィール保存中に例外発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー={'code': 'PGRST204', 'details': None, 'hint': None, 'message': "Could not find the 'occupation' column of 'profile' in the schema cache"}
+2025-06-24 16:05:19,875 [ERROR] app [C:\Users\keisu\python\app.py:1601 - create_pdf()] PDF作成中にエラー発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=cannot access local variable 'sanitize_text' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1185, in create_pdf
+    certs_text = sanitize_text(certs_text)
+                 ^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'sanitize_text' where it is not associated with a value
+2025-06-24 16:06:00,621 [ERROR] app [C:\Users\keisu\python\app.py:1609 - create_pdf()] PDF作成中にエラー発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=cannot access local variable 'draw_wrapped_text' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1200, in create_pdf
+    draw_wrapped_text(p, certs_text, certs_start_x, certs_start_y, certs_max_width,
+    ^^^^^^^^^^^^^^^^^
+UnboundLocalError: cannot access local variable 'draw_wrapped_text' where it is not associated with a value
+2025-06-24 16:09:14,038 [ERROR] app [C:\Users\keisu\python\app.py:1654 - view_pdf()] PDF表示ページでデータ取得中に例外発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=Could not build url for endpoint 'create_pdf'. Did you mean 'view_pdf' instead?
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1645, in view_pdf
+    return render_template(
+        "view_pdf.html",
+    ...<3 lines>...
+        projects=projects
+    )
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\keisu\python\templates\view_pdf.html", line 27, in top-level template code
+    <a href="{{ url_for('create_pdf') }}" class="sample_btn">PDFを再生成</a>
+    ^^^^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'create_pdf'. Did you mean 'view_pdf' instead?
+2025-06-24 16:09:18,180 [ERROR] app [C:\Users\keisu\python\app.py:1654 - view_pdf()] PDF表示ページでデータ取得中に例外発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=Could not build url for endpoint 'create_pdf'. Did you mean 'view_pdf' instead?
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1645, in view_pdf
+    return render_template(
+        "view_pdf.html",
+    ...<3 lines>...
+        projects=projects
+    )
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\keisu\python\templates\view_pdf.html", line 27, in top-level template code
+    <a href="{{ url_for('create_pdf') }}" class="sample_btn">PDFを再生成</a>
+    ^^^^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'create_pdf'. Did you mean 'view_pdf' instead?
+2025-06-24 16:09:19,992 [ERROR] app [C:\Users\keisu\python\app.py:1654 - view_pdf()] PDF表示ページでデータ取得中に例外発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=Could not build url for endpoint 'create_pdf'. Did you mean 'view_pdf' instead?
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1645, in view_pdf
+    return render_template(
+        "view_pdf.html",
+    ...<3 lines>...
+        projects=projects
+    )
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 150, in render_template
+    return _render(app, template, context)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\templating.py", line 131, in _render
+    rv = template.render(context)
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 1295, in render
+    self.environment.handle_exception()
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\jinja2\environment.py", line 942, in handle_exception
+    raise rewrite_traceback_stack(source=source)
+  File "C:\Users\keisu\python\templates\view_pdf.html", line 27, in top-level template code
+    <a href="{{ url_for('create_pdf') }}" class="sample_btn">PDFを再生成</a>
+    ^^^^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1121, in url_for
+    return self.handle_url_build_error(error, endpoint, values)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\flask\app.py", line 1110, in url_for
+    rv = url_adapter.build(  # type: ignore[union-attr]
+        endpoint,
+    ...<3 lines>...
+        force_external=_external,
+    )
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\werkzeug\routing\map.py", line 924, in build
+    raise BuildError(endpoint, values, method, self)
+werkzeug.routing.exceptions.BuildError: Could not build url for endpoint 'create_pdf'. Did you mean 'view_pdf' instead?
+2025-06-24 16:20:31,650 [ERROR] app [C:\Users\keisu\python\app.py:1598 - create_pdf()] PDF作成中にエラー発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=cannot access local variable 'y_cursor' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1230, in create_pdf
+    lines_drawn = draw_wrapped_text(p, certs_text, profile_x, y_cursor, certs_max_width,
+                                                              ^^^^^^^^
+UnboundLocalError: cannot access local variable 'y_cursor' where it is not associated with a value
+2025-06-24 16:21:35,952 [ERROR] app [C:\Users\keisu\python\app.py:1598 - create_pdf()] PDF作成中にエラー発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=cannot access local variable 'y_cursor' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1230, in create_pdf
+    lines_drawn = draw_wrapped_text(p, certs_text, profile_x, y_cursor, certs_max_width,
+                                                              ^^^^^^^^
+UnboundLocalError: cannot access local variable 'y_cursor' where it is not associated with a value
+2025-06-24 16:22:34,405 [ERROR] app [C:\Users\keisu\python\app.py:1598 - create_pdf()] PDF作成中にエラー発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー=cannot access local variable 'y_cursor' where it is not associated with a value
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1230, in create_pdf
+    lines_drawn = draw_wrapped_text(p, certs_text, profile_x, y_cursor, certs_max_width,
+                                                              ^^^^^^^^
+UnboundLocalError: cannot access local variable 'y_cursor' where it is not associated with a value

@@ -59,43 +59,49 @@
                 </div>
             </div>
 
-        <div class="two-column-group">
-          <div class="form-group">
-            <label for="education">最終学歴 <span class="required-mark">※必須</span></label>
-            <input type="text" id="education" name="education" required value="{{ profile.education or '' }}" placeholder="某大学 〇〇学部、某専門学校 〇〇学科">
-          </div>
-
-          <div class="form-group">
-            <label>資格</label>
-            <div id="certifications-container">
-              {% if profile.certifications %}
-                {% for cert in profile.certifications.split('、') %}
-                <div class="certification-item">
-                  <input type="text" name="certifications[]" value="{{ cert }}" placeholder="例：基本情報技術者">
-                  <button type="button" onclick="removeField(this)">削除</button>
-                </div>
-                {% endfor %}
-              {% else %}
-                <div class="certification-item">
-                  <input type="text" name="certifications[]" placeholder="例：基本情報技術者">
-                </div>
-              {% endif %}
+            <div class="two-column-group">
+              <div class="form-group">
+                <label for="education">最終学歴 <span class="required-mark">※必須</span></label>
+                <input type="text" id="education" name="education" required value="{{ profile.education or '' }}" placeholder="某大学 〇〇学部、某専門学校 〇〇学科">
             </div>
-            <button type="button" onclick="addCertification()">＋ 資格を追加</button>
-          </div>
 
-        <div class="form-group">
-          <label for="bio">自己PR</label>
-          <textarea id="bio" name="bio" rows="5" placeholder="自己PRや経歴、スキルなど">{{ profile.bio or '' }}</textarea>
-        </div>
+            <div class="form-group">
+              <label>資格・取得年月</label>
+              <div id="certifications-container">
+                {% if profile.certifications %}
+                  {% for cert in profile.certifications.split('、') %}
+                  {% set parts = cert.split('（') %}
+                  <div class="certification-item">
+                    <input type="text" name="certifications[]" value="{{ parts[0] }}" placeholder="例：基本情報技術者">
+                    <input type="month" name="certification_dates[]" value="{{ parts[1][:-1] if parts|length > 1 else '' }}">
+                    <button type="button" onclick="removeField(this)">削除</button>
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="certification-item">
+                    <input type="text" name="certifications[]" placeholder="例：基本情報技術者">
+                    <input type="month" name="certification_dates[]">
+                  </div>
+                {% endif %}
+              </div>
+              <button type="button" onclick="addCertification()">＋ 資格を追加</button>
+            </div>
 
-        <button type="submit">保存する</button>
+        
+
+            <div class="form-group">
+              <label for="bio">自己PR</label>
+              <textarea id="bio" name="bio" rows="5" placeholder="自己PRや経歴、スキルなど">{{ profile.bio or '' }}</textarea>
+            </div>
+
+            <div class="button-container">
+              <button type="submit">保存する</button>
+            </div>
+
+            <div class="back-link-container">
+                <a href="{{ url_for('dashboard') }}" class="back-button">ダッシュボードに戻る</a>
+            </div>
       </form>
-
-      <div style="text-align: right;">
-        <a href="{{ url_for('dashboard') }}" class="back-button">ダッシュボードに戻る</a>
-      </div>
     </div>
-
   </body>
 </html>

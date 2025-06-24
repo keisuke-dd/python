@@ -28,7 +28,7 @@
             <label for="description">プロジェクト説明 <span class="required-mark">※必須</span></label>
             <textarea id="description"  name="description" class="auto-expand" rows="5" placeholder="プロジェクト概要（新卒チームによる開発版）Python（Flask）とSupabaseを用いて、社内向けのスキル管理Webアプリケーションを新規開発しました。本アプリは、社員一人ひとりの保有スキルや職務経歴をカテゴリ別に入力・更新・閲覧できる機能を備え、データはSupabaseのデータベースで一元管理されます。UIはHTML/CSSおよびJinjaテンプレートを用いて構築し、直感的に操作できるフォーム設計を実現しました。ログイン認証、パスワードリセット、データの自動反映など基本的なユーザー管理機能に加え、SupabaseのRLS（Row Level Security）を用いたセキュアなアクセス制御も実装済みです。技術力と実行力の両面で成長が見られる成果となりました。" required>{{ project.description if project and project.description else '' }}</textarea>
 
-            <label>AI生成結果</label>
+            <label>AI生成結果:<span class="required-mark">※注意: AI生成結果は参考程度に、最後はご自身で添削してください。</span></label>
              {% if generated_summary %}
              <div class="ai-result-box">
              {{ generated_summary }}

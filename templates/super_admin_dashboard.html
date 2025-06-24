@@ -2,53 +2,79 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>管理者ダッシュボード</title>    
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/super_admin_login.css') }}">
+    <title>最高管理者ダッシュボード</title>
     <script>
         function confirmTransfer(userName) {
             return confirm(`${userName} に最高管理者権限を譲渡しますか？ これは元に戻せません。`);
         }
+
+        function confirmDelete(userName) {
+            return confirm(`${userName} を削除しますか？（ソフトデリート）`);
+        }
     </script>
+    <style>
+        .deleted {
+            background-color: #f4f4f4;
+            color: #888;
+        }
+    </style>
 </head>
 <body>
-    <div class="container">
     <h1>最高管理者ダッシュボード</h1>
 
     <p><a href="{{ url_for('logout') }}">ログアウト</a></p>
     <p><a href="{{ url_for('dashboard') }}">一般ダッシュボードに戻る</a></p>
 
     <table border="1">
-        <tr>
-            <th>名前</th>
-            <th>メール</th>
-            <th>現在の役割</th>
-            <th>操作</th>
-        </tr>
-        {% for user in profiles %}
-        <tr>
-            <td>{{ user.name or "未登録" }}</td>
-            <td>{{ user.email }}</td>
-            <td>{{ user.role or "user" }}</td>
-            <td>
-                <form method="post" style="display:inline;">
-                    <input type="hidden" name="user_id" value="{{ user.user_id }}">
-                    {% if user.role == "user" %}
-                        <button type="submit" name="action" value="promote">管理者に昇格</button>
-                    {% elif user.role == "admin" %}
-                        <button type="submit" name="action" value="demote">一般に降格</button>
+        <thead>
+            <tr>
+                <th>名前</th>
+                <th>現在の役割</th>
+                <th>状態</th>
+                <th>操作</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in profiles %}
+            <tr class="{% if user.deleted_at %}deleted{% endif %}">
+                <td>{{ user.name or "未登録" }}{% if user.deleted_at %}（削除済み）{% endif %}</td>
+                <td>{{ user.role or "user" }}</td>
+                <td>
+                    {% if user.deleted_at %}
+                        削除日: {{ user.deleted_at[:10] }}
+                    {% else %}
+                        利用中
                     {% endif %}
-                    </div>
-                </form>
+                </td>
+                <td>
+                    {% if not user.deleted_at %}
+                        <form method="post" style="display:inline;">
+                            <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                            {% if user.role == "user" %}
+                                <button type="submit" name="action" value="promote">管理者に昇格</button>
+                            {% elif user.role == "admin" %}
+                                <button type="submit" name="action" value="demote">一般に降格</button>
+                            {% endif %}
+                        </form>
 
-                {% if user.role != "superadmin" %}
-                <form method="post" style="display:inline;" onsubmit="return confirmTransfer('{{ user.name or user.email }}');">
-                    <input type="hidden" name="user_id" value="{{ user.user_id }}">
-                    <button type="submit" name="action" value="transfer_superadmin">最高管理者を譲渡</button>
-                </form>
-                {% endif %}
-            </td>
-        </tr>
-        {% endfor %}
+                        {% if user.role != "superadmin" %}
+                        <form method="post" style="display:inline;" action="{{ url_for('super_admin_dashboard') }}" onsubmit="return confirmTransfer('{{ user.name or user.email }}');">
+                            <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                            <button type="submit" name="action" value="transfer_superadmin">最高管理者を譲渡</button>
+                        </form>
+                        {% endif %}
+
+                        <form method="post" style="display:inline;" action="{{ url_for('soft_delete_user') }}" onsubmit="return confirmDelete('{{ user.name or user.email }}');">
+                            <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                            <button type="submit" name="action" value="soft_delete">削除</button>
+                        </form>
+                    {% else %}
+                        <em>削除済み</em>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
 </body>
 </html>

@@ -82,7 +82,7 @@
                 <option value="C">C (知識のみ、研修レベル)</option>
                 <option value="D">D (経験なし)</option>
             </select>
-            <button type="button" class="remove-custom-skill">×</button>  <!-- ← 変更ポイント② -->
+            <button type="button" class="remove-custom-skill">削除</button>  <!-- ← 変更ポイント② -->
         `;
 
         container.appendChild(wrapper);
