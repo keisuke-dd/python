@@ -59,13 +59,7 @@
                 </div>
             </div>
 
-            <div class="two-column-group">
-              <div class="form-group">
-                <label for="education">最終学歴 <span class="required-mark">※必須</span></label>
-                <input type="text" id="education" name="education" required value="{{ profile.education or '' }}" placeholder="某大学 〇〇学部、某専門学校 〇〇学科">
-            </div>
-
-            <div class="form-group">
+                        <div class="form-group">
               <label>資格・取得年月</label>
               <div id="certifications-container">
                 {% if profile.certifications %}
@@ -87,21 +81,28 @@
               <button type="button" onclick="addCertification()">＋ 資格を追加</button>
             </div>
 
-        
-
-            <div class="form-group">
-              <label for="bio">自己PR</label>
-              <textarea id="bio" name="bio" rows="5" placeholder="自己PRや経歴、スキルなど">{{ profile.bio or '' }}</textarea>
+            <div class="two-column-group">
+              <div class="form-group">
+                <label for="education">最終学歴 <span class="required-mark">※必須</span></label>
+                <input type="text" id="education" name="education" required value="{{ profile.education or '' }}" placeholder="某大学 〇〇学部、某専門学校 〇〇学科">
             </div>
 
+            
+            <div class="form-group">
+          <label for="bio">自己PR</label>
+          <textarea id="bio" name="bio" rows="5" placeholder="自己PRや経歴、スキルなど">{{ profile.bio or '' }}</textarea>
+            </div>
+        
+
             <div class="button-container">
-              <button type="submit">保存する</button>
+                <button type="submit">保存する</button>
             </div>
 
             <div class="back-link-container">
                 <a href="{{ url_for('dashboard') }}" class="back-button">ダッシュボードに戻る</a>
             </div>
-      </form>
+
+        </form>
     </div>
-  </body>
+</body>
 </html>

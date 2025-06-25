@@ -91,25 +91,25 @@ textarea {
 
 /* 🔽 保存ボタン中央配置 */
 .button-container {
-  width: 100%;
+  width: 200%;
   display: flex;
-  justify-content: center; /* ← これが最重要！ */
   margin-top: 2rem;
+  justify-content: center; /* これを追加 */
 }
 
 button[type="submit"] {
-    padding: 0.8rem 1.6rem;
-    background-color: #4299e1;
-    color: #fff;
-    border: none;
-    border-radius: 0.5rem;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.2s ease;
-    width: 100%;
-    max-width: 320px;
-    display: block;
-    margin: 0 auto;
+  padding: 0.8rem 1.6rem;
+  background-color: #4299e1;
+  color: #fff;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.2s ease;
+  width: 100%;
+  max-width: 320px;
+  /* display: block; */ /* 不要になる場合があります */
+  /* margin: 0 auto; */ /* 不要になる場合があります */
 }
 
 button[type="submit"]:hover {
@@ -135,17 +135,17 @@ button[type="submit"]:hover {
 
 /* 資格追加ボタンなど共通ボタン */
 button {
-    padding: 0.8rem 1.6rem;
+    padding: 0.5rem 1.1rem;
     background-color: #007bff;
     color: white;
-    font-size: 1rem;
+    font-size: 0.85rem;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 0.2rem;
     cursor: pointer;
     transition: background-color 0.2s ease;
 }
 
-button:hover {
+button :hover {
     background-color: #0056b3;
 }
 

@@ -64,3 +64,8 @@ p a:hover {
 form div {
     display: contents; 
 }
+
+.deleted {
+    background-color: #f4f4f4;
+    color: #888;
+}
