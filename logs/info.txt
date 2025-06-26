@@ -2940,3 +2940,75 @@
 2025-06-25 16:24:16,165 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
 2025-06-25 16:24:16,757 [INFO] app [C:\Users\keisu\python\app.py:609 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=5
 2025-06-25 16:24:16,816 [INFO] app [C:\Users\keisu\python\app.py:618 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 10:40:21,734 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /login IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 10:40:22,626 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: POST /login IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 10:40:23,371 [INFO] app [C:\Users\keisu\python\app.py:195 - login()] ログイン成功: email=keisuke.tezuka.dd@gmail.com
+2025-06-26 10:40:23,377 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 10:40:23,844 [INFO] app [C:\Users\keisu\python\app.py:609 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=5
+2025-06-26 10:40:23,890 [INFO] app [C:\Users\keisu\python\app.py:618 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 10:40:25,991 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /profile_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 10:40:46,679 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /skillsheet_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 10:40:51,404 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /project_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 10:40:53,744 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /view_pdf IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 10:40:53,994 [INFO] app [C:\Users\keisu\python\app.py:1686 - view_pdf()] PDF表示ページ読み込み成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 プロジェクト件数=5
+2025-06-26 11:00:48,748 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /create_pdf IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:00:48,748 [INFO] app [C:\Users\keisu\python\app.py:1147 - create_pdf()] PDF作成開始: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748
+2025-06-26 11:00:49,519 [INFO] app [C:\Users\keisu\python\app.py:1645 - create_pdf()] PDF作成完了: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 保存先=static/temp/4c5ba71b-b6f5-470d-aa79-5154b1227748_skillsheet.pdf
+2025-06-26 11:00:49,525 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /view_pdf IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:00:49,680 [INFO] app [C:\Users\keisu\python\app.py:1686 - view_pdf()] PDF表示ページ読み込み成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 プロジェクト件数=5
+2025-06-26 11:00:56,653 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /profile_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:00:59,246 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:00:59,479 [INFO] app [C:\Users\keisu\python\app.py:609 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=5
+2025-06-26 11:00:59,548 [INFO] app [C:\Users\keisu\python\app.py:618 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 11:01:05,725 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /view_pdf IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:01:05,874 [INFO] app [C:\Users\keisu\python\app.py:1686 - view_pdf()] PDF表示ページ読み込み成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 プロジェクト件数=5
+2025-06-26 11:01:07,183 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /project_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:01:25,263 [INFO] app [C:\Users\keisu\python\app.py:144 - wrapper()] アクセス: GET /view_pdf IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:01:25,465 [INFO] app [C:\Users\keisu\python\app.py:1686 - view_pdf()] PDF表示ページ読み込み成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 プロジェクト件数=5
+2025-06-26 11:30:18,155 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /login IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:19,337 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: POST /login IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:19,975 [INFO] app [C:\Users\keisu\python\app.py:211 - login()] ログイン成功: email=keisuke.tezuka.dd@gmail.com
+2025-06-26 11:30:19,980 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:20,385 [INFO] app [C:\Users\keisu\python\app.py:625 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=5
+2025-06-26 11:30:20,437 [INFO] app [C:\Users\keisu\python\app.py:634 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 11:30:22,619 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /profile_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:23,535 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /skillsheet_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:24,356 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:24,570 [INFO] app [C:\Users\keisu\python\app.py:625 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=5
+2025-06-26 11:30:24,633 [INFO] app [C:\Users\keisu\python\app.py:634 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 11:30:25,028 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /project_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:25,719 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /view_pdf IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:25,931 [INFO] app [C:\Users\keisu\python\app.py:1702 - view_pdf()] PDF表示ページ読み込み成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 プロジェクト件数=5
+2025-06-26 11:30:33,079 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:30:33,171 [INFO] app [C:\Users\keisu\python\app.py:625 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=5
+2025-06-26 11:30:33,205 [INFO] app [C:\Users\keisu\python\app.py:634 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 11:37:37,632 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:37:37,788 [INFO] app [C:\Users\keisu\python\app.py:625 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=5
+2025-06-26 11:37:37,819 [INFO] app [C:\Users\keisu\python\app.py:634 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 11:49:22,085 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /view_pdf IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:49:22,713 [INFO] app [C:\Users\keisu\python\app.py:1702 - view_pdf()] PDF表示ページ読み込み成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 プロジェクト件数=5
+2025-06-26 11:49:24,257 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /project_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:50:08,808 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: POST /project_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:50:11,811 [INFO] app [C:\Users\keisu\python\app.py:937 - project_input()] AI生成成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 プロジェクト名=スキル管理WEBアプリ作成
+2025-06-26 11:52:08,790 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: POST /project_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:52:09,463 [INFO] app [C:\Users\keisu\python\app.py:970 - project_input()] プロジェクト保存成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 プロジェクト名=スキル管理WEBアプリ作成
+2025-06-26 11:52:09,473 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:52:09,646 [INFO] app [C:\Users\keisu\python\app.py:625 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=6
+2025-06-26 11:52:09,695 [INFO] app [C:\Users\keisu\python\app.py:634 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 11:52:16,620 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /project_edit/fb28d349-8b72-4eda-9f7f-146df766dabb IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:52:26,745 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:52:26,989 [INFO] app [C:\Users\keisu\python\app.py:625 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=6
+2025-06-26 11:52:27,044 [INFO] app [C:\Users\keisu\python\app.py:634 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 11:53:33,649 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /project_input IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:54:55,195 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:54:55,611 [INFO] app [C:\Users\keisu\python\app.py:625 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=0
+2025-06-26 11:54:55,662 [INFO] app [C:\Users\keisu\python\app.py:634 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=0
+2025-06-26 11:55:08,192 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /login IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:55:09,146 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: POST /login IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:55:09,424 [INFO] app [C:\Users\keisu\python\app.py:211 - login()] ログイン成功: email=keisuke.tezuka.dd@gmail.com
+2025-06-26 11:55:09,430 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /dashboard IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:55:09,883 [INFO] app [C:\Users\keisu\python\app.py:625 - dashboard()] プロジェクト取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=6
+2025-06-26 11:55:09,991 [INFO] app [C:\Users\keisu\python\app.py:634 - dashboard()] カスタムスキル取得成功: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 件数=3
+2025-06-26 11:55:27,220 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: GET /project_edit/fb28d349-8b72-4eda-9f7f-146df766dabb IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:55:28,156 [INFO] app [C:\Users\keisu\python\app.py:160 - wrapper()] アクセス: POST /project_edit/fb28d349-8b72-4eda-9f7f-146df766dabb IP=127.0.0.1 UA=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0
+2025-06-26 11:55:30,364 [INFO] app [C:\Users\keisu\python\app.py:1058 - project_edit()] AI生成成功（編集）: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 project_id=fb28d349-8b72-4eda-9f7f-146df766dabb

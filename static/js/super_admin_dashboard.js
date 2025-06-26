@@ -1,6 +1,15 @@
-// 最高管理者権限の譲渡確認
-function confirmTransfer(userName) {
-    return confirm(`${userName} に最高管理者権限を譲渡しますか？ これは元に戻せません。`);
+// 最高管理者権限の譲渡確認（文字入力）
+function confirmTransferWithInput(userName) {
+    const input = prompt(`${userName} に最高管理者権限を譲渡します。\n続行するには「譲渡」と入力してください。`);
+    if (input === "譲渡") {
+        return true;
+    } else if (input === null) {
+        alert("譲渡をキャンセルしました。");
+        return false;
+    } else {
+        alert("正しく「譲渡」と入力してください。操作は中止されました。");
+        return false;
+    }
 }
 
 // ソフトデリート時の文字入力確認
@@ -9,7 +18,6 @@ function confirmDeleteWithInput(userName) {
     if (input === "削除") {
         return true;
     } else if (input === null) {
-        // ユーザーがキャンセルを押した場合
         alert("削除をキャンセルしました。");
         return false;
     } else {

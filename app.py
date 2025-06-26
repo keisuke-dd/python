@@ -10,6 +10,7 @@ import requests
 from pykakasi import kakasi
 from gotrue.errors import AuthApiError, AuthWeakPasswordError
 from dateutil.parser import isoparse
+import secrets
 
 # ログ出力
 import logging
@@ -44,15 +45,19 @@ SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 SERVICE_ROLE_KEY = os.getenv("SUPABASE_SERVICE_ROLE_KEY")
 
+
 # 管理者メールアドレスリストを取得
 ADMIN_EMAILS = os.getenv("ADMIN_EMAILS", "")
 ADMIN_EMAIL_LIST = [email.strip() for email in ADMIN_EMAILS.split(",") if email.strip()]
 
+
 # カスタムカラーの定義
 navy = HexColor("#3B0997")  # 紺色を16進数カラーコードで定義
 
+
 # Supabaseクライアントの作成
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+
 
 # 1回だけ日本語フォントを登録（フォント名は自由に決められます）
 pdfmetrics.registerFont(TTFont('IPAexGothic', 'static/fonts/ipaexg.ttf'))
@@ -60,7 +65,8 @@ pdfmetrics.registerFont(TTFont('IPAexGothic', 'static/fonts/ipaexg.ttf'))
 
 # Flaskの設定
 app = Flask(__name__)
-app.secret_key = "your_secret_key"  # セッション用のシークレットキー
+SECRET_KEY = secrets.token_hex(32)
+app.secret_key = "SECRET_KEY"  # セッション用のシークレットキー
 
 
 #  セッションの設定
@@ -104,7 +110,16 @@ formatter = logging.Formatter(
     '%(asctime)s [%(levelname)s] %(name)s [%(pathname)s:%(lineno)d - %(funcName)s()] %(message)s'
 )
 
-# --- INFOレベルのみ info.txt に出力 ---
+# --- カスタムフィルター定義 ---
+class InfoFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno in (logging.INFO, logging.WARNING)
+
+class ErrorFilter(logging.Filter):
+    def filter(self, record):
+        return record.levelno >= logging.WARNING
+
+# --- INFO+WARNING を info.txt に出力 ---
 info_handler = RotatingFileHandler(
     os.path.join(LOG_DIR, 'info.txt'),
     maxBytes=10 * 1024 * 1024,
@@ -112,10 +127,10 @@ info_handler = RotatingFileHandler(
     encoding='utf-8'
 )
 info_handler.setLevel(logging.INFO)
-info_handler.addFilter(lambda record: record.levelno == logging.INFO)
+info_handler.addFilter(InfoFilter())
 info_handler.setFormatter(formatter)
 
-# --- WARNING以上 error.txt に出力 ---
+# --- WARNING以上を error.txt に出力 ---
 error_handler = RotatingFileHandler(
     os.path.join(LOG_DIR, 'error.txt'),
     maxBytes=10 * 1024 * 1024,
@@ -123,6 +138,7 @@ error_handler = RotatingFileHandler(
     encoding='utf-8'
 )
 error_handler.setLevel(logging.WARNING)
+error_handler.addFilter(ErrorFilter())
 error_handler.setFormatter(formatter)
 
 # --- コンソール出力（DEBUG以上） ---
@@ -137,7 +153,7 @@ app.logger.addHandler(info_handler)
 app.logger.addHandler(error_handler)
 app.logger.addHandler(console_handler)
 
-# --- アクセスログのみ出力するデコレーター ---
+# --- アクセスログ用デコレーター ---
 def log_request_basic(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
@@ -895,7 +911,7 @@ def project_input():
             - 業務内容、使用技術、貢献成果が分かる具体的な表現
             - 成果や貢献を必ず含める  
             - 専門用語は適度に使いながら、分かりやすさも重視する  
-            - 敬体（です・ます調）で、正式かつ読みやすい文体にする  
+            - 体言止めで、正式かつ読みやすい文体にする  
             - 全体の文字数は400～500文字程度
 
             # 入力情報  
@@ -1016,7 +1032,7 @@ def project_edit(project_id):
             - 具体的な業務内容や使用技術を明記する  
             - 成果や貢献を必ず含める  
             - 専門用語は適度に使いながら、分かりやすさも重視する  
-            - 敬体（です・ます調）で、正式かつ読みやすい文体にする  
+            - 体言止めで、正式かつ読みやすい文体にする  
             - 全体で300～400字程度  
 
             # 入力情報  

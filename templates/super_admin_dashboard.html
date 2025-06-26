@@ -46,19 +46,16 @@
                         </form>
 
                         {% if user.role != "superadmin" %}
-                        <form method="post" style="display:inline;" action="{{ url_for('super_admin_dashboard') }}" onsubmit="return confirmTransfer('{{ user.name or user.email }}');">
+                        <form method="post" style="display:inline;" action="{{ url_for('super_admin_dashboard') }}" onsubmit="return confirmTransferWithInput('{{ user.name or user.email }}');">
                             <input type="hidden" name="user_id" value="{{ user.user_id }}">
                             <button type="submit" name="action" value="transfer_superadmin">最高管理者を譲渡</button>
                         </form>
-                        {% endif %}
 
-                        {% if user.role != "superadmin" %}
-                            <form method="post" style="display:inline;" action="{{ url_for('soft_delete_user') }}" onsubmit="return confirmDeleteWithInput('{{ user.name or user.email }}');">
-                                <input type="hidden" name="user_id" value="{{ user.user_id }}">
-                                <button type="submit" name="action" value="soft_delete">削除</button>
-                            </form>
+                        <form method="post" style="display:inline;" action="{{ url_for('soft_delete_user') }}" onsubmit="return confirmDeleteWithInput('{{ user.name or user.email }}');">
+                            <input type="hidden" name="user_id" value="{{ user.user_id }}">
+                            <button type="submit" name="action" value="soft_delete">削除</button>
+                        </form>
                         {% endif %}
-
                     {% else %}
                         <em>削除済み</em>
                     {% endif %}
