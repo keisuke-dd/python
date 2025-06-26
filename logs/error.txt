@@ -314,3 +314,4 @@ Traceback (most recent call last):
   File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\postgrest\_sync\request_builder.py", line 78, in execute
     raise APIError(r.json())
 postgrest.exceptions.APIError: {'code': 'P0001', 'details': None, 'hint': None, 'message': 'superadminは常に1人でなければなりません（現在4d人）'}
+2025-06-26 14:59:44,079 [WARNING] app [C:\Users\keisu\python\app.py:1185 - create_pdf()] プロフィール未登録: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748

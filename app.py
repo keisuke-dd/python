@@ -1667,12 +1667,52 @@ def create_pdf():
         return redirect(url_for('dashboard'))
 
 
-# PDF作成処理
     except Exception as e:
         print(f"PDF作成エラー: {e}")
         session['error'] = f"PDFの作成に失敗しました: {str(e)}"
         return redirect(url_for('dashboard'))
 
+
+
+
+# PDF削除処理
+PDF_FOLDER = "static/temp"
+MAX_FOLDER_SIZE_MB = 100 # 最大フォルダサイズ（MB）
+MAX_FOLDER_SIZE_BYTES = MAX_FOLDER_SIZE_MB * 1024 * 1024
+
+def get_folder_size(folder):
+    total_size = 0
+    for filename in os.listdir(folder):
+        filepath = os.path.join(folder, filename)
+        if os.path.isfile(filepath) and filename.endswith(".pdf"):
+            total_size += os.path.getsize(filepath)
+    return total_size
+
+def cleanup_pdfs_by_size():
+    total_size = get_folder_size(PDF_FOLDER)
+
+    if total_size <= MAX_FOLDER_SIZE_BYTES:
+        return
+
+    pdf_files = []
+    for filename in os.listdir(PDF_FOLDER):
+        filepath = os.path.join(PDF_FOLDER, filename)
+        if os.path.isfile(filepath) and filename.endswith(".pdf"):
+            mtime = os.path.getmtime(filepath)
+            size = os.path.getsize(filepath)
+            pdf_files.append((filepath, mtime, size))
+
+    pdf_files.sort(key=lambda x: x[1])  # 古い順
+
+    for filepath, _, size in pdf_files:
+        try:
+            os.remove(filepath)
+            app.logger.info(f"PDF削除（容量超過対応）: {filepath}")
+            total_size -= size
+            if total_size <= MAX_FOLDER_SIZE_BYTES:
+                break
+        except Exception as e:
+            app.logger.warning(f"PDF削除失敗: {filepath}, エラー: {e}")
 
 
 @app.route("/view_pdf")
@@ -1685,12 +1725,14 @@ def view_pdf():
     user_id = session['user_id']
     pdf_path = f"static/temp/{user_id}_skillsheet.pdf"
 
+    # --- 容量チェック・古いPDF削除 ---
+    cleanup_pdfs_by_size()
+
     if not os.path.exists(pdf_path):
         app.logger.warning(f"PDFファイル未検出: user_id={user_id} path={pdf_path} → /create_pdfへリダイレクト")
         return redirect(url_for('create_pdf'))
 
     try:
-        # Supabaseからデータ取得
         profile_res = supabase.from_("profile").select("*").eq("user_id", user_id).execute()
         skillsheet_res = supabase.from_("skillsheet").select("*").eq("user_id", user_id).execute()
         projects_res = supabase.from_("project").select("*").eq("user_id", user_id).execute()
@@ -1712,7 +1754,6 @@ def view_pdf():
         app.logger.exception(f"PDF表示ページでデータ取得中に例外発生: user_id={user_id} エラー={e}")
         session['error'] = "PDF表示に失敗しました。"
         return redirect(url_for('dashboard'))
-
 
 #  ログアウト処理
 @app.route("/logout")
