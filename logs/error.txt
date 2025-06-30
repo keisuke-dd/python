@@ -315,3 +315,17 @@ Traceback (most recent call last):
     raise APIError(r.json())
 postgrest.exceptions.APIError: {'code': 'P0001', 'details': None, 'hint': None, 'message': 'superadminは常に1人でなければなりません（現在4d人）'}
 2025-06-26 14:59:44,079 [WARNING] app [C:\Users\keisu\python\app.py:1185 - create_pdf()] プロフィール未登録: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748
+2025-06-30 11:10:19,431 [WARNING] app [C:\Users\keisu\python\app.py:628 - dashboard()] プロジェクト取得失敗: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー: {'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in rules for relation "admin_users"'}
+2025-06-30 11:10:19,502 [WARNING] app [C:\Users\keisu\python\app.py:637 - dashboard()] カスタムスキル取得失敗: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー: {'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in rules for relation "admin_users"'}
+2025-06-30 11:10:22,276 [WARNING] app [C:\Users\keisu\python\app.py:628 - dashboard()] プロジェクト取得失敗: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー: {'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in rules for relation "admin_users"'}
+2025-06-30 11:10:22,338 [WARNING] app [C:\Users\keisu\python\app.py:637 - dashboard()] カスタムスキル取得失敗: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー: {'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in rules for relation "admin_users"'}
+2025-06-30 11:10:25,497 [WARNING] app [C:\Users\keisu\python\app.py:813 - skillsheet_input()] カスタムスキル取得失敗: {'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in rules for relation "admin_users"'}
+2025-06-30 11:10:31,764 [ERROR] app [C:\Users\keisu\python\app.py:1754 - view_pdf()] PDF表示ページでデータ取得中に例外発生: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー={'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in policy for relation "profile"'}
+Traceback (most recent call last):
+  File "C:\Users\keisu\python\app.py", line 1736, in view_pdf
+    profile_res = supabase.from_("profile").select("*").eq("user_id", user_id).execute()
+  File "C:\Users\keisu\AppData\Local\Programs\Python\Python313\Lib\site-packages\postgrest\_sync\request_builder.py", line 78, in execute
+    raise APIError(r.json())
+postgrest.exceptions.APIError: {'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in policy for relation "profile"'}
+2025-06-30 11:10:31,913 [WARNING] app [C:\Users\keisu\python\app.py:628 - dashboard()] プロジェクト取得失敗: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー: {'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in rules for relation "admin_users"'}
+2025-06-30 11:10:31,981 [WARNING] app [C:\Users\keisu\python\app.py:637 - dashboard()] カスタムスキル取得失敗: user_id=4c5ba71b-b6f5-470d-aa79-5154b1227748 エラー: {'code': '42P17', 'details': None, 'hint': None, 'message': 'infinite recursion detected in rules for relation "admin_users"'}

@@ -663,41 +663,37 @@ def profile_input():
         first_name_kana = request.form.get("first_name_kana")
         birth_date = request.form.get("birth_date")
         location = request.form.get("location")
-        
         education = request.form.get("education")
-        # certificationsは複数選択可能なチェックボックス、リスト化
-        # 資格名と取得年月をペアで取得
+        bio = request.form.get("bio")
+
+        # 資格情報取得
         certifications = request.form.getlist("certifications[]")
         certification_dates = request.form.getlist("certification_dates[]")
 
-
+        # 資格データ整形（日本語年月）とゼロ埋め
         certifications_list = []
         for name, date in zip(certifications, certification_dates):
             if name.strip():
                 if date:
-                    # date は "YYYY-MM" 形式なので分割して日本語表記に変換
                     year, month = date.split('-')
+                    month = month.zfill(2)  # ここでゼロ埋め
                     formatted_date = f"{year}年{month}月"
                     certifications_list.append(f"{name.strip()}（{formatted_date}）")
                 else:
                     certifications_list.append(f"{name.strip()}")
 
-
         certifications_str = "、".join(certifications_list)
-
-        
-
-        bio = request.form.get("bio")
 
         # 年齢計算
         if birth_date:
-            birth_date = datetime.strptime(birth_date, '%Y-%m-%d')
+            birth_date_obj = datetime.strptime(birth_date, '%Y-%m-%d')
             today = datetime.now()
-            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            age = today.year - birth_date_obj.year - ((today.month, today.day) < (birth_date_obj.month, birth_date_obj.day))
         else:
+            birth_date_obj = None
             age = None
 
-        # イニシャル生成
+        # イニシャル生成（省略せず記載）
         def generate_initial(last_name_kana, first_name_kana):
             kana_to_romaji = {
                 'ア': 'A', 'イ': 'I', 'ウ': 'U', 'エ': 'E', 'オ': 'O',
@@ -725,6 +721,7 @@ def profile_input():
         full_name = f"{last_name} {first_name}"
 
         try:
+            # Supabaseにアップサート
             result = supabase.table("profile").upsert({
                 "user_id": session['user_id'],
                 "last_name": last_name,
@@ -732,10 +729,9 @@ def profile_input():
                 "last_name_kana": last_name_kana,
                 "first_name_kana": first_name_kana,
                 "name": full_name,
-                "birth_date": birth_date.strftime('%Y-%m-%d') if birth_date else None,
+                "birth_date": birth_date_obj.strftime('%Y-%m-%d') if birth_date_obj else None,
                 "age": age,
                 "location": location,
-                
                 "education": education,
                 "certifications": certifications_str,
                 "bio": bio,
@@ -744,16 +740,16 @@ def profile_input():
 
             if result.model_dump().get("error"):
                 app.logger.warning(f"プロフィール保存失敗: user_id={session['user_id']} エラー={result.error}")
+                # 入力内容をテンプレートに戻す
                 profile_input = {
                     "last_name": last_name,
                     "first_name": first_name,
                     "last_name_kana": last_name_kana,
                     "first_name_kana": first_name_kana,
-                    "birth_date": birth_date.strftime('%Y-%m-%d') if birth_date else None,
+                    "birth_date": birth_date if isinstance(birth_date, str) else (birth_date_obj.strftime('%Y-%m-%d') if birth_date_obj else ''),
                     "location": location,
-                    
                     "education": education,
-                    "certifications": certifications_str,
+                    "certifications_raw": list(zip(certifications, certification_dates)),
                     "bio": bio,
                     "initial": initial,
                 }
@@ -764,11 +760,50 @@ def profile_input():
 
         except Exception as e:
             app.logger.warning(f"プロフィール保存中に例外発生: user_id={session['user_id']} エラー={e}")
-            return render_template("profile_input.html", error="予期せぬエラーが発生しました。", profile={})
+            # エラー時も入力内容保持
+            profile_input = {
+                "last_name": last_name,
+                "first_name": first_name,
+                "last_name_kana": last_name_kana,
+                "first_name_kana": first_name_kana,
+                "birth_date": birth_date if isinstance(birth_date, str) else (birth_date_obj.strftime('%Y-%m-%d') if birth_date_obj else ''),
+                "location": location,
+                "education": education,
+                "certifications_raw": list(zip(certifications, certification_dates)),
+                "bio": bio,
+                "initial": initial,
+            }
+            return render_template("profile_input.html", error="予期せぬエラーが発生しました。", profile=profile_input)
 
+    # --- GET処理 ---
     user_id = session['user_id']
     profile_data = get_supabase_data("profile", user_id) or {}
+
+    # 資格年月をフォーム用に分解
+    certifications_raw = []
+    if profile_data.get("certifications"):
+        for cert in profile_data["certifications"].split("、"):
+            parts = cert.rsplit("（", 1)
+            name = parts[0]
+            date = ""
+            if len(parts) > 1:
+                date_text = parts[1].rstrip('）')
+                if "年" in date_text and "月" in date_text:
+                    year = date_text.split("年")[0]
+                    month = date_text.split("年")[1].rstrip("月")
+                    month = month.zfill(2)  # 2桁化
+                    date = f"{year}-{month}"
+            certifications_raw.append((name, date))
+    profile_data["certifications_raw"] = certifications_raw
+
+    # birth_dateは文字列にしておく（Noneなら空文字）
+    if "birth_date" in profile_data and profile_data["birth_date"]:
+        profile_data["birth_date"] = profile_data["birth_date"]
+    else:
+        profile_data["birth_date"] = ''
+
     return render_template("profile_input.html", profile=profile_data)
+
 
             
 
