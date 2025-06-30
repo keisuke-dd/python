@@ -192,10 +192,10 @@ def signup():
 @app.route("/login", methods=["GET", "POST"])
 @log_request_basic
 def login():
-
     if request.method == "POST":
         email = request.form["email"]
         password = request.form["password"]
+
         try:
             user = supabase.auth.sign_in_with_password({
                 "email": email,
@@ -208,9 +208,21 @@ def login():
                 session["user_id"] = user.user.id
                 session["user_email"] = user.user.email
 
+                user_id = user.user.id
+
+                # プロフィールの deleted_at をチェック
+                profile_data = supabase.table("profile").select("deleted_at").eq("user_id", user_id).limit(1).execute()
+                if profile_data.data:
+                    if profile_data.data[0].get("deleted_at"):
+                        app.logger.warning(f"ログイン拒否（削除済）: email={email}")
+                        return render_template("login.html", error="このアカウントは削除されています。")
+                else:
+                    # プロフィールが存在しない → 登録ページへ誘導
+                    app.logger.info(f"プロフィール未登録: email={email}")
+                    return redirect(url_for("dashboard"))
+
                 app.logger.info(f"ログイン成功: email={email}")
-                # ログイン成功後
-                return redirect(url_for('dashboard'))
+                return redirect(url_for("dashboard"))
 
             else:
                 app.logger.warning(f"ログイン失敗（未確認メール）: email={email}")
@@ -226,24 +238,37 @@ def login():
 @app.route("/super_admin_login", methods=["GET", "POST"])
 def super_admin_login():
     if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
+        email = request.form.get("email")
+        password = request.form.get("password")
+        app.logger.info(f"[super_admin_login] ログイン試行: email={email}")
 
         try:
             result = supabase.auth.sign_in_with_password({"email": email, "password": password})
             user = result.user
+
+            if not user:
+                app.logger.warning("[super_admin_login] ログイン失敗: ユーザー情報が取得できません")
+                return "ログイン失敗", 401
+
             user_id = user.id
+            app.logger.info(f"[super_admin_login] ログイン成功: user_id={user_id}")
 
             # プロフィールからroleを確認
-            profile = supabase.table("profile").select("role").eq("user_id", user_id).single().execute().data
-            if profile and profile["role"] == "superadmin":
+            profile_resp = supabase.table("profile").select("role").eq("user_id", user_id).single().execute()
+            profile = profile_resp.data
+
+            if profile and profile.get("role") == "superadmin":
                 session["super_admin"] = True
                 session["user_id"] = user_id
+                app.logger.info(f"[super_admin_login] 権限確認OK: superadmin user_id={user_id}")
                 return redirect(url_for("super_admin_dashboard"))
             else:
-                return "アクセス拒否：superadminではありません", 403
+                app.logger.warning(f"[super_admin_login] 権限なし: user_id={user_id} role={profile.get('role') if profile else 'なし'}")
+                return "アクセス拒否：権限がありません", 403
+
         except Exception as e:
-            return f"ログイン失敗: {str(e)}", 401
+            app.logger.exception(f"[super_admin_login] 例外発生: {e}")
+            return "ログイン失敗", 401
 
     return render_template("super_admin_login.html")
 
@@ -255,34 +280,61 @@ def get_current_user_id():
 @app.route("/super_admin_dashboard", methods=["GET", "POST"])
 def super_admin_dashboard():
     if not session.get("super_admin"):
+        app.logger.warning("[super_admin_dashboard] アクセス拒否：未認証アクセス")
         return redirect(url_for("super_admin_login"))
 
     if request.method == "POST":
-        # 操作対象のユーザーIDを取得する
-        user_id = request.form["user_id"]
-        action = request.form["action"]
+        user_id = request.form.get("user_id")
+        action = request.form.get("action")
+        app.logger.info(f"[super_admin_dashboard] POST処理開始: action={action}, user_id={user_id}")
 
-        # 昇格・降格処理
-        if action == "promote":
-            supabase.table("profile").update({"role": "admin"}).eq("user_id", user_id).execute()
-        elif action == "demote":
-            supabase.table("profile").update({"role": "user"}).eq("user_id", user_id).execute()
-        elif action == "transfer_superadmin":
-            # 1. 対象ユーザーをsuperadminに昇格
-            supabase.table("profile").update({"role": "superadmin"}).eq("user_id", user_id).execute()
-            # 2. 現在のsuperadmin（自分）をuserに降格
-            current_user_id = get_current_user_id()  # トークンなどで取得
-            supabase.table("profile").update({"role": "user"}).eq("user_id", current_user_id).execute()
-            # 3. セッションからsuperadmin権限を削除し再ログインを促す
-            session.pop("super_admin", None)
-            session.pop("super_admin_email", None)
-            return redirect(url_for("super_admin_login"))
+        try:
+            if action == "promote":
+                supabase.table("profile").update({"role": "admin"}).eq("user_id", user_id).execute()
+                app.logger.info(f"[super_admin_dashboard] 昇格処理: user_id={user_id} → admin")
+
+            elif action == "demote":
+                supabase.table("profile").update({"role": "user"}).eq("user_id", user_id).execute()
+                app.logger.info(f"[super_admin_dashboard] 降格処理: user_id={user_id} → user")
+
+            elif action == "transfer_superadmin":
+                # 対象ユーザーをsuperadminに昇格
+                supabase.table("profile").update({"role": "superadmin"}).eq("user_id", user_id).execute()
+                app.logger.info(f"[super_admin_dashboard] 譲渡先昇格: user_id={user_id} → superadmin")
+
+                # 現在のsuperadminをuserに降格
+                current_user_id = get_current_user_id()
+                supabase.table("profile").update({"role": "user"}).eq("user_id", current_user_id).execute()
+                app.logger.info(f"[super_admin_dashboard] 自分を降格: user_id={current_user_id} → user")
+
+                # セッションからsuperadmin権限を削除
+                session.pop("super_admin", None)
+                session.pop("super_admin_email", None)
+                app.logger.info("[super_admin_dashboard] セッションからsuperadmin権限を削除、ログインページにリダイレクト")
+
+                return redirect(url_for("super_admin_login"))
+
+        except Exception as e:
+            app.logger.exception(f"[super_admin_dashboard] 例外発生: action={action}, user_id={user_id}, error={e}")
+            return "操作中にエラーが発生しました", 500
 
         return redirect(url_for("super_admin_dashboard"))
 
-    # プロフィール一覧取得
-    profiles = supabase.table("profile").select("*").order("created_at", desc=True).execute().data
+    # GET時：全プロフィール取得
+    try:
+        profiles_resp = supabase.table("profile").select("*").execute()
+        profiles = profiles_resp.data or []
+        app.logger.info(f"[super_admin_dashboard] プロフィール取得: 件数={len(profiles)}")
+    except Exception as e:
+        app.logger.exception(f"[super_admin_dashboard] プロフィール取得失敗: {e}")
+        profiles = []
+
     return render_template("super_admin_dashboard.html", profiles=profiles)
+
+
+    # プロフィール一覧取得
+    # profiles = supabase.table("profile").select("*").order("created_at", desc=True).execute().data
+    # return render_template("super_admin_dashboard.html", profiles=profiles)
 
 
 # ユーザーのソフトデリート処理
